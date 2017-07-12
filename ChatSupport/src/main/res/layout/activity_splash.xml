@@ -15,8 +15,7 @@
         android:layout_marginBottom="@dimen/text18"/>
 
     <ProgressBar
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:indeterminate="true"/>
+        android:layout_width="60dp"
+        android:layout_height="60dp" />
 
 </LinearLayout>

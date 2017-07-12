@@ -53,9 +53,6 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     ContactsAdapter contactsAdapter;
     ProgressDialog progressDialog;
     Button btnTry;
-    Menu myMenu;
-    MenuItem syncItem;
-    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
         setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
         assert mActionBar != null;
-        mActionBar.setTitle("Home");
+        mActionBar.setTitle(Support.userM.getFullName());
     }
 
     private void initView() {
@@ -144,24 +141,17 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
                 } else {
                     contactsMs.clear();
                     contactsMs.addAll(arrayList);
-                    contactsAdapter.notifyDataSetChanged();
-                    if (syncItem != null) {
-                        syncItem.setActionView(null);
-                    }
+                    contactsAdapter.notifyItemInserted(contactsMs.size());
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                if (syncItem != null) {
-                    syncItem.setActionView(null);
-                } else {
-                    if (progressDialog != null && progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
-                    no_data_layout.setVisibility(View.VISIBLE);
-                    data_layout.setVisibility(View.GONE);
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
                 }
+                no_data_layout.setVisibility(View.VISIBLE);
+                data_layout.setVisibility(View.GONE);
                 Log.e(TAG, "Database error " + databaseError.getMessage());
             }
         });
@@ -188,8 +178,6 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home_menu, menu);
-        myMenu = menu;
-        syncItem = myMenu.findItem(R.id.progressSync);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -201,21 +189,6 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
                 Intent intent = new Intent(activity, LoginActivity.class);
                 startActivity(intent);
                 finish();
-                break;
-            case R.id.action_sync:
-                if (Tools.isNetworkAvailable(mContext)) {
-                    if (syncItem.getActionView() == null) {
-                        progressBar = new ProgressBar(mContext);
-                        progressBar.getIndeterminateDrawable().setColorFilter(
-                                Color.WHITE, PorterDuff.Mode.MULTIPLY);
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(50, 50);
-                        progressBar.setLayoutParams(params);
-                        syncItem.setActionView(progressBar);
-                        initData();
-                    }
-                } else {
-                    Toast.makeText(mContext, "No internet connection", Toast.LENGTH_SHORT).show();
-                }
                 break;
         }
         return super.onOptionsItemSelected(item);

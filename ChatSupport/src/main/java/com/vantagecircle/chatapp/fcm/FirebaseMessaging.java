@@ -1,13 +1,10 @@
 package com.vantagecircle.chatapp.fcm;
 
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.utils.NotificationUtils;
 import com.vantagecircle.chatapp.utils.Tools;
 
@@ -28,17 +25,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            } else {
-                if(Support.isChatWindowActive){
-                    sendBroadcast(Config.FIREBASE_DB_SYNC);
-                }
             }
         }
-    }
-
-    private void sendBroadcast(String receiver) {
-        Intent intent = new Intent(Config.FCM_RECEIVER);
-        intent.putExtra("status", receiver);
-        LocalBroadcastManager.getInstance(Support.getInstance()).sendBroadcast(intent);
     }
 }
