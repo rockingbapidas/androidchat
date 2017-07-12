@@ -1,10 +1,16 @@
 package com.vantagecircle.chatapp.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,9 +18,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,7 +33,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
@@ -34,9 +43,9 @@ import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.ContactsM;
 import com.vantagecircle.chatapp.model.NotificationM;
 import com.vantagecircle.chatapp.services.SendNotification;
+import com.vantagecircle.chatapp.utils.Tools;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by bapidas on 10/07/17.
@@ -65,9 +74,11 @@ public class ChatActivity extends AppCompatActivity {
         mContext = getApplicationContext();
         activity = this;
         setContentView(R.layout.activity_chat);
+
         contactsM = new Gson().fromJson(getIntent().getStringExtra("data"), ContactsM.class);
         room_type_1 = Support.id + "_" + contactsM.getUserId();
         room_type_2 = contactsM.getUserId() + "_" + Support.id;
+
         initToolbar();
         initView();
         initRecycler();
@@ -81,6 +92,8 @@ public class ChatActivity extends AppCompatActivity {
         mActionBar = getSupportActionBar();
         assert mActionBar != null;
         mActionBar.setTitle(contactsM.getFullName());
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setDisplayShowHomeEnabled(true);
     }
 
     private void initView() {
@@ -92,6 +105,7 @@ public class ChatActivity extends AppCompatActivity {
     private void initRecycler() {
         linearLayoutManager = new LinearLayoutManager(mContext);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(0);
         recyclerView.setHasFixedSize(true);
@@ -228,11 +242,23 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendPushNotification(ChatM chatM, String chat_room) {
         try {
-            NotificationM notificationM = new NotificationM(
-                    chatM.getSenderName(), chatM.getMessageText(),
-                    chatM.getReceiverName(), chatM.getReceiverUid(),
-                    Support.userM.getFcmToken(), contactsM.getFcmToken(),
-                    chat_room, chatM.getTimeStamp());
+            String senderUsername = chatM.getSenderName();
+            String senderUserId = chatM.getSenderUid();
+            String senderFcmToken = Support.userM.getFcmToken();
+            String messageText = chatM.getMessageText();
+            String receiverFcmToken = contactsM.getFcmToken();
+            long timeStamp = chatM.getTimeStamp();
+
+            NotificationM notificationM = new NotificationM();
+            notificationM.setTitle(senderUsername);
+            notificationM.setMessageText(messageText);
+            notificationM.setSenderUsername(senderUsername);
+            notificationM.setSenderUid(senderUserId);
+            notificationM.setSenderFcmToken(senderFcmToken);
+            notificationM.setTimeStamp(timeStamp);
+            notificationM.setChatRoom(chat_room);
+            notificationM.setReceiverFcmToken(receiverFcmToken);
+
             SendNotification sendNotification = new SendNotification(notificationM);
             sendNotification.send();
         } catch (Exception e) {
@@ -315,17 +341,42 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void setListToAdapter(DataSnapshot dataSnapshot) {
-        if(!isSentFromMeNow){
+        if (!isSentFromMeNow) {
             ChatM chatM = dataSnapshot.getValue(ChatM.class);
             if (chatMs == null) {
                 chatMs = new ArrayList<>();
+                chatMs.add(chatM);
                 chatAdapter = new ChatAdapter(mContext, chatMs);
                 recyclerView.setAdapter(chatAdapter);
+            } else {
+                chatMs.add(chatM);
+                chatAdapter.notifyItemInserted(chatMs.size());
             }
-            chatMs.add(chatM);
             recyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
         } else {
             isSentFromMeNow = false;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Support.setIsChatWindowActive(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Support.setIsChatWindowActive(false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

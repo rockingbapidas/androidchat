@@ -72,17 +72,17 @@ public class ConstantM {
         }
         final long diff = now - time;
         if (diff < MINUTE_MILLIS) {
-            return "Just now";
+            return "now";
         } else if (diff < 2 * MINUTE_MILLIS) {
-            return "a minute ago";
+            return "a min ago";
         } else if (diff < 50 * MINUTE_MILLIS) {
-            return diff / MINUTE_MILLIS + " minutes ago";
+            return diff / MINUTE_MILLIS + " min ago";
         } else if (diff < 90 * MINUTE_MILLIS) {
             return "an hour ago";
         } else if (diff < 24 * HOUR_MILLIS) {
-            return diff / HOUR_MILLIS + " hours ago";
+            return diff / HOUR_MILLIS + " hr ago";
         } else if (diff < 48 * HOUR_MILLIS) {
-            return "Yesterday";
+            return "yesterday";
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMM, yy", Locale.ENGLISH);
             Date netDate = new Date(timestamp * 1000);

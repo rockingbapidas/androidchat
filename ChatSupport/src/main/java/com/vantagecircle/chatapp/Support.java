@@ -17,6 +17,7 @@ public class Support extends MultiDexApplication {
     private static Support mInstance;
     public static String id = null;
     public static UserM userM = null;
+    public static boolean isChatWindowActive;
 
     @Override
     public void onCreate() {
@@ -46,5 +47,9 @@ public class Support extends MultiDexApplication {
 
     public static synchronized DatabaseReference getChatReference(){
         return getDatabaseInstance().getReference(Config.CHAT_REF);
+    }
+
+    public static synchronized void setIsChatWindowActive(boolean active){
+        isChatWindowActive = active;
     }
 }

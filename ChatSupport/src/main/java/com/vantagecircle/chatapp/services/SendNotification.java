@@ -35,12 +35,13 @@ public class SendNotification {
     private static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
     //Json keys from fcm data
     private static final String KEY_TO = "to";
+    private static final String KEY_DATA = "data";
+
     private static final String KEY_TITLE = "title";
     private static final String KEY_TEXT = "text";
-    private static final String KEY_DATA = "data";
-    private static final String KEY_USERNAME = "username";
-    private static final String KEY_UID = "uid";
-    private static final String KEY_FCM_TOKEN = "fcm_token";
+    private static final String KEY_USERNAME = "senderUsername";
+    private static final String KEY_UID = "senderUid";
+    private static final String KEY_FCM_TOKEN = "senderToken";
     //Notification model
     private NotificationM notificationM;
 
@@ -86,12 +87,15 @@ public class SendNotification {
     private JSONObject getJsonDataObject() throws JSONException {
         JSONObject parentBody = new JSONObject();
         parentBody.put(KEY_TO, notificationM.getReceiverFcmToken());
+
         JSONObject childData = new JSONObject();
         childData.put(KEY_TITLE, notificationM.getTitle());
         childData.put(KEY_TEXT, notificationM.getMessageText());
+
         childData.put(KEY_USERNAME, notificationM.getSenderUsername());
         childData.put(KEY_UID, notificationM.getSenderUid());
         childData.put(KEY_FCM_TOKEN, notificationM.getSenderFcmToken());
+
         parentBody.put(KEY_DATA, childData);
         return parentBody;
     }

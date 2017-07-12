@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/dummy_name"
                 android:textColor="@color/colorOrange"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 app:fontFamily="roboto"
                 app:typeface="roboto_regular" />
 
@@ -62,6 +62,7 @@
                     android:text="@string/just_now"
                     android:textColor="@color/colorPrimary"
                     app:fontFamily="roboto"
+                    android:textSize="12sp"
                     app:typeface="roboto_regular" />
 
                 <ImageView

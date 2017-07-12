@@ -14,18 +14,6 @@ public class NotificationM {
     private String chatRoom;
     private long timeStamp;
 
-    public NotificationM(String title, String messageText, String senderUsername, String senderUid,
-                         String senderFcmToken, String receiverFcmToken, String chatRoom, long timeStamp) {
-        this.title = title;
-        this.messageText = messageText;
-        this.senderUsername = senderUsername;
-        this.senderUid = senderUid;
-        this.senderFcmToken = senderFcmToken;
-        this.receiverFcmToken = receiverFcmToken;
-        this.chatRoom = chatRoom;
-        this.timeStamp = timeStamp;
-    }
-
     public String getTitle() {
         return title;
     }

@@ -64,7 +64,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 holder.userName.setVisibility(View.VISIBLE);
             }
             if(chatM.isSentSuccessfully()){
-                holder.statusImage.setImageResource(R.drawable.tick_icon);
+                holder.statusImage.setImageResource(R.drawable.single_tick);
             } else {
                 holder.statusImage.setImageResource(R.drawable.ic_msg_wait);
             }
@@ -72,6 +72,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 holder.userName.setTextColor(ContextCompat.getColor(mContext, R.color.colorOrange));
                 holder.lyt_parent.setPadding(100, 10, 15, 10);
                 holder.lyt_parent.setGravity(Gravity.END);
+                holder.statusImage.setVisibility(View.VISIBLE);
                 holder.lyt_thread.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.chat_background));
             } else {
                 holder.userName.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));

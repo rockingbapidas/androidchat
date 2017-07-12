@@ -17,11 +17,9 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_chat"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_above="@+id/message_card1"
-            android:clipToPadding="false"
             android:padding="8dp"
-            android:scrollbarStyle="outsideOverlay"
             android:stackFromBottom="true" />
 
         <LinearLayout
@@ -35,7 +33,6 @@
             android:background="@drawable/bg_chat_input">
 
             <LinearLayout
-                android:id="@+id/message_panel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
