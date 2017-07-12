@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">ChatApp</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="fullname">Fullname</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="loading_application">Loading application..</string>
+    <string name="image">image</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_sync">Sync</string>
+    <string name="tryagain">Try again</string>
+    <string name="type_a_message">Type message</string>
+    <string name="just_now">Just now</string>
+    <string name="dummy_text">Hello u Dere????</string>
+    <string name="dummy_name">Bapi</string>
 </resources>

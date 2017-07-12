@@ -8,7 +8,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
+import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.utils.Tools;
 
 import org.json.JSONException;
@@ -28,29 +33,54 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        if (Tools.isNetworkAvailable(getApplicationContext())) {
+            if (Support.getUserInstance() != null) {
+                setupData();
+            } else {
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "No internet connection found",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setupData(){
         try {
-            TimerTask timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    if (Tools.isNetworkAvailable(getApplicationContext())) {
-                        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
+            Support.getUserReference().child(Support.getUserInstance().getUid())
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            UserM userM = dataSnapshot.getValue(UserM.class);
+                            if (userM != null) {
+                                Support.id = Support.getUserInstance().getUid();
+                                Support.userM = userM;
+                                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                //logout from firebase and try again
+                                Support.getAuthInstance().signOut();
+                                Toast.makeText(getApplicationContext(), "User data fetch error try again",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            //logout from firebase and try again
+                            Support.getAuthInstance().signOut();
+                            Toast.makeText(getApplicationContext(), databaseError.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                             startActivity(intent);
                             finish();
                         }
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No internet connection found",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-            };
-            new Timer().schedule(timerTask, 2000);
-        } catch (Exception e) {
-            Log.d(TAG, e.getMessage());
+                    });
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

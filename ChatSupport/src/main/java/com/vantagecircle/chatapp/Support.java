@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.model.UserM;
 
 /**
@@ -40,6 +41,10 @@ public class Support extends MultiDexApplication {
     }
 
     public static synchronized DatabaseReference getUserReference(){
-        return getDatabaseInstance().getReference("users");
+        return getDatabaseInstance().getReference(Config.USER_REF);
+    }
+
+    public static synchronized DatabaseReference getChatReference(){
+        return getDatabaseInstance().getReference(Config.CHAT_REF);
     }
 }

@@ -4,18 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/colorLightBlue">
+    android:background="@color/white">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Loading application .."
+        android:text="@string/loading_application"
         android:textSize="@dimen/text18"
-        android:textColor="@color/white"
+        android:textColor="@color/colorLightBlue"
         android:layout_marginBottom="@dimen/text18"/>
 
     <ProgressBar
-        android:layout_width="50dp"
-        android:layout_height="50dp" />
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:indeterminate="true"/>
 
 </LinearLayout>

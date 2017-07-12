@@ -10,19 +10,29 @@
         android:id="@+id/usernameEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
+        android:textColor="@color/text_blue"
+        android:textSize="18sp"
         android:inputType="textEmailAddress"
-        android:layout_margin="15dp"
-        android:hint="Username" />
+        android:hint="@string/username" />
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/passwordEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
+        android:textColor="@color/text_blue"
+        android:textSize="18sp"
         android:inputType="textPassword"
-        android:layout_margin="15dp"
-        android:hint="Password" />
+        android:hint="@string/password" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,23 +40,50 @@
         android:gravity="center"
         android:padding="10dp"
         android:weightSum="2"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
-        <Button
-            android:id="@+id/btnLogin"
-            android:layout_width="wrap_content"
+        <com.balysv.materialripple.MaterialRippleLayout
+            style="@style/RippleStyle.White"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="login" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="30dp"
+            android:gravity="center">
 
-        <Button
-            android:id="@+id/btnSignup"
-            android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/button_shape_active"
+                android:text="@string/login"
+                android:textColor="@color/white" />
+        </com.balysv.materialripple.MaterialRippleLayout>
+
+        <com.balysv.materialripple.MaterialRippleLayout
+            style="@style/RippleStyle.White"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
             android:layout_weight="1"
-            android:text="Register" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="30dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnSignup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/button_shape_active"
+                android:text="@string/register"
+                android:textColor="@color/white" />
+        </com.balysv.materialripple.MaterialRippleLayout>
 
     </LinearLayout>
 

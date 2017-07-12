@@ -24,7 +24,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.data.Config;
+import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.UserM;
+import com.vantagecircle.chatapp.utils.SharedPrefM;
+import com.vantagecircle.chatapp.utils.Tools;
 
 /**
  * Created by bapidas on 10/07/17.
@@ -70,8 +74,9 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(mContext, "Password cannot be blank",
                             Toast.LENGTH_SHORT).show();
                 } else {
+                    Tools.hideKeyboard(activity);
                     progressDialog = new ProgressDialog(activity);
-                    progressDialog.setMessage("Please Wait");
+                    progressDialog.setMessage("Authenticating user");
                     progressDialog.show();
                     userLogin();
                 }
@@ -97,6 +102,9 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                progressDialog.setMessage("Authentication success");
+                                ConstantM.updateToken(new SharedPrefM(mContext)
+                                        .getString(Config.FIREBASE_TOKEN));
                                 setupData();
                             }
                         }
@@ -104,7 +112,9 @@ public class LoginActivity extends AppCompatActivity {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
+                            if (progressDialog != null && progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                            }
                             Toast.makeText(mContext, e.getMessage(),
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -122,24 +132,32 @@ public class LoginActivity extends AppCompatActivity {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             UserM userM = dataSnapshot.getValue(UserM.class);
                             if (userM != null) {
-                                Log.d(TAG, userM.toString());
+                                Support.id = Support.getUserInstance().getUid();
                                 Support.userM = userM;
-                                progressDialog.dismiss();
+                                if (progressDialog != null && progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                }
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
                             } else {
+                                //logout from firebase and try again
                                 Support.getAuthInstance().signOut();
-                                progressDialog.dismiss();
-                                Toast.makeText(mContext, "User Login error try again",
+                                if (progressDialog != null && progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                }
+                                Toast.makeText(mContext, "User data fetch error try again",
                                         Toast.LENGTH_SHORT).show();
                             }
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
+                            //logout from firebase and try again
                             Support.getAuthInstance().signOut();
-                            progressDialog.dismiss();
+                            if (progressDialog != null && progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                            }
                             Toast.makeText(mContext, databaseError.getMessage(),
                                     Toast.LENGTH_SHORT).show();
                         }

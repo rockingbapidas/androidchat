@@ -4,23 +4,29 @@
     <color name="colorPrimaryDark">#044a7a</color>
     <color name="colorAccent">#455a64</color>
 
-    <!-- button colors -->
+    <!-- colors -->
     <color name="colorLightBlue">#0f70b2</color>
     <color name="btntxtgrey">#6d6e70</color>
     <color name="btninactive">#e7e8e8</color>
-
-    <!-- black colors -->
+    <color name="colorGreen">#009467</color>
+    <color name="whitestroke">#cccbcb</color>
+    <color name="darktext">#333333</color>
+    <color name="colorOrange">#f0a120</color>
+    <color name="textlightdark">#808083</color>
+    <color name="text_blue">#233f86</color>
+    <color name="textlight">#58595b</color>
+    <color name="header_color">#323232</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
-
     <color name="grey_cc">#AA224155</color>
+    <color name="white80">#80FFFFFF</color>
+    <color name="Transparent">#00ffffff</color>
+    <color name="TransparentLow">#822e2e2e</color>
     <color name="gray_66">#546e7a</color>
-
-    <!-- text colors -->
     <color name="text_primary">#333333</color>
     <color name="text_secondary">#666666</color>
     <color name="text_secondary_light">#b2b2b2</color>
-
-    <!-- ripple color -->
     <color name="light_color">#9f9f9f</color>
+    <color name="colorWhiteFade">#f2f2f2</color>
+    <color name="chat_background">#d6eef7</color>
 </resources>

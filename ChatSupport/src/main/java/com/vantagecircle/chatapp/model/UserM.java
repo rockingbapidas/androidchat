@@ -10,13 +10,14 @@ public class UserM implements Serializable {
     private String userId;
     private String username;
     private String fullName;
+    private String fcmToken;
 
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userid) {
-        this.userId = userid;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -35,12 +36,11 @@ public class UserM implements Serializable {
         this.fullName = fullName;
     }
 
-    @Override
-    public String toString() {
-        return "UserM{" +
-                "userId='" + userId + '\'' +
-                ", username='" + username + '\'' +
-                ", fullName='" + fullName + '\'' +
-                '}';
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }

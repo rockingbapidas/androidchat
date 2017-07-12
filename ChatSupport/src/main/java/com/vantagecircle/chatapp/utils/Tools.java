@@ -33,58 +33,6 @@ import java.util.List;
 public class Tools {
     public static final String TAG = Tools.class.getSimpleName();
 
-    private static boolean checkPlayStore(AppCompatActivity context) {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = apiAvailability.isGooglePlayServicesAvailable(context);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(context, resultCode,
-                        GoogleApiAvailability.GOOGLE_PLAY_SERVICES_VERSION_CODE).show();
-            }
-            return false;
-        }
-        return true;
-    }
-
-    @SuppressLint("HardwareIds")
-    public static String getUniqueId() {
-        String unique_id = null;
-        unique_id = Settings.Secure.getString(Support.getInstance().getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-        return unique_id;
-    }
-
-    public static String getDeviceModelName() {
-        String manufacturer = Build.MANUFACTURER;
-        String model = Build.MODEL;
-        if (model.startsWith(manufacturer)) {
-            return "Android " + Build.VERSION.RELEASE + " (" + capitalize(model) + ")";
-        }
-        return "Android " + Build.VERSION.RELEASE + " (" + capitalize(manufacturer) + " " + model + ")";
-    }
-
-    private static String capitalize(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return str;
-        }
-        char[] arr = str.toCharArray();
-        boolean capitalizeNext = true;
-
-        StringBuilder phrase = new StringBuilder();
-        for (char c : arr) {
-            if (capitalizeNext && Character.isLetter(c)) {
-                phrase.append(Character.toUpperCase(c));
-                capitalizeNext = false;
-                continue;
-            } else if (Character.isWhitespace(c)) {
-                capitalizeNext = true;
-            }
-            phrase.append(c);
-        }
-
-        return phrase.toString();
-    }
-
     public static boolean isNetworkAvailable(Context mContext) {
         try {
             ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
