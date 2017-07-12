@@ -97,7 +97,8 @@ public class LoginActivity extends AppCompatActivity {
             String username = usernameEdit.getText().toString();
             String password = passwordEdit.getText().toString();
 
-            Support.getAuthInstance().signInWithEmailAndPassword(username, password)
+            Support.getAuthInstance()
+                    .signInWithEmailAndPassword(username, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -126,7 +127,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupData() {
         try {
-            Support.getUserReference().child(Support.getUserInstance().getUid())
+            Support.getUserReference()
+                    .child(Support.getUserInstance().getUid())
                     .addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {

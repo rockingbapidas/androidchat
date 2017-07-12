@@ -27,7 +27,6 @@ import java.util.TimerTask;
  */
 
 public class SplashActivity extends AppCompatActivity {
-    private static final String TAG = SplashActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,7 +48,8 @@ public class SplashActivity extends AppCompatActivity {
 
     private void setupData(){
         try {
-            Support.getUserReference().child(Support.getUserInstance().getUid())
+            Support.getUserReference()
+                    .child(Support.getUserInstance().getUid())
                     .addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -65,6 +65,9 @@ public class SplashActivity extends AppCompatActivity {
                                 Support.getAuthInstance().signOut();
                                 Toast.makeText(getApplicationContext(), "User data fetch error try again",
                                         Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
                             }
                         }
 

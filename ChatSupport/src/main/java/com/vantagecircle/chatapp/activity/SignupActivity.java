@@ -92,7 +92,8 @@ public class SignupActivity extends AppCompatActivity {
             String password = passwordEdit.getText().toString();
             fullName = fullNameEdit.getText().toString();
 
-            Support.getAuthInstance().createUserWithEmailAndPassword(username, password)
+            Support.getAuthInstance()
+                    .createUserWithEmailAndPassword(username, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -138,7 +139,9 @@ public class SignupActivity extends AppCompatActivity {
     private void addUserData(final UserM userM){
         try {
             progressDialog.setMessage("Creating account and store data");
-            Support.getUserReference().child(userM.getUserId()).setValue(userM)
+            Support.getUserReference()
+                    .child(userM.getUserId())
+                    .setValue(userM)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {

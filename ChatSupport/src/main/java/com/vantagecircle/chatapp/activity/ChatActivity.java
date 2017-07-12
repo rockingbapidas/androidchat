@@ -1,6 +1,7 @@
 package com.vantagecircle.chatapp.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -67,6 +68,7 @@ public class ChatActivity extends AppCompatActivity {
     int lastPosition;
     String room_type_1, room_type_2;
     boolean isSentFromMeNow = false;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +85,10 @@ public class ChatActivity extends AppCompatActivity {
         initView();
         initRecycler();
         initListener();
+
+        progressDialog = new ProgressDialog(activity);
+        progressDialog.setMessage("Please wait getting chats");
+        progressDialog.show();
         getMessages();
     }
 
@@ -168,7 +174,6 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(room_type_1)) {
-                        Log.e(TAG, room_type_1 + " exists");
                         Support.getChatReference().child(room_type_1)
                                 .child(String.valueOf(chatM.getTimeStamp()))
                                 .setValue(chatM)
@@ -188,7 +193,6 @@ public class ChatActivity extends AppCompatActivity {
                                     }
                                 });
                     } else if (dataSnapshot.hasChild(room_type_2)) {
-                        Log.e(TAG, room_type_2 + " exists");
                         Support.getChatReference().child(room_type_2)
                                 .child(String.valueOf(chatM.getTimeStamp()))
                                 .setValue(chatM)
@@ -208,7 +212,6 @@ public class ChatActivity extends AppCompatActivity {
                                     }
                                 });
                     } else {
-                        Log.e(TAG, "onDataChange");
                         Support.getChatReference().child(room_type_1)
                                 .child(String.valueOf(chatM.getTimeStamp()))
                                 .setValue(chatM)
@@ -272,59 +275,63 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(room_type_1)) {
-                        Support.getChatReference().child(room_type_1).addChildEventListener(new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                setListToAdapter(dataSnapshot);
-                            }
+                        Support.getChatReference()
+                                .child(room_type_1)
+                                .addChildEventListener(new ChildEventListener() {
+                                    @Override
+                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                        setListToAdapter(dataSnapshot);
+                                    }
 
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                    @Override
+                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                            }
+                                    }
 
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                    @Override
+                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                            }
+                                    }
 
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                                    @Override
+                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                            }
+                                    }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.e(TAG, "onCancelled " + databaseError.getMessage());
-                            }
-                        });
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.e(TAG, "onCancelled " + databaseError.getMessage());
+                                    }
+                                });
                     } else if (dataSnapshot.hasChild(room_type_2)) {
-                        Support.getChatReference().child(room_type_2).addChildEventListener(new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                setListToAdapter(dataSnapshot);
-                            }
+                        Support.getChatReference()
+                                .child(room_type_2)
+                                .addChildEventListener(new ChildEventListener() {
+                                    @Override
+                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                        setListToAdapter(dataSnapshot);
+                                    }
 
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                    @Override
+                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                            }
+                                    }
 
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                    @Override
+                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                            }
+                                    }
 
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                                    @Override
+                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                            }
+                                    }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.e(TAG, "onCancelled " + databaseError.getMessage());
-                            }
-                        });
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.e(TAG, "onCancelled " + databaseError.getMessage());
+                                    }
+                                });
                     } else {
                         Log.e(TAG, "No such chat data available");
                     }
@@ -332,7 +339,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                    Log.e(TAG, "Database error " + databaseError.getMessage());
                 }
             });
         } catch (Exception e) {
@@ -353,6 +360,9 @@ public class ChatActivity extends AppCompatActivity {
                 chatAdapter.notifyItemInserted(chatMs.size());
             }
             recyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
         } else {
             isSentFromMeNow = false;
         }
@@ -372,7 +382,7 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;

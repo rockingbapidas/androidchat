@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     Toolbar mToolbar;
     ActionBar mActionBar;
     RecyclerView recyclerView;
-    FloatingActionButton floatingActionButton;
     LinearLayoutManager linearLayoutManager;
     LinearLayout data_layout, no_data_layout;
     ArrayList<ContactsM> contactsMs = null;
@@ -79,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     }
 
     private void initView() {
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.btnAddContact);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         no_data_layout = (LinearLayout) findViewById(R.id.no_data_layout);
         data_layout = (LinearLayout) findViewById(R.id.data_layout);
@@ -98,13 +96,6 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
     }
 
     private void initListener() {
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
         btnTry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
