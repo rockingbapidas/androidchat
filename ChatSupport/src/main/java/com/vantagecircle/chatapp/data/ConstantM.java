@@ -91,14 +91,12 @@ public class ConstantM {
             if (Support.getUserInstance() != null) {
                 HashMap<String, Object> hashMap = new HashMap<>();
                 hashMap.put(Config.LAST_SEEN, timeStamp);
-                Support.getUserReference().child(Support.getUserInstance()
-                        .getUid())
+                Support.getUserReference().child(Support.getUserInstance().getUid())
                         .updateChildren(hashMap)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Log.d(TAG, "Last Seen updated successfully");
-                                setOnlineStatus(false);
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {

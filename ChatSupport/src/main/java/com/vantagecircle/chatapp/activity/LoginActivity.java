@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText usernameEdit, passwordEdit;
     private Button btnLogin, btnSignup;
     private ProgressDialog progressDialog;
+    private ValueEventListener valueEventListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -131,49 +132,47 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupData() {
         try {
-            Support.getUserReference()
-                    .child(Support.getUserInstance().getUid())
-                    .addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            UserM userM = dataSnapshot.getValue(UserM.class);
-                            if (userM != null) {
-                                Support.id = Support.getUserInstance().getUid();
-                                Support.userM = userM;
-                                if (progressDialog != null && progressDialog.isShowing()) {
-                                    progressDialog.dismiss();
-                                }
-                                if (userM.getUserType().equals(Config._ADMIN)) {
-                                    Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    Intent intent = new Intent(LoginActivity.this, UserActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            } else {
-                                //logout from firebase and try again
-                                Support.getAuthInstance().signOut();
-                                if (progressDialog != null && progressDialog.isShowing()) {
-                                    progressDialog.dismiss();
-                                }
-                                Toast.makeText(mContext, "User data fetch error try again",
-                                        Toast.LENGTH_SHORT).show();
-                            }
+            valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    UserM userM = dataSnapshot.getValue(UserM.class);
+                    if (userM != null) {
+                        Support.id = Support.getUserInstance().getUid();
+                        Support.userM = userM;
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
                         }
+                        if (userM.getUserType().equals(Config._ADMIN)) {
+                            Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Intent intent = new Intent(LoginActivity.this, UserActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    } else {
+                        Support.getAuthInstance().signOut();
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                        Toast.makeText(mContext, "User data fetch error try again",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            //logout from firebase and try again
-                            Support.getAuthInstance().signOut();
-                            if (progressDialog != null && progressDialog.isShowing()) {
-                                progressDialog.dismiss();
-                            }
-                            Toast.makeText(mContext, databaseError.getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Support.getAuthInstance().signOut();
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    Toast.makeText(mContext, databaseError.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            };
+            Support.getUserReference().child(Support.getUserInstance().getUid())
+                    .addValueEventListener(valueEventListener);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -182,6 +181,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        finish();
+        if (valueEventListener != null) {
+            Support.getUserReference().removeEventListener(valueEventListener);
+        }
     }
 }

@@ -60,6 +60,8 @@ public class ChatActivity extends AppCompatActivity {
     String room_type_1, room_type_2;
     boolean isSentFromMeNow = false;
     ProgressDialog progressDialog;
+    ValueEventListener sendEventListener, getEventListener, statusEventListener;
+    ChildEventListener childEventListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -160,7 +162,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendMessage(final ChatM chatM) {
         try {
-            Support.getChatReference().addListenerForSingleValueEvent(new ValueEventListener() {
+            sendEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(room_type_1)) {
@@ -230,7 +232,8 @@ public class ChatActivity extends AppCompatActivity {
                 public void onCancelled(DatabaseError databaseError) {
                     Log.e(TAG, "onCancelled " + databaseError.getMessage());
                 }
-            });
+            };
+            Support.getChatReference().addListenerForSingleValueEvent(sendEventListener);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -264,73 +267,71 @@ public class ChatActivity extends AppCompatActivity {
 
     private void getMessages() {
         try {
-            Support.getChatReference().addListenerForSingleValueEvent(new ValueEventListener() {
+            getEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(room_type_1)) {
-                        Support.getChatReference()
-                                .child(room_type_1)
-                                .addChildEventListener(new ChildEventListener() {
-                                    @Override
-                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                        setListToAdapter(dataSnapshot);
-                                    }
+                        childEventListener = new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                setListToAdapter(dataSnapshot);
+                            }
 
-                                    @Override
-                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                                    }
+                            }
 
-                                    @Override
-                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                                    }
+                            }
 
-                                    @Override
-                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                                    }
+                            }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                        Log.e(TAG, "onCancelled " + databaseError.getMessage());
-                                        if (progressDialog != null && progressDialog.isShowing()) {
-                                            progressDialog.dismiss();
-                                        }
-                                    }
-                                });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.e(TAG, "onCancelled " + databaseError.getMessage());
+                                if (progressDialog != null && progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                }
+                            }
+                        };
+                        Support.getChatReference().child(room_type_1).addChildEventListener(childEventListener);
                     } else if (dataSnapshot.hasChild(room_type_2)) {
-                        Support.getChatReference()
-                                .child(room_type_2)
-                                .addChildEventListener(new ChildEventListener() {
-                                    @Override
-                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                        setListToAdapter(dataSnapshot);
-                                    }
+                        childEventListener = new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                setListToAdapter(dataSnapshot);
+                            }
 
-                                    @Override
-                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                                    }
+                            }
 
-                                    @Override
-                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                                    }
+                            }
 
-                                    @Override
-                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                                    }
+                            }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                        Log.e(TAG, "onCancelled " + databaseError.getMessage());
-                                        if (progressDialog != null && progressDialog.isShowing()) {
-                                            progressDialog.dismiss();
-                                        }
-                                    }
-                                });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.e(TAG, "onCancelled " + databaseError.getMessage());
+                                if (progressDialog != null && progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                }
+                            }
+                        };
+                        Support.getChatReference().child(room_type_2).addChildEventListener(childEventListener);
                     } else {
                         Log.e(TAG, "No such chat data available");
                         if (progressDialog != null && progressDialog.isShowing()) {
@@ -346,31 +347,37 @@ public class ChatActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                 }
-            });
+            };
+            Support.getChatReference().addListenerForSingleValueEvent(getEventListener);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void getOnlineStatus(){
-        Support.getUserReference().child(userM.getUserId()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                UserM model = dataSnapshot.getValue(UserM.class);
-                if(model != null){
-                    if(model.isOnline()){
-                        mActionBar.setSubtitle("Online");
-                    } else {
-                        mActionBar.setSubtitle("Last seen on " + DateUtils.getTime(model.getLastSeenTime()));
+    private void getOnlineStatus() {
+        try {
+            statusEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    UserM model = dataSnapshot.getValue(UserM.class);
+                    if (model != null) {
+                        if (model.isOnline()) {
+                            mActionBar.setSubtitle("Online");
+                        } else {
+                            mActionBar.setSubtitle("Last seen on " + DateUtils.getTime(model.getLastSeenTime()));
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled " + databaseError.getMessage());
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d(TAG, "onCancelled " + databaseError.getMessage());
+                }
+            };
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Support.getUserReference().child(userM.getUserId()).addValueEventListener(statusEventListener);
     }
 
     private void setListToAdapter(DataSnapshot dataSnapshot) {
@@ -398,6 +405,16 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Support.setIsChatWindowActive(true);
@@ -412,16 +429,17 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        finish();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
+        if (sendEventListener != null) {
+            Support.getChatReference().removeEventListener(sendEventListener);
         }
-        return super.onOptionsItemSelected(item);
+        if (getEventListener != null) {
+            Support.getChatReference().removeEventListener(getEventListener);
+        }
+        if (childEventListener != null) {
+            Support.getChatReference().removeEventListener(childEventListener);
+        }
+        if (statusEventListener != null) {
+            Support.getUserReference().removeEventListener(statusEventListener);
+        }
     }
 }

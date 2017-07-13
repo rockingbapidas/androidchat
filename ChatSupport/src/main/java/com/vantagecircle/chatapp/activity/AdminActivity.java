@@ -29,11 +29,13 @@ import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.ClickListener;
 import com.vantagecircle.chatapp.adapter.UsersAdapter;
+import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.widget.customview.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by bapidas on 13/07/17.
@@ -52,6 +54,7 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
     UsersAdapter usersAdapter;
     ProgressDialog progressDialog;
     Button btnTry;
+    ChildEventListener childEventListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,11 +111,11 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
     }
 
     private void initData() {
-        Support.getUserReference().addChildEventListener(new ChildEventListener() {
+        childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 UserM userM = dataSnapshot.getValue(UserM.class);
-                if (userM != null) {
+                if (userM != null && userM.getUserType().equals(Config._USER)) {
                     if (!userM.getLastMessage().equals("") && userM.getLastMessage().length() > 0) {
                         if (userMs == null) {
                             userMs = new ArrayList<>();
@@ -129,10 +132,10 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 UserM userM = dataSnapshot.getValue(UserM.class);
-                if (userM != null) {
+                if (userM != null && userM.getUserType().equals(Config._USER)) {
                     if (!userM.getLastMessage().equals("") && userM.getLastMessage().length() > 0) {
                         if (userMs != null) {
-                            if(userMs.contains(userM)) {
+                            if (userMs.contains(userM)) {
                                 int i = userMs.indexOf(userM);
                                 usersAdapter.updateLastMessage(i, userM.getLastMessage());
                             } else {
@@ -167,7 +170,8 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
                 data_layout.setVisibility(View.GONE);
                 Log.e(TAG, "Database error " + databaseError.getMessage());*/
             }
-        });
+        };
+        Support.getUserReference().addChildEventListener(childEventListener);
     }
 
     private void setupData() {
@@ -201,6 +205,8 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
+                ConstantM.setLastSeen(new Date().getTime());
+                ConstantM.setOnlineStatus(false);
                 Support.getAuthInstance().signOut();
                 Intent intent = new Intent(activity, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -223,17 +229,21 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
     protected void onResume() {
         super.onResume();
         ConstantM.setOnlineStatus(true);
+        ConstantM.setLastSeen(new Date().getTime());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        ConstantM.setLastSeen(System.currentTimeMillis());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        finish();
+        if(childEventListener != null){
+            Support.getUserReference().removeEventListener(childEventListener);
+        }
+        ConstantM.setOnlineStatus(false);
+        ConstantM.setLastSeen(new Date().getTime());
     }
 }

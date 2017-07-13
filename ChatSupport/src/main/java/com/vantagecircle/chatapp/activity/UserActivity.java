@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -33,6 +32,7 @@ import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.widget.customview.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class UserActivity extends AppCompatActivity implements ClickListener {
     private static final String TAG = UserActivity.class.getSimpleName();
@@ -47,12 +47,12 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
     UsersAdapter usersAdapter;
     ProgressDialog progressDialog;
     Button btnTry;
+    ValueEventListener userEventListener, lastMEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        Log.d(TAG, "Instance Created");
         mContext = getApplicationContext();
         activity = this;
         initToolbar();
@@ -104,59 +104,59 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
     }
 
     private void initData() {
-        Support.getUserReference()
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        ArrayList<UserM> arrayList = new ArrayList<UserM>();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            UserM userM = snapshot.getValue(UserM.class);
-                            if (userM != null) {
-                                if (userM.getUserType().equals("admin")) {
-                                    arrayList.add(userM);
-                                }
-                            }
-                        }
-                        if (userMs == null) {
-                            userMs = new ArrayList<>();
-                            userMs.addAll(arrayList);
-                            setupData();
-                        } else {
-                            userMs.clear();
-                            userMs.addAll(arrayList);
-                            usersAdapter.notifyItemInserted(userMs.size());
+        userEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<UserM> arrayList = new ArrayList<UserM>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    UserM userM = snapshot.getValue(UserM.class);
+                    if (userM != null) {
+                        if (userM.getUserType().equals("admin")) {
+                            arrayList.add(userM);
                         }
                     }
+                }
+                if (userMs == null) {
+                    userMs = new ArrayList<>();
+                    userMs.addAll(arrayList);
+                    setupData();
+                } else {
+                    userMs.clear();
+                    userMs.addAll(arrayList);
+                    usersAdapter.notifyItemInserted(userMs.size());
+                }
+            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                        no_data_layout.setVisibility(View.VISIBLE);
-                        data_layout.setVisibility(View.GONE);
-                        Log.e(TAG, "Database error " + databaseError.getMessage());
-                    }
-                });
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                no_data_layout.setVisibility(View.VISIBLE);
+                data_layout.setVisibility(View.GONE);
+                Log.e(TAG, "Database error " + databaseError.getMessage());
+            }
+        };
+        Support.getUserReference().addValueEventListener(userEventListener);
     }
 
     private void getLastMessage() {
         try {
-            Support.getUserReference().child(userMs.get(0).getUserId())
-                    .addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            UserM userM = dataSnapshot.getValue(UserM.class);
-                            if (userM != null) {
-                                usersAdapter.updateLastMessage(0, userM.getLastMessage());
-                            }
-                        }
+            lastMEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    UserM userM = dataSnapshot.getValue(UserM.class);
+                    if (userM != null) {
+                        usersAdapter.updateLastMessage(0, userM.getLastMessage());
+                    }
+                }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                }
+            };
+            Support.getUserReference().child(userMs.get(0).getUserId()).addValueEventListener(lastMEventListener);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -191,6 +191,8 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
+                ConstantM.setLastSeen(new Date().getTime());
+                ConstantM.setOnlineStatus(false);
                 Support.getAuthInstance().signOut();
                 Intent intent = new Intent(activity, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -211,19 +213,26 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
 
     @Override
     protected void onResume() {
-        ConstantM.setOnlineStatus(true);
         super.onResume();
+        ConstantM.setOnlineStatus(true);
+        ConstantM.setLastSeen(new Date().getTime());
     }
 
     @Override
     protected void onPause() {
-        ConstantM.setLastSeen(System.currentTimeMillis());
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        finish();
+        if (userEventListener != null) {
+            Support.getUserReference().removeEventListener(userEventListener);
+        }
+        if (lastMEventListener != null) {
+            Support.getUserReference().removeEventListener(lastMEventListener);
+        }
+        ConstantM.setOnlineStatus(false);
+        ConstantM.setLastSeen(new Date().getTime());
     }
 }

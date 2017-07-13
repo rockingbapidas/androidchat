@@ -10,7 +10,8 @@
     <com.balysv.materialripple.MaterialRippleLayout
         style="@style/RippleStyle.Light"
         android:layout_width="match_parent"
-        android:layout_height="70dp">
+        android:layout_height="wrap_content"
+        android:padding="6dp">
 
         <LinearLayout
             android:id="@+id/sub_holder"
@@ -76,7 +77,7 @@
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     app:fontFamily="roboto"
-                    app:typeface="roboto_condensed_bold" />
+                    app:typeface="roboto_condensed_regular" />
 
             </LinearLayout>
         </LinearLayout>

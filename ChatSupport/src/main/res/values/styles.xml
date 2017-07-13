@@ -18,7 +18,7 @@
 
     <style name="SubTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:textSize">@dimen/text15</item>
-        <item name="android:textColor">@dimen/text15</item>
+        <item name="android:textColor">@color/colorOrange</item>
         <item name="android:textStyle">normal</item>
     </style>
 
