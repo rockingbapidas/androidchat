@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -74,11 +73,16 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(mContext, "Password cannot be blank",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    Tools.hideKeyboard(activity);
-                    progressDialog = new ProgressDialog(activity);
-                    progressDialog.setMessage("Authenticating user");
-                    progressDialog.show();
-                    userLogin();
+                    if (Tools.isNetworkAvailable(mContext)) {
+                        Tools.hideKeyboard(activity);
+                        progressDialog = new ProgressDialog(activity);
+                        progressDialog.setMessage("Authenticating user");
+                        progressDialog.show();
+                        userLogin();
+                    } else {
+                        Toast.makeText(mContext, "Please check your internet connection",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -139,9 +143,15 @@ public class LoginActivity extends AppCompatActivity {
                                 if (progressDialog != null && progressDialog.isShowing()) {
                                     progressDialog.dismiss();
                                 }
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
+                                if (userM.getUserType().equals(Config._ADMIN)) {
+                                    Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    Intent intent = new Intent(LoginActivity.this, UserActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
                             } else {
                                 //logout from firebase and try again
                                 Support.getAuthInstance().signOut();
@@ -167,5 +177,11 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
     }
 }

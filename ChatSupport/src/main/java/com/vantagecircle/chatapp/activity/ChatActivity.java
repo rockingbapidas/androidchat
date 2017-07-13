@@ -2,16 +2,10 @@ package com.vantagecircle.chatapp.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -19,13 +13,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,12 +30,12 @@ import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.ChatAdapter;
-import com.vantagecircle.chatapp.data.Config;
+import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.ChatM;
-import com.vantagecircle.chatapp.model.ContactsM;
+import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.model.NotificationM;
 import com.vantagecircle.chatapp.services.SendNotification;
-import com.vantagecircle.chatapp.utils.Tools;
+import com.vantagecircle.chatapp.utils.DateUtils;
 
 import java.util.ArrayList;
 
@@ -58,7 +49,7 @@ public class ChatActivity extends AppCompatActivity {
     Toolbar mToolbar;
     Context mContext;
     Activity activity;
-    ContactsM contactsM;
+    UserM userM;
     EditText et_message;
     ImageButton btn_send_txt;
     RecyclerView recyclerView;
@@ -76,10 +67,9 @@ public class ChatActivity extends AppCompatActivity {
         mContext = getApplicationContext();
         activity = this;
         setContentView(R.layout.activity_chat);
-
-        contactsM = new Gson().fromJson(getIntent().getStringExtra("data"), ContactsM.class);
-        room_type_1 = Support.id + "_" + contactsM.getUserId();
-        room_type_2 = contactsM.getUserId() + "_" + Support.id;
+        userM = new Gson().fromJson(getIntent().getStringExtra("data"), UserM.class);
+        room_type_1 = Support.id + "_" + userM.getUserId();
+        room_type_2 = userM.getUserId() + "_" + Support.id;
 
         initToolbar();
         initView();
@@ -89,6 +79,7 @@ public class ChatActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(activity);
         progressDialog.setMessage("Please wait getting chats");
         progressDialog.show();
+        getOnlineStatus();
         getMessages();
     }
 
@@ -97,9 +88,8 @@ public class ChatActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
         assert mActionBar != null;
-        mActionBar.setTitle(contactsM.getFullName());
+        mActionBar.setTitle(userM.getFullName());
         mActionBar.setDisplayHomeAsUpEnabled(true);
-        mActionBar.setDisplayShowHomeEnabled(true);
     }
 
     private void initView() {
@@ -134,9 +124,9 @@ public class ChatActivity extends AppCompatActivity {
     private void prepareModel() {
         try {
             String senderName = Support.userM.getFullName();
-            String receiverName = contactsM.getFullName();
+            String receiverName = userM.getFullName();
             String senderUid = Support.id;
-            String receiverUid = contactsM.getUserId();
+            String receiverUid = userM.getUserId();
             String messageText = et_message.getText().toString();
             long timeStamp = System.currentTimeMillis();
             ChatM chatM = new ChatM(senderName, receiverName, senderUid,
@@ -183,13 +173,14 @@ public class ChatActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             chatAdapter.toggleStatus(lastPosition);
                                             sendPushNotification(chatM, room_type_1);
+                                            ConstantM.setLastMessage(chatM.getMessageText());
                                         }
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-
+                                        Log.e(TAG, "onFailure " + e.getMessage());
                                     }
                                 });
                     } else if (dataSnapshot.hasChild(room_type_2)) {
@@ -202,13 +193,14 @@ public class ChatActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             chatAdapter.toggleStatus(lastPosition);
                                             sendPushNotification(chatM, room_type_2);
+                                            ConstantM.setLastMessage(chatM.getMessageText());
                                         }
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-
+                                        Log.e(TAG, "onFailure " + e.getMessage());
                                     }
                                 });
                     } else {
@@ -221,13 +213,14 @@ public class ChatActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             chatAdapter.toggleStatus(lastPosition);
                                             sendPushNotification(chatM, room_type_1);
+                                            ConstantM.setLastMessage(chatM.getMessageText());
                                         }
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-
+                                        Log.e(TAG, "onFailure " + e.getMessage());
                                     }
                                 });
                     }
@@ -249,7 +242,7 @@ public class ChatActivity extends AppCompatActivity {
             String senderUserId = chatM.getSenderUid();
             String senderFcmToken = Support.userM.getFcmToken();
             String messageText = chatM.getMessageText();
-            String receiverFcmToken = contactsM.getFcmToken();
+            String receiverFcmToken = userM.getFcmToken();
             long timeStamp = chatM.getTimeStamp();
 
             NotificationM notificationM = new NotificationM();
@@ -301,6 +294,9 @@ public class ChatActivity extends AppCompatActivity {
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
                                         Log.e(TAG, "onCancelled " + databaseError.getMessage());
+                                        if (progressDialog != null && progressDialog.isShowing()) {
+                                            progressDialog.dismiss();
+                                        }
                                     }
                                 });
                     } else if (dataSnapshot.hasChild(room_type_2)) {
@@ -330,21 +326,51 @@ public class ChatActivity extends AppCompatActivity {
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
                                         Log.e(TAG, "onCancelled " + databaseError.getMessage());
+                                        if (progressDialog != null && progressDialog.isShowing()) {
+                                            progressDialog.dismiss();
+                                        }
                                     }
                                 });
                     } else {
                         Log.e(TAG, "No such chat data available");
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
                     }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Log.e(TAG, "Database error " + databaseError.getMessage());
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void getOnlineStatus(){
+        Support.getUserReference().child(userM.getUserId()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UserM model = dataSnapshot.getValue(UserM.class);
+                if(model != null){
+                    if(model.isOnline()){
+                        mActionBar.setSubtitle("Online");
+                    } else {
+                        mActionBar.setSubtitle("Last seen on " + DateUtils.getTime(model.getLastSeenTime()));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled " + databaseError.getMessage());
+            }
+        });
     }
 
     private void setListToAdapter(DataSnapshot dataSnapshot) {
@@ -365,6 +391,9 @@ public class ChatActivity extends AppCompatActivity {
             }
         } else {
             isSentFromMeNow = false;
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
         }
     }
 
@@ -378,6 +407,12 @@ public class ChatActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Support.setIsChatWindowActive(false);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
     }
 
     @Override

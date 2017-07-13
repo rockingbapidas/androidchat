@@ -65,6 +65,19 @@
                     app:fontFamily="roboto"
                     app:typeface="roboto_regular" />
 
+                <com.vantagecircle.chatapp.widget.roboto.RobotoTextView
+                    android:id="@+id/last_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:maxLines="1"
+                    android:visibility="visible"
+                    android:text="Hii dere"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:fontFamily="roboto"
+                    app:typeface="roboto_condensed_bold" />
+
             </LinearLayout>
         </LinearLayout>
     </com.balysv.materialripple.MaterialRippleLayout>

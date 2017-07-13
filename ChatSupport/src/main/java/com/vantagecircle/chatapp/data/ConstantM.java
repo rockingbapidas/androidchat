@@ -22,19 +22,16 @@ import java.util.Locale;
 
 public class ConstantM {
     private static final String TAG = ConstantM.class.getSimpleName();
-    private static final int SECOND_MILLIS = 1000;
-    private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
-    private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
 
     public static void updateToken(String token) {
-        String fcmToken;
-        if (token != null) {
-            fcmToken = token;
-        } else {
-            fcmToken = FirebaseInstanceId.getInstance().getToken();
-            new SharedPrefM(Support.getInstance()).saveString(Config.FIREBASE_TOKEN, fcmToken);
-        }
-        if (Tools.isNetworkAvailable(Support.getInstance())) {
+        try {
+            String fcmToken;
+            if (token != null) {
+                fcmToken = token;
+            } else {
+                fcmToken = FirebaseInstanceId.getInstance().getToken();
+                new SharedPrefM(Support.getInstance()).saveString(Config.FIREBASE_TOKEN, fcmToken);
+            }
             if (Support.getUserInstance() != null) {
                 HashMap<String, Object> hashMap = new HashMap<>();
                 hashMap.put(Config.FIREBASE_TOKEN, fcmToken);
@@ -56,37 +53,93 @@ public class ConstantM {
             } else {
                 Log.d(TAG, "Firebase user is null");
             }
-        } else {
-            Log.d(TAG, "No internet connection found");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public static String getTimeAgo(long time) {
-        long timestamp = time;
-        if (time < 1000000000000L) {
-            time *= 1000;
+    public static void setLastMessage(String message) {
+        try {
+            if (Support.getUserInstance() != null) {
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put(Config.LAST_MESSAGE, message);
+                Support.getUserReference().child(Support.getUserInstance()
+                        .getUid())
+                        .updateChildren(hashMap)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Log.d(TAG, "Last Message updated successfully");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Last Message updated error " + e.getMessage());
+                            }
+                        });
+            } else {
+                Log.d(TAG, "Firebase user is null");
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
-        long now = System.currentTimeMillis();
-        if (time > now || time <= 0) {
-            return null;
+    }
+
+    public static void setLastSeen(long timeStamp) {
+        try {
+            if (Support.getUserInstance() != null) {
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put(Config.LAST_SEEN, timeStamp);
+                Support.getUserReference().child(Support.getUserInstance()
+                        .getUid())
+                        .updateChildren(hashMap)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Log.d(TAG, "Last Seen updated successfully");
+                                setOnlineStatus(false);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Last seen updated error " + e.getMessage());
+                            }
+                        });
+            } else {
+                Log.d(TAG, "Firebase user is null");
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
-        final long diff = now - time;
-        if (diff < MINUTE_MILLIS) {
-            return "now";
-        } else if (diff < 2 * MINUTE_MILLIS) {
-            return "a min ago";
-        } else if (diff < 50 * MINUTE_MILLIS) {
-            return diff / MINUTE_MILLIS + " min ago";
-        } else if (diff < 90 * MINUTE_MILLIS) {
-            return "an hour ago";
-        } else if (diff < 24 * HOUR_MILLIS) {
-            return diff / HOUR_MILLIS + " hr ago";
-        } else if (diff < 48 * HOUR_MILLIS) {
-            return "yesterday";
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM, yy", Locale.ENGLISH);
-            Date netDate = new Date(timestamp * 1000);
-            return sdf.format(netDate);
+    }
+
+    public static void setOnlineStatus(boolean status) {
+        try {
+            if (Support.getUserInstance() != null) {
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put(Config.ONLINE_STATUS, status);
+                Support.getUserReference().child(Support.getUserInstance()
+                        .getUid())
+                        .updateChildren(hashMap)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Log.d(TAG, "Online status updated successfully");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Online status updated error " + e.getMessage());
+                            }
+                        });
+            } else {
+                Log.d(TAG, "Firebase user is null");
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

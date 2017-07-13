@@ -25,6 +25,12 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            } else {
+                if(Support.getIsChatWindowActive()){
+
+                } else {
+
+                }
             }
         }
     }

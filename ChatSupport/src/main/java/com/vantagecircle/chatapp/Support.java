@@ -15,41 +15,48 @@ import com.vantagecircle.chatapp.model.UserM;
 
 public class Support extends MultiDexApplication {
     private static Support mInstance;
+    private static boolean isChatWindowActive;
     public static String id = null;
     public static UserM userM = null;
-    public static boolean isChatWindowActive;
 
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        getDatabaseInstance().setPersistenceEnabled(true);
+        getUserReference().keepSynced(true);
+        getChatReference().keepSynced(true);
     }
 
-    public static synchronized Support getInstance(){
+    public static synchronized Support getInstance() {
         return mInstance;
     }
 
-    public static synchronized FirebaseAuth getAuthInstance(){
+    public static synchronized FirebaseAuth getAuthInstance() {
         return FirebaseAuth.getInstance();
     }
 
-    public static synchronized FirebaseUser getUserInstance(){
+    public static synchronized FirebaseUser getUserInstance() {
         return getAuthInstance().getCurrentUser();
     }
 
-    public static synchronized FirebaseDatabase getDatabaseInstance(){
+    public static synchronized FirebaseDatabase getDatabaseInstance() {
         return FirebaseDatabase.getInstance();
     }
 
-    public static synchronized DatabaseReference getUserReference(){
+    public static synchronized DatabaseReference getUserReference() {
         return getDatabaseInstance().getReference(Config.USER_REF);
     }
 
-    public static synchronized DatabaseReference getChatReference(){
+    public static synchronized DatabaseReference getChatReference() {
         return getDatabaseInstance().getReference(Config.CHAT_REF);
     }
 
-    public static synchronized void setIsChatWindowActive(boolean active){
+    public static synchronized void setIsChatWindowActive(boolean active) {
         isChatWindowActive = active;
+    }
+
+    public static synchronized boolean getIsChatWindowActive() {
+        return isChatWindowActive;
     }
 }

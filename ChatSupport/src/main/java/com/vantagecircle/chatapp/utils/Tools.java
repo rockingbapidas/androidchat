@@ -35,7 +35,8 @@ public class Tools {
 
     public static boolean isNetworkAvailable(Context mContext) {
         try {
-            ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager connectivityManager = (ConnectivityManager)
+                    mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 Network[] networks = connectivityManager.getAllNetworks();
                 NetworkInfo networkInfo;

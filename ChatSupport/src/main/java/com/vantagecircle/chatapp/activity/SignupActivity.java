@@ -76,11 +76,16 @@ public class SignupActivity extends AppCompatActivity {
                     Toast.makeText(mContext, "Full name cannot be blank",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    Tools.hideKeyboard(activity);
-                    progressDialog = new ProgressDialog(activity);
-                    progressDialog.setMessage("Validating fields and data");
-                    progressDialog.show();
-                    userSignup();
+                    if (Tools.isNetworkAvailable(mContext)) {
+                        Tools.hideKeyboard(activity);
+                        progressDialog = new ProgressDialog(activity);
+                        progressDialog.setMessage("Validating fields and data");
+                        progressDialog.show();
+                        userSignup();
+                    } else {
+                        Toast.makeText(mContext, "Please check your internet connection",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -118,7 +123,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private void setupData() {
         try {
-            final UserM userM = new UserM();
+            UserM userM = new UserM();
             userM.setUserId(Support.getUserInstance().getUid());
             userM.setUsername(username);
             userM.setFullName(fullName);
@@ -130,6 +135,11 @@ public class SignupActivity extends AppCompatActivity {
                 new SharedPrefM(Support.getInstance()).saveString(Config.FIREBASE_TOKEN, fcmToken);
             }
             userM.setFcmToken(fcmToken);
+            userM.setLastMessage("");
+            userM.setLastSeenTime(System.currentTimeMillis());
+            userM.setNotificationCount(0);
+            userM.setOnline(true);
+            userM.setUserType(Config._USER);
             addUserData(userM);
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,10 +162,17 @@ public class SignupActivity extends AppCompatActivity {
                             }
                             Toast.makeText(mContext, "Account is created successfully",
                                     Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            finish();
+                            if (userM.getUserType().equals(Config._USER)) {
+                                Intent intent = new Intent(SignupActivity.this, UserActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Intent intent = new Intent(SignupActivity.this, AdminActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+                            }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -173,5 +190,11 @@ public class SignupActivity extends AppCompatActivity {
         } catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
     }
 }

@@ -18,7 +18,7 @@ import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.activity.ChatActivity;
-import com.vantagecircle.chatapp.model.ContactsM;
+import com.vantagecircle.chatapp.model.UserM;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,14 +33,14 @@ public class NotificationUtils {
 
     public static void setNotification(JSONObject jsonObject) throws JSONException {
         mBuilder = new NotificationCompat.Builder(Support.getInstance());
-        ContactsM contactsM = new ContactsM();
-        contactsM.setFullName(jsonObject.getString("senderUsername"));
-        contactsM.setUserId(jsonObject.getString("senderUid"));
-        contactsM.setFcmToken(jsonObject.getString("senderToken"));
+        UserM userM = new UserM();
+        userM.setFullName(jsonObject.getString("senderUsername"));
+        userM.setUserId(jsonObject.getString("senderUid"));
+        userM.setFcmToken(jsonObject.getString("senderToken"));
 
         Intent intent = new Intent(Support.getInstance(), ChatActivity.class);
         intent.putExtra("isFromBar", true);
-        intent.putExtra("data", new Gson().toJson(contactsM));
+        intent.putExtra("data", new Gson().toJson(userM));
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(Support.getInstance());

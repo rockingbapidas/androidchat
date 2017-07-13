@@ -37,7 +37,9 @@
 
         <activity android:name=".activity.SignupActivity" />
 
-        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.UserActivity" />
+
+        <activity android:name=".activity.AdminActivity" />
 
         <activity android:name=".activity.ChatActivity" />
 

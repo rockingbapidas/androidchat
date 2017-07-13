@@ -16,6 +16,7 @@ import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.ChatM;
+import com.vantagecircle.chatapp.utils.DateUtils;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             ChatM chatM = arrayList.get(position);
             holder.userName.setText(chatM.getSenderName());
             holder.messageText.setText(chatM.getMessageText());
-            holder.dateTime.setText(ConstantM.getTimeAgo(chatM.getTimeStamp()));
+            holder.dateTime.setText(DateUtils.getTimeAgo(chatM.getTimeStamp()));
             if (isChatContinue) {
                 holder.userName.setVisibility(View.GONE);
             } else {
