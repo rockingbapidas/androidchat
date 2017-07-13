@@ -73,7 +73,8 @@ public class SendNotification {
                     if (response.code() == 200) {
                         HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put("sentSuccessfully", true);
-                        Support.getChatReference().child(notificationM.getChatRoom())
+                        Support.getChatReference()
+                                .child(notificationM.getChatRoom())
                                 .child(String.valueOf(notificationM.getTimeStamp()))
                                 .updateChildren(hashMap);
                     }

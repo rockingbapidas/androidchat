@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical|center_horizontal"
-        android:padding="5dp"
+        app:contentPadding="6dp"
         app:cardCornerRadius="@dimen/d4"
         app:cardElevation="@dimen/d4"
         app:cardUseCompatPadding="true">
@@ -34,6 +34,7 @@
                 android:text="@string/dummy_name"
                 android:textColor="@color/colorOrange"
                 android:textSize="12sp"
+                android:layout_marginBottom="5dp"
                 app:fontFamily="roboto"
                 app:typeface="roboto_regular" />
 
@@ -52,6 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:layout_marginTop="5dp"
                 android:gravity="end|center_vertical"
                 android:orientation="horizontal">
 
@@ -67,8 +69,8 @@
 
                 <ImageView
                     android:id="@+id/chat_status"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
                     android:src="@drawable/single_tick"

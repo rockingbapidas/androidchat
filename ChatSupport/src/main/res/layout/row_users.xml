@@ -19,7 +19,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="60dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
@@ -60,7 +60,7 @@
                     android:layout_marginTop="5dp"
                     android:maxLines="1"
                     android:text="1457894125632"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="@color/colorOrange"
                     android:textSize="14sp"
                     app:fontFamily="roboto"
                     app:typeface="roboto_regular" />

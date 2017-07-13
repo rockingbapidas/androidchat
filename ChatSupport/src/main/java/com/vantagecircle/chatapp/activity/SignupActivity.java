@@ -153,7 +153,7 @@ public class SignupActivity extends AppCompatActivity {
                             Toast.makeText(mContext, "Account is created successfully",
                                     Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             finish();
                         }
