@@ -74,17 +74,32 @@ public class SplashActivity extends AppCompatActivity {
                 }
             };
             Support.getUserReference().child(Support.getUserInstance().getUid())
-                    .addValueEventListener(valueEventListener);
+                    .addListenerForSingleValueEvent(valueEventListener);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        /*if (valueEventListener != null) {
+            Support.getUserReference().child(Support.getUserInstance().getUid())
+                    .addListenerForSingleValueEvent(valueEventListener);
+        }*/
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (valueEventListener != null) {
+            Support.getUserReference().child(Support.getUserInstance().getUid())
+                    .removeEventListener(valueEventListener);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (valueEventListener != null) {
-            Support.getUserReference().removeEventListener(valueEventListener);
-        }
     }
 }

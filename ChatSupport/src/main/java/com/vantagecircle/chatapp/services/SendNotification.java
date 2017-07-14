@@ -1,8 +1,14 @@
 package com.vantagecircle.chatapp.services;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.data.Config;
+import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.NotificationM;
 
 import org.json.JSONException;
@@ -71,12 +77,8 @@ public class SendNotification {
                     Log.e(TAG, "onResponse body: " + response.body().string());
                     Log.e(TAG, "onResponse code: " + response.code());
                     if (response.code() == 200) {
-                        HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put("sentSuccessfully", true);
-                        Support.getChatReference()
-                                .child(notificationM.getChatRoom())
-                                .child(String.valueOf(notificationM.getTimeStamp()))
-                                .updateChildren(hashMap);
+                        ConstantM.updateSentStatus(notificationM.getChatRoom(), notificationM.getTimeStamp());
+                        ConstantM.setLastMessage(notificationM.getMessageText());
                     }
                 }
             });

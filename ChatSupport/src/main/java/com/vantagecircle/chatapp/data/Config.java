@@ -16,4 +16,5 @@ public class Config {
     public static final String ONLINE_STATUS = "online";
     public static final String LAST_SEEN = "lastSeenTime";
     public static final String LAST_MESSAGE = "lastMessage";
+    public static final String SENT_STATUS = "sentSuccessfully";
 }

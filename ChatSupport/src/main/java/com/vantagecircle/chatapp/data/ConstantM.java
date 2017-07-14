@@ -58,6 +58,26 @@ public class ConstantM {
         }
     }
 
+    public static void updateSentStatus(String room, long timeStamp) {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put(Config.SENT_STATUS, true);
+        Support.getChatReference().child(room)
+                .child(String.valueOf(timeStamp))
+                .updateChildren(hashMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d(TAG, "Sent status updated successfully");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Sent status updated error " + e.getMessage());
+                    }
+                });
+    }
+
     public static void setLastMessage(String message) {
         try {
             if (Support.getUserInstance() != null) {
@@ -81,7 +101,7 @@ public class ConstantM {
             } else {
                 Log.d(TAG, "Firebase user is null");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -108,7 +128,7 @@ public class ConstantM {
             } else {
                 Log.d(TAG, "Firebase user is null");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -136,7 +156,7 @@ public class ConstantM {
             } else {
                 Log.d(TAG, "Firebase user is null");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

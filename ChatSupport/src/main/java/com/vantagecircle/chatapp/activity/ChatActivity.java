@@ -175,7 +175,6 @@ public class ChatActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             chatAdapter.toggleStatus(lastPosition);
                                             sendPushNotification(chatM, room_type_1);
-                                            ConstantM.setLastMessage(chatM.getMessageText());
                                         }
                                     }
                                 })
@@ -195,7 +194,6 @@ public class ChatActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             chatAdapter.toggleStatus(lastPosition);
                                             sendPushNotification(chatM, room_type_2);
-                                            ConstantM.setLastMessage(chatM.getMessageText());
                                         }
                                     }
                                 })
@@ -215,7 +213,6 @@ public class ChatActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             chatAdapter.toggleStatus(lastPosition);
                                             sendPushNotification(chatM, room_type_1);
-                                            ConstantM.setLastMessage(chatM.getMessageText());
                                         }
                                     }
                                 })
@@ -377,7 +374,8 @@ public class ChatActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Support.getUserReference().child(userM.getUserId()).addValueEventListener(statusEventListener);
+        Support.getUserReference().child(userM.getUserId())
+                .addListenerForSingleValueEvent(statusEventListener);
     }
 
     private void setListToAdapter(DataSnapshot dataSnapshot) {
@@ -418,28 +416,36 @@ public class ChatActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Support.setIsChatWindowActive(true);
+        /*if (sendEventListener != null) {
+            Support.getChatReference().addListenerForSingleValueEvent(sendEventListener);
+        }
+        if (getEventListener != null) {
+            Support.getChatReference().addListenerForSingleValueEvent(getEventListener);
+        }
+        if (statusEventListener != null) {
+            Support.getUserReference().child(userM.getUserId())
+                    .addListenerForSingleValueEvent(statusEventListener);
+        }*/
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Support.setIsChatWindowActive(false);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
         if (sendEventListener != null) {
             Support.getChatReference().removeEventListener(sendEventListener);
         }
         if (getEventListener != null) {
             Support.getChatReference().removeEventListener(getEventListener);
         }
-        if (childEventListener != null) {
-            Support.getChatReference().removeEventListener(childEventListener);
-        }
         if (statusEventListener != null) {
-            Support.getUserReference().removeEventListener(statusEventListener);
+            Support.getUserReference().child(userM.getUserId())
+                    .removeEventListener(statusEventListener);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

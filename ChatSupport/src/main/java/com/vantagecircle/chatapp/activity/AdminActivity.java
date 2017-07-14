@@ -23,7 +23,6 @@ import android.widget.LinearLayout;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
@@ -122,8 +121,10 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
                             userMs.add(userM);
                             setupData();
                         } else {
-                            userMs.add(userM);
-                            usersAdapter.notifyItemInserted(userMs.size());
+                            if(!userMs.contains(userM)){
+                                userMs.add(userM);
+                                usersAdapter.notifyItemInserted(userMs.size());
+                            }
                         }
                     }
                 }
@@ -163,12 +164,10 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                /*if (progressDialog != null && progressDialog.isShowing()) {
+                if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                no_data_layout.setVisibility(View.VISIBLE);
-                data_layout.setVisibility(View.GONE);
-                Log.e(TAG, "Database error " + databaseError.getMessage());*/
+                Log.e(TAG, "Database error " + databaseError.getMessage());
             }
         };
         Support.getUserReference().addChildEventListener(childEventListener);
@@ -202,11 +201,19 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
     }
 
     @Override
+    public void onItemClick(int position) {
+        UserM userM = userMs.get(position);
+        Intent intent = new Intent(activity, ChatActivity.class);
+        intent.putExtra("data", new Gson().toJson(userM));
+        startActivity(intent);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
-                ConstantM.setLastSeen(new Date().getTime());
                 ConstantM.setOnlineStatus(false);
+                ConstantM.setLastSeen(new Date().getTime());
                 Support.getAuthInstance().signOut();
                 Intent intent = new Intent(activity, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -218,16 +225,11 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
     }
 
     @Override
-    public void onItemClick(int position) {
-        UserM userM = userMs.get(position);
-        Intent intent = new Intent(activity, ChatActivity.class);
-        intent.putExtra("data", new Gson().toJson(userM));
-        startActivity(intent);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
+        /*if (childEventListener != null) {
+            Support.getUserReference().addChildEventListener(childEventListener);
+        }*/
         ConstantM.setOnlineStatus(true);
         ConstantM.setLastSeen(new Date().getTime());
     }
@@ -235,14 +237,14 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
     @Override
     protected void onPause() {
         super.onPause();
+        if (childEventListener != null) {
+            Support.getUserReference().removeEventListener(childEventListener);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(childEventListener != null){
-            Support.getUserReference().removeEventListener(childEventListener);
-        }
         ConstantM.setOnlineStatus(false);
         ConstantM.setLastSeen(new Date().getTime());
     }

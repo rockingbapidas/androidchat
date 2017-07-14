@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -27,6 +28,7 @@ import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.ClickListener;
 import com.vantagecircle.chatapp.adapter.UsersAdapter;
+import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.widget.customview.DividerItemDecoration;
@@ -47,7 +49,7 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
     UsersAdapter usersAdapter;
     ProgressDialog progressDialog;
     Button btnTry;
-    ValueEventListener userEventListener, lastMEventListener;
+    ChildEventListener childEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,27 +106,52 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
     }
 
     private void initData() {
-        userEventListener = new ValueEventListener() {
+        childEventListener = new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<UserM> arrayList = new ArrayList<UserM>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    UserM userM = snapshot.getValue(UserM.class);
-                    if (userM != null) {
-                        if (userM.getUserType().equals("admin")) {
-                            arrayList.add(userM);
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                UserM userM = dataSnapshot.getValue(UserM.class);
+                if (userM != null && userM.getUserType().equals(Config._ADMIN)) {
+                    if (userMs != null) {
+                        userMs.add(userM);
+                        usersAdapter.notifyItemInserted(userMs.size());
+                    } else {
+                        userMs = new ArrayList<>();
+                        userMs.add(userM);
+                        setupData();
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                UserM userM = dataSnapshot.getValue(UserM.class);
+                if (userM != null && userM.getUserType().equals(Config._ADMIN)) {
+                    if (!userM.getLastMessage().equals("") && userM.getLastMessage().length() > 0) {
+                        if (userMs != null) {
+                            if (userMs.contains(userM)) {
+                                int i = userMs.indexOf(userM);
+                                usersAdapter.updateLastMessage(i, userM.getLastMessage());
+                            } else {
+                                userMs.add(userM);
+                                usersAdapter.notifyItemInserted(userMs.size());
+                            }
+                        } else {
+                            userMs = new ArrayList<>();
+                            userMs.add(userM);
+                            setupData();
                         }
                     }
                 }
-                if (userMs == null) {
-                    userMs = new ArrayList<>();
-                    userMs.addAll(arrayList);
-                    setupData();
-                } else {
-                    userMs.clear();
-                    userMs.addAll(arrayList);
-                    usersAdapter.notifyItemInserted(userMs.size());
-                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
@@ -132,34 +159,10 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                no_data_layout.setVisibility(View.VISIBLE);
-                data_layout.setVisibility(View.GONE);
                 Log.e(TAG, "Database error " + databaseError.getMessage());
             }
         };
-        Support.getUserReference().addValueEventListener(userEventListener);
-    }
-
-    private void getLastMessage() {
-        try {
-            lastMEventListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    UserM userM = dataSnapshot.getValue(UserM.class);
-                    if (userM != null) {
-                        usersAdapter.updateLastMessage(0, userM.getLastMessage());
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            };
-            Support.getUserReference().child(userMs.get(0).getUserId()).addValueEventListener(lastMEventListener);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Support.getUserReference().addChildEventListener(childEventListener);
     }
 
     private void setupData() {
@@ -171,7 +174,6 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
             data_layout.setVisibility(View.VISIBLE);
             usersAdapter = new UsersAdapter(mContext, userMs, this);
             recyclerView.setAdapter(usersAdapter);
-            getLastMessage();
         } else {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
@@ -188,11 +190,19 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
     }
 
     @Override
+    public void onItemClick(int position) {
+        UserM userM = userMs.get(position);
+        Intent intent = new Intent(activity, ChatActivity.class);
+        intent.putExtra("data", new Gson().toJson(userM));
+        startActivity(intent);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
-                ConstantM.setLastSeen(new Date().getTime());
                 ConstantM.setOnlineStatus(false);
+                ConstantM.setLastSeen(new Date().getTime());
                 Support.getAuthInstance().signOut();
                 Intent intent = new Intent(activity, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -204,16 +214,11 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
     }
 
     @Override
-    public void onItemClick(int position) {
-        UserM userM = userMs.get(position);
-        Intent intent = new Intent(activity, ChatActivity.class);
-        intent.putExtra("data", new Gson().toJson(userM));
-        startActivity(intent);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
+        /*if (childEventListener != null) {
+            Support.getUserReference().removeEventListener(childEventListener);
+        }*/
         ConstantM.setOnlineStatus(true);
         ConstantM.setLastSeen(new Date().getTime());
     }
@@ -221,17 +226,14 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
     @Override
     protected void onPause() {
         super.onPause();
+        if (childEventListener != null) {
+            Support.getUserReference().removeEventListener(childEventListener);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (userEventListener != null) {
-            Support.getUserReference().removeEventListener(userEventListener);
-        }
-        if (lastMEventListener != null) {
-            Support.getUserReference().removeEventListener(lastMEventListener);
-        }
         ConstantM.setOnlineStatus(false);
         ConstantM.setLastSeen(new Date().getTime());
     }
