@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -135,6 +136,7 @@ public class LoginActivity extends AppCompatActivity {
             valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e(TAG, "onDataChange ");
                     UserM userM = dataSnapshot.getValue(UserM.class);
                     if (userM != null) {
                         Support.id = Support.getUserInstance().getUid();
@@ -163,6 +165,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, "onCancelled ");
                     Support.getAuthInstance().signOut();
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
@@ -181,15 +184,22 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        /*if (valueEventListener != null) {
-            Support.getUserReference().child(Support.getUserInstance().getUid())
-                    .addListenerForSingleValueEvent(valueEventListener);
-        }*/
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         if (valueEventListener != null) {
             Support.getUserReference().child(Support.getUserInstance().getUid())
                     .removeEventListener(valueEventListener);

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -155,6 +156,7 @@ public class SignupActivity extends AppCompatActivity {
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+                            Log.e(TAG, "onComplete ");
                             Support.userM = userM;
                             Support.id = userM.getUserId();
                             if (progressDialog != null && progressDialog.isShowing()) {
@@ -178,6 +180,7 @@ public class SignupActivity extends AppCompatActivity {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "onFailure ");
                             //delete account and try again
                             Support.getUserInstance().delete();
                             if (progressDialog != null && progressDialog.isShowing()) {

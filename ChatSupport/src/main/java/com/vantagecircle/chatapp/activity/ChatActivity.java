@@ -60,6 +60,7 @@ public class ChatActivity extends AppCompatActivity {
     String room_type_1, room_type_2;
     boolean isSentFromMeNow = false;
     ProgressDialog progressDialog;
+
     ValueEventListener sendEventListener, getEventListener, statusEventListener;
     ChildEventListener childEventListener;
 
@@ -78,11 +79,8 @@ public class ChatActivity extends AppCompatActivity {
         initRecycler();
         initListener();
 
-        progressDialog = new ProgressDialog(activity);
-        progressDialog.setMessage("Please wait getting chats");
-        progressDialog.show();
-        getOnlineStatus();
-        getMessages();
+        /*getOnlineStatus();
+        getMessages();*/
     }
 
     private void initToolbar() {
@@ -172,6 +170,7 @@ public class ChatActivity extends AppCompatActivity {
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
+                                        Log.e(TAG, "onComplete ");
                                         if (task.isSuccessful()) {
                                             chatAdapter.toggleStatus(lastPosition);
                                             sendPushNotification(chatM, room_type_1);
@@ -191,6 +190,7 @@ public class ChatActivity extends AppCompatActivity {
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
+                                        Log.e(TAG, "onComplete ");
                                         if (task.isSuccessful()) {
                                             chatAdapter.toggleStatus(lastPosition);
                                             sendPushNotification(chatM, room_type_2);
@@ -210,6 +210,7 @@ public class ChatActivity extends AppCompatActivity {
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
+                                        Log.e(TAG, "onComplete ");
                                         if (task.isSuccessful()) {
                                             chatAdapter.toggleStatus(lastPosition);
                                             sendPushNotification(chatM, room_type_1);
@@ -271,30 +272,28 @@ public class ChatActivity extends AppCompatActivity {
                         childEventListener = new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                Log.e(TAG, "onChildAdded ");
                                 setListToAdapter(dataSnapshot);
                             }
 
                             @Override
                             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                                Log.e(TAG, "onChildChanged ");
                             }
 
                             @Override
                             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                                Log.e(TAG, "onChildRemoved ");
                             }
 
                             @Override
                             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                                Log.e(TAG, "onChildMoved ");
                             }
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
                                 Log.e(TAG, "onCancelled " + databaseError.getMessage());
-                                if (progressDialog != null && progressDialog.isShowing()) {
-                                    progressDialog.dismiss();
-                                }
                             }
                         };
                         Support.getChatReference().child(room_type_1).addChildEventListener(childEventListener);
@@ -302,47 +301,39 @@ public class ChatActivity extends AppCompatActivity {
                         childEventListener = new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                Log.e(TAG, "onChildAdded ");
                                 setListToAdapter(dataSnapshot);
                             }
 
                             @Override
                             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                                Log.e(TAG, "onChildChanged ");
                             }
 
                             @Override
                             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                                Log.e(TAG, "onChildRemoved ");
                             }
 
                             @Override
                             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                                Log.e(TAG, "onChildMoved ");
                             }
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
                                 Log.e(TAG, "onCancelled " + databaseError.getMessage());
-                                if (progressDialog != null && progressDialog.isShowing()) {
-                                    progressDialog.dismiss();
-                                }
                             }
                         };
                         Support.getChatReference().child(room_type_2).addChildEventListener(childEventListener);
                     } else {
                         Log.e(TAG, "No such chat data available");
-                        if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
                     }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.e(TAG, "Database error " + databaseError.getMessage());
-                    if (progressDialog != null && progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
+                    Log.e(TAG, "onCancelled Database error " + databaseError.getMessage());
                 }
             };
             Support.getChatReference().addListenerForSingleValueEvent(getEventListener);
@@ -360,8 +351,11 @@ public class ChatActivity extends AppCompatActivity {
                     if (model != null) {
                         if (model.isOnline()) {
                             mActionBar.setSubtitle("Online");
+                            Log.e(TAG, "User Online");
                         } else {
-                            mActionBar.setSubtitle("Last seen on " + DateUtils.getTime(model.getLastSeenTime()));
+                            mActionBar.setSubtitle("Last seen on " +
+                                    DateUtils.getTime(model.getLastSeenTime()));
+                            Log.e(TAG, "User Offline");
                         }
                     }
                 }
@@ -375,7 +369,7 @@ public class ChatActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         Support.getUserReference().child(userM.getUserId())
-                .addListenerForSingleValueEvent(statusEventListener);
+                .addValueEventListener(statusEventListener);
     }
 
     private void setListToAdapter(DataSnapshot dataSnapshot) {
@@ -391,14 +385,9 @@ public class ChatActivity extends AppCompatActivity {
                 chatAdapter.notifyItemInserted(chatMs.size());
             }
             recyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
         } else {
             isSentFromMeNow = false;
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
+
         }
     }
 
@@ -416,31 +405,42 @@ public class ChatActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Support.setIsChatWindowActive(true);
-        /*if (sendEventListener != null) {
-            Support.getChatReference().addListenerForSingleValueEvent(sendEventListener);
-        }
-        if (getEventListener != null) {
-            Support.getChatReference().addListenerForSingleValueEvent(getEventListener);
-        }
-        if (statusEventListener != null) {
-            Support.getUserReference().child(userM.getUserId())
-                    .addListenerForSingleValueEvent(statusEventListener);
-        }*/
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Support.setIsChatWindowActive(false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getOnlineStatus();
+        getMessages();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         if (sendEventListener != null) {
-            Support.getChatReference().removeEventListener(sendEventListener);
+            Support.getChatReference()
+                    .removeEventListener(sendEventListener);
         }
         if (getEventListener != null) {
-            Support.getChatReference().removeEventListener(getEventListener);
+            Support.getChatReference()
+                    .removeEventListener(getEventListener);
         }
         if (statusEventListener != null) {
             Support.getUserReference().child(userM.getUserId())
                     .removeEventListener(statusEventListener);
+        }
+
+        if (childEventListener != null) {
+            Support.getChatReference().child(room_type_1)
+                    .removeEventListener(childEventListener);
+            Support.getChatReference().child(room_type_2)
+                    .removeEventListener(childEventListener);
         }
     }
 

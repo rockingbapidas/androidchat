@@ -77,7 +77,8 @@ public class SendNotification {
                     Log.e(TAG, "onResponse body: " + response.body().string());
                     Log.e(TAG, "onResponse code: " + response.code());
                     if (response.code() == 200) {
-                        ConstantM.updateSentStatus(notificationM.getChatRoom(), notificationM.getTimeStamp());
+                        ConstantM.updateSentStatus(notificationM.getChatRoom(),
+                                notificationM.getTimeStamp());
                         ConstantM.setLastMessage(notificationM.getMessageText());
                     }
                 }

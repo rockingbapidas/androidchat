@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -19,6 +20,7 @@ import com.vantagecircle.chatapp.model.UserM;
  */
 
 public class SplashActivity extends AppCompatActivity {
+    private static final String TAG = SplashActivity.class.getSimpleName();
     ValueEventListener valueEventListener;
 
     @Override
@@ -39,6 +41,7 @@ public class SplashActivity extends AppCompatActivity {
             valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e(TAG, "onDataChange ");
                     UserM userM = dataSnapshot.getValue(UserM.class);
                     if (userM != null) {
                         Support.id = Support.getUserInstance().getUid();
@@ -65,6 +68,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, "onCancelled ");
                     Support.getAuthInstance().signOut();
                     Toast.makeText(getApplicationContext(), databaseError.getMessage(),
                             Toast.LENGTH_SHORT).show();
@@ -83,15 +87,22 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        /*if (valueEventListener != null) {
-            Support.getUserReference().child(Support.getUserInstance().getUid())
-                    .addListenerForSingleValueEvent(valueEventListener);
-        }*/
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         if (valueEventListener != null) {
             Support.getUserReference().child(Support.getUserInstance().getUid())
                     .removeEventListener(valueEventListener);

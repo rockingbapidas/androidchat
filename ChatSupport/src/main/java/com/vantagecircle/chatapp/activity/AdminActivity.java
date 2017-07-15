@@ -65,10 +65,7 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
         initView();
         initRecycler();
         initListener();
-        progressDialog = new ProgressDialog(activity);
-        progressDialog.setMessage("Please wait");
-        progressDialog.show();
-        initData();
+        /*initData();*/
     }
 
     private void initToolbar() {
@@ -113,17 +110,27 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.e(TAG, "onChildAdded ");
+
                 UserM userM = dataSnapshot.getValue(UserM.class);
+
                 if (userM != null && userM.getUserType().equals(Config._USER)) {
-                    if (!userM.getLastMessage().equals("") && userM.getLastMessage().length() > 0) {
-                        if (userMs == null) {
+
+                    if (userM.getLastMessage() != null
+                            && !userM.getLastMessage().equals("")
+                            && userM.getLastMessage().length() > 0) {
+
+                        if (userMs == null || userMs.size() == 0) {
                             userMs = new ArrayList<>();
                             userMs.add(userM);
                             setupData();
+
                         } else {
-                            if(!userMs.contains(userM)){
-                                userMs.add(userM);
-                                usersAdapter.notifyItemInserted(userMs.size());
+                            for (int i = 0; i < userMs.size(); i++){
+                                if(!userMs.get(i).getUserId().equals(userM.getUserId())){
+                                    userMs.add(userM);
+                                    usersAdapter.notifyItemInserted(userMs.size());
+                                }
                             }
                         }
                     }
@@ -132,21 +139,25 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.e(TAG, "onChildChanged ");
+
                 UserM userM = dataSnapshot.getValue(UserM.class);
+
                 if (userM != null && userM.getUserType().equals(Config._USER)) {
-                    if (!userM.getLastMessage().equals("") && userM.getLastMessage().length() > 0) {
-                        if (userMs != null) {
-                            if (userMs.contains(userM)) {
-                                int i = userMs.indexOf(userM);
-                                usersAdapter.updateLastMessage(i, userM.getLastMessage());
-                            } else {
-                                userMs.add(userM);
-                                usersAdapter.notifyItemInserted(userMs.size());
+
+                    if (userM.getLastMessage() != null
+                            && !userM.getLastMessage().equals("")
+                            && userM.getLastMessage().length() > 0) {
+
+                        if (userMs != null && userMs.size() > 0) {
+                            for (int i = 0; i < userMs.size(); i++){
+                                if(!userMs.get(i).getUserId().equals(userM.getUserId())){
+                                    userMs.add(userM);
+                                    usersAdapter.notifyItemInserted(userMs.size());
+                                } else {
+                                    usersAdapter.updateLastMessage(i, userM.getLastMessage());
+                                }
                             }
-                        } else {
-                            userMs = new ArrayList<>();
-                            userMs.add(userM);
-                            setupData();
                         }
                     }
                 }
@@ -154,41 +165,30 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                Log.e(TAG, "onChildRemoved ");
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                Log.e(TAG, "onChildMoved ");
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-                Log.e(TAG, "Database error " + databaseError.getMessage());
+                Log.e(TAG, "onCancelled " + databaseError.getMessage());
             }
         };
         Support.getUserReference().addChildEventListener(childEventListener);
     }
 
     private void setupData() {
-        if (userMs != null && userMs.size() > 0) {
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-
+        if (userMs.size() > 0) {
             no_data_layout.setVisibility(View.GONE);
             data_layout.setVisibility(View.VISIBLE);
 
             usersAdapter = new UsersAdapter(mContext, userMs, this);
             recyclerView.setAdapter(usersAdapter);
         } else {
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-
             no_data_layout.setVisibility(View.VISIBLE);
             data_layout.setVisibility(View.GONE);
         }
@@ -227,16 +227,24 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
     @Override
     protected void onResume() {
         super.onResume();
-        /*if (childEventListener != null) {
-            Support.getUserReference().addChildEventListener(childEventListener);
-        }*/
-        ConstantM.setOnlineStatus(true);
-        ConstantM.setLastSeen(new Date().getTime());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ConstantM.setOnlineStatus(true);
+        ConstantM.setLastSeen(new Date().getTime());
+        initData();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         if (childEventListener != null) {
             Support.getUserReference().removeEventListener(childEventListener);
         }
