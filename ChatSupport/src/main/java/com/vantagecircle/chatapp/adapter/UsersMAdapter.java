@@ -16,6 +16,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.UserM;
 
@@ -45,7 +46,7 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
 
     public static class UsersMViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView user_name, email_id, last_message;
-        LinearLayout sub_holder;
+        LinearLayout sub_holder, lastImage;
         ClickUser clickUser;
 
         UsersMViewHolder(View itemView) {
@@ -53,6 +54,7 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
             user_name = (TextView) itemView.findViewById(R.id.user_name);
             email_id = (TextView) itemView.findViewById(R.id.email_id);
             sub_holder = (LinearLayout) itemView.findViewById(R.id.sub_holder);
+            lastImage = (LinearLayout) itemView.findViewById(R.id.lastImage);
             last_message = (TextView) itemView.findViewById(R.id.last_message);
             sub_holder.setOnClickListener(this);
         }
@@ -84,14 +86,28 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
                                         assert chatM != null;
                                         user_name.setText(userM.getFullName());
                                         email_id.setText(userM.getUsername());
-                                        last_message.setText(chatM.getMessageText());
+                                        if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                            lastImage.setVisibility(View.GONE);
+                                            last_message.setVisibility(View.VISIBLE);
+                                            last_message.setText(chatM.getMessageText());
+                                        } else {
+                                            lastImage.setVisibility(View.VISIBLE);
+                                            last_message.setVisibility(View.GONE);
+                                        }
                                     }
 
                                     @Override
                                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                                         ChatM chatM = dataSnapshot.getValue(ChatM.class);
                                         assert chatM != null;
-                                        last_message.setText(chatM.getMessageText());
+                                        if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                            lastImage.setVisibility(View.GONE);
+                                            last_message.setVisibility(View.VISIBLE);
+                                            last_message.setText(chatM.getMessageText());
+                                        } else {
+                                            lastImage.setVisibility(View.VISIBLE);
+                                            last_message.setVisibility(View.GONE);
+                                        }
                                     }
 
                                     @Override
@@ -118,14 +134,28 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
                                         assert chatM != null;
                                         user_name.setText(userM.getFullName());
                                         email_id.setText(userM.getUsername());
-                                        last_message.setText(chatM.getMessageText());
+                                        if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                            lastImage.setVisibility(View.GONE);
+                                            last_message.setVisibility(View.VISIBLE);
+                                            last_message.setText(chatM.getMessageText());
+                                        } else {
+                                            lastImage.setVisibility(View.VISIBLE);
+                                            last_message.setVisibility(View.GONE);
+                                        }
                                     }
 
                                     @Override
                                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                                         ChatM chatM = dataSnapshot.getValue(ChatM.class);
                                         assert chatM != null;
-                                        last_message.setText(chatM.getMessageText());
+                                        if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                            lastImage.setVisibility(View.GONE);
+                                            last_message.setVisibility(View.VISIBLE);
+                                            last_message.setText(chatM.getMessageText());
+                                        } else {
+                                            lastImage.setVisibility(View.VISIBLE);
+                                            last_message.setVisibility(View.GONE);
+                                        }
                                     }
 
                                     @Override
@@ -147,6 +177,7 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
                         user_name.setText(userM.getFullName());
                         email_id.setText(userM.getUsername());
                         last_message.setVisibility(View.GONE);
+                        lastImage.setVisibility(View.GONE);
                     }
                 }
 

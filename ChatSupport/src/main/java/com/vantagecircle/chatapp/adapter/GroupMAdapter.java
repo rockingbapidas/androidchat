@@ -15,6 +15,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
@@ -53,7 +54,7 @@ public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMAdapter
         TextView user_name;
         TextView email_id;
         TextView last_message;
-        LinearLayout sub_holder;
+        LinearLayout sub_holder, lastImage;
         ClickGroup clickGroup;
 
         GroupMViewHolder(View itemView) {
@@ -61,6 +62,7 @@ public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMAdapter
             user_name = (TextView) itemView.findViewById(R.id.user_name);
             email_id = (TextView) itemView.findViewById(R.id.email_id);
             sub_holder = (LinearLayout) itemView.findViewById(R.id.sub_holder);
+            lastImage = (LinearLayout) itemView.findViewById(R.id.lastImage);
             last_message = (TextView) itemView.findViewById(R.id.last_message);
             sub_holder.setOnClickListener(this);
         }
@@ -91,14 +93,28 @@ public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMAdapter
                                         ChatM chatM = dataSnapshot.getValue(ChatM.class);
                                         assert chatM != null;
                                         user_name.setText(groupM.getName());
-                                        last_message.setText(chatM.getMessageText());
+                                        if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                            lastImage.setVisibility(View.GONE);
+                                            last_message.setVisibility(View.VISIBLE);
+                                            last_message.setText(chatM.getMessageText());
+                                        } else {
+                                            lastImage.setVisibility(View.VISIBLE);
+                                            last_message.setVisibility(View.GONE);
+                                        }
                                     }
 
                                     @Override
                                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                                         ChatM chatM = dataSnapshot.getValue(ChatM.class);
                                         assert chatM != null;
-                                        last_message.setText(chatM.getMessageText());
+                                        if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                            lastImage.setVisibility(View.GONE);
+                                            last_message.setVisibility(View.VISIBLE);
+                                            last_message.setText(chatM.getMessageText());
+                                        } else {
+                                            lastImage.setVisibility(View.VISIBLE);
+                                            last_message.setVisibility(View.GONE);
+                                        }
                                     }
 
                                     @Override
@@ -119,6 +135,7 @@ public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMAdapter
                     } else {
                         user_name.setText(groupM.getName());
                         last_message.setVisibility(View.GONE);
+                        lastImage.setVisibility(View.GONE);
                     }
                 }
 

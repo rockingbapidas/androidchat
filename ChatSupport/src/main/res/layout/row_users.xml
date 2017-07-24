@@ -71,12 +71,38 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:maxLines="1"
-                    android:visibility="visible"
                     android:text="Hii dere"
                     android:textColor="@color/colorLightBlue"
                     android:textSize="14sp"
+                    android:visibility="visible"
                     app:fontFamily="roboto"
                     app:typeface="roboto_condensed_regular" />
+
+                <LinearLayout
+                    android:id="@+id/lastImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_camera_alt_black_24dp" />
+
+                    <com.vantagecircle.chatapp.widget.roboto.RobotoTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
+                        android:maxLines="1"
+                        android:text="Photo"
+                        android:textColor="@color/colorLightBlue"
+                        android:textSize="14sp"
+                        android:visibility="visible"
+                        app:fontFamily="roboto"
+                        app:typeface="roboto_condensed_regular" />
+                </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
