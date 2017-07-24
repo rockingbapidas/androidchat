@@ -4,21 +4,30 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,30 +35,32 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.adapter.ClickListener;
-import com.vantagecircle.chatapp.adapter.UsersAdapter;
-import com.vantagecircle.chatapp.data.Config;
+import com.vantagecircle.chatapp.adapter.GroupMAdapter;
+import com.vantagecircle.chatapp.adapter.UsersMAdapter;
 import com.vantagecircle.chatapp.data.ConstantM;
+import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.widget.customview.DividerItemDecoration;
 
-import java.util.ArrayList;
 import java.util.Date;
 
-public class UserActivity extends AppCompatActivity implements ClickListener {
+public class UserActivity extends AppCompatActivity implements UsersMAdapter.UsersMViewHolder.ClickUser, GroupMAdapter.GroupMViewHolder.ClickGroup {
     private static final String TAG = UserActivity.class.getSimpleName();
     Activity activity;
     Context mContext;
     Toolbar mToolbar;
     ActionBar mActionBar;
     RecyclerView recyclerView;
+    RecyclerView recyclerView1;
+    TextView groupTitle;
     LinearLayoutManager linearLayoutManager;
-    LinearLayout data_layout, no_data_layout;
-    ArrayList<UserM> userMs = null;
-    UsersAdapter usersAdapter;
+    LinearLayoutManager linearLayoutManager1;
+    UsersMAdapter usersMAdapter;
+    GroupMAdapter groupMAdapter;
     ProgressDialog progressDialog;
-    Button btnTry;
-    ChildEventListener childEventListener;
+    ValueEventListener lastMessageEvent;
+    ChildEventListener lastMessageChild;
+    AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +71,9 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
         initToolbar();
         initView();
         initRecycler();
-        initListener();
-        /*initData();*/
+
+        ConstantM.setOnlineStatus(true);
+        ConstantM.setLastSeen(new Date().getTime());
     }
 
     private void initToolbar() {
@@ -74,9 +86,8 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
 
     private void initView() {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        no_data_layout = (LinearLayout) findViewById(R.id.no_data_layout);
-        data_layout = (LinearLayout) findViewById(R.id.data_layout);
-        btnTry = (Button) findViewById(R.id.btnTry);
+        recyclerView1 = (RecyclerView) findViewById(R.id.recyclerView1);
+        groupTitle = (TextView) findViewById(R.id.groupTitle);
     }
 
     private void initRecycler() {
@@ -84,95 +95,101 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(0);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(ContextCompat
                 .getDrawable(mContext, R.drawable.divider)));
+
+        linearLayoutManager1 = new LinearLayoutManager(mContext);
+        linearLayoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView1.setLayoutManager(linearLayoutManager1);
+        recyclerView1.scrollToPosition(0);
+        recyclerView1.setItemAnimator(new DefaultItemAnimator());
+        recyclerView1.addItemDecoration(new DividerItemDecoration(ContextCompat
+                .getDrawable(mContext, R.drawable.divider)));
+
+        usersMAdapter = new UsersMAdapter(Support.getUserReference().equalTo(Support.id), this);
+        recyclerView.setAdapter(usersMAdapter);
+
+        groupMAdapter = new GroupMAdapter(Support.getGroupReference(), this);
+        recyclerView1.setAdapter(groupMAdapter);
     }
 
-    private void initListener() {
-        btnTry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressDialog = new ProgressDialog(activity);
-                progressDialog.setMessage("Please wait getting users");
-                progressDialog.show();
-                initData();
-            }
-        });
-    }
+    private void getLastMessage(UserM userM) {
+        try {
+            final String room_type_1 = userM.getUserId() + "_" + Support.id;
+            final String room_type_2 = Support.id + "_" + userM.getUserId();
+            lastMessageEvent = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChild(room_type_1)) {
+                        lastMessageChild = new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                Log.e(TAG, "onChildAdded ");
+                            }
 
-    private void initData() {
-        childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.e(TAG, "onChildAdded ");
-                UserM userM = dataSnapshot.getValue(UserM.class);
-                if (userM != null && userM.getUserType().equals(Config._ADMIN)) {
-                    if (userMs == null || userMs.size() == 0) {
-                        userMs = new ArrayList<>();
-                        userMs.add(userM);
-                        setupData();
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                Log.e(TAG, "onChildChanged ");
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                Log.e(TAG, "onChildRemoved ");
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                                Log.e(TAG, "onChildMoved ");
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.e(TAG, "onCancelled " + databaseError.getMessage());
+                            }
+                        };
+                        Support.getChatReference().child(room_type_1).addChildEventListener(lastMessageChild);
+                    } else if (dataSnapshot.hasChild(room_type_2)) {
+                        lastMessageChild = new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                Log.e(TAG, "onChildAdded ");
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                Log.e(TAG, "onChildChanged ");
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                Log.e(TAG, "onChildRemoved ");
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                                Log.e(TAG, "onChildMoved ");
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.e(TAG, "onCancelled " + databaseError.getMessage());
+                            }
+                        };
+                        Support.getChatReference().child(room_type_2).addChildEventListener(lastMessageChild);
                     } else {
-                        for (int i = 0; i < userMs.size(); i++){
-                            if(!userMs.get(i).getUserId().equals(userM.getUserId())){
-                                userMs.add(userM);
-                                usersAdapter.notifyItemInserted(userMs.size());
-                            }
-                        }
+                        Log.e(TAG, "last message not available");
                     }
                 }
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.e(TAG, "onChildChanged ");
-                UserM userM = dataSnapshot.getValue(UserM.class);
-                if (userM != null && userM.getUserType().equals(Config._ADMIN)) {
-                    if (userM.getLastMessage() != null
-                            && !userM.getLastMessage().equals("")
-                            && userM.getLastMessage().length() > 0) {
-                        if (userMs != null && userMs.size() > 0) {
-                            for (int i = 0; i < userMs.size(); i++){
-                                if(!userMs.get(i).getUserId().equals(userM.getUserId())){
-                                    userMs.add(userM);
-                                    usersAdapter.notifyItemInserted(userMs.size());
-                                } else {
-                                    usersAdapter.updateLastMessage(i, userM.getLastMessage());
-                                }
-                            }
-                        }
-                    }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, "onCancelled Database error " + databaseError.getMessage());
                 }
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.e(TAG, "onChildRemoved ");
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                Log.e(TAG, "onChildMoved ");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "onCancelled " + databaseError.getMessage());
-            }
-        };
-        Support.getUserReference().addChildEventListener(childEventListener);
-    }
-
-    private void setupData() {
-        if (userMs != null && userMs.size() > 0) {
-            no_data_layout.setVisibility(View.GONE);
-            data_layout.setVisibility(View.VISIBLE);
-            usersAdapter = new UsersAdapter(mContext, userMs, this);
-            recyclerView.setAdapter(usersAdapter);
-        } else {
-            no_data_layout.setVisibility(View.VISIBLE);
-            data_layout.setVisibility(View.GONE);
+            };
+            Support.getChatReference().addListenerForSingleValueEvent(lastMessageEvent);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -180,14 +197,6 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home_menu, menu);
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public void onItemClick(int position) {
-        UserM userM = userMs.get(position);
-        Intent intent = new Intent(activity, ChatActivity.class);
-        intent.putExtra("data", new Gson().toJson(userM));
-        startActivity(intent);
     }
 
     @Override
@@ -202,40 +211,122 @@ public class UserActivity extends AppCompatActivity implements ClickListener {
                 startActivity(intent);
                 finish();
                 break;
+            case R.id.action_group:
+                showDialog();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        LayoutInflater layoutInflater = LayoutInflater.from(activity);
+        View view = layoutInflater.inflate(R.layout.layout_create_group, null);
+        final EditText editText = (EditText) view.findViewById(R.id.groupnameEdit);
+        final Button btnSubmit = (Button) view.findViewById(R.id.btnSubmit);
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(editText.getText().toString())) {
+                    progressDialog = new ProgressDialog(activity);
+                    progressDialog.setMessage("Please Wait");
+                    progressDialog.show();
+                    final String id = Support.getGroupReference().push().getKey();
+                    String name = editText.getText().toString();
+                    GroupM groupM = new GroupM();
+                    groupM.setId(id);
+                    groupM.setName(name);
+                    Support.getGroupReference().child(id).setValue(groupM)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    alertDialog.dismiss();
+                                    progressDialog.dismiss();
+                                    if (task.isSuccessful()) {
+                                        addUsersToGroup(id);
+                                    }
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(mContext, e.getMessage(),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                } else {
+                    Toast.makeText(mContext, "Enter Group Name",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setCancelable(true);
+        builder.setView(view);
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void addUsersToGroup(String id) {
+        for (int i = 0; i < usersMAdapter.getItemCount(); i++) {
+            UserM userM = usersMAdapter.getItem(i);
+            Support.getGroupReference().child(id)
+                    .child("users")
+                    .child(userM.getUserId())
+                    .child("fcmToken")
+                    .setValue(userM.getFcmToken());
+        }
+        alertDialog.dismiss();
+        progressDialog.dismiss();
+        Toast.makeText(mContext, "Group created success fully",
+                Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume");
         super.onResume();
     }
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause");
         super.onPause();
     }
 
     @Override
     protected void onStart() {
+        Log.d(TAG, "onStart");
         super.onStart();
-        ConstantM.setOnlineStatus(true);
-        ConstantM.setLastSeen(new Date().getTime());
-        initData();
     }
 
     @Override
     protected void onStop() {
+        Log.d(TAG, "onStop");
         super.onStop();
-        if (childEventListener != null) {
-            Support.getUserReference().removeEventListener(childEventListener);
-        }
     }
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
         ConstantM.setOnlineStatus(false);
         ConstantM.setLastSeen(new Date().getTime());
+    }
+
+    @Override
+    public void onUserClick(int position) {
+        Intent intent = new Intent(activity, ChatActivity.class);
+        intent.putExtra("isFormBar", false);
+        intent.putExtra("data", new Gson().toJson(usersMAdapter.getItem(position)));
+        startActivity(intent);
+    }
+
+    @Override
+    public void onGroupClick(int position) {
+        Intent intent = new Intent(activity, GroupChatActivity.class);
+        intent.putExtra("isFormBar", false);
+        intent.putExtra("data", new Gson().toJson(groupMAdapter.getItem(position)));
+        startActivity(intent);
     }
 }

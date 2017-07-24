@@ -6,6 +6,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.model.UserM;
 
@@ -45,11 +47,35 @@ public class Support extends MultiDexApplication {
     }
 
     public static synchronized DatabaseReference getUserReference() {
-        return getDatabaseInstance().getReference(Config.USER_REF);
+        return getDatabaseInstance().getReference(Config.DATABASE_USER_REF);
     }
 
     public static synchronized DatabaseReference getChatReference() {
-        return getDatabaseInstance().getReference(Config.CHAT_REF);
+        return getDatabaseInstance().getReference(Config.DATABASE_CHAT_REF);
+    }
+
+    public static synchronized DatabaseReference getGroupReference() {
+        return getDatabaseInstance().getReference(Config.DATABASE_GROUP_REF);
+    }
+
+    public static synchronized FirebaseStorage getStorageInstance(){
+        return FirebaseStorage.getInstance();
+    }
+
+    public static synchronized StorageReference getChatImageReference(){
+        return getStorageInstance().getReference(Config.STORAGE_CHAT_IMAGE_REF);
+    }
+
+    public static synchronized StorageReference getChatFileReference(){
+        return getStorageInstance().getReference().child(Config.STORAGE_CHAT_FILE_REF);
+    }
+
+    public static synchronized StorageReference getChatVideoReference(){
+        return getStorageInstance().getReference().child(Config.STORAGE_CHAT_VIDEO_REF);
+    }
+
+    public static synchronized StorageReference getUserImageReference(){
+        return getStorageInstance().getReference().child(Config.STORAGE_USER_IMAGE_REF);
     }
 
     public static synchronized void setIsChatWindowActive(boolean active) {

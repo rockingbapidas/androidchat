@@ -145,9 +145,13 @@ public class LoginActivity extends AppCompatActivity {
                             progressDialog.dismiss();
                         }
                         if (userM.getUserType().equals(Config._ADMIN)) {
-                            Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
+                            Support.getAuthInstance().signOut();
+                            Toast.makeText(mContext, "User invalid use another account",
+                                    Toast.LENGTH_SHORT).show();
+
+                            /*Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
                             startActivity(intent);
-                            finish();
+                            finish();*/
                         } else {
                             Intent intent = new Intent(LoginActivity.this, UserActivity.class);
                             startActivity(intent);
@@ -189,7 +193,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 
     @Override
@@ -201,7 +204,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         if (valueEventListener != null) {
-            Support.getUserReference().child(Support.getUserInstance().getUid())
+            Support.getUserReference()
+                    .child(Support.getUserInstance().getUid())
                     .removeEventListener(valueEventListener);
         }
     }

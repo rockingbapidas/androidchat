@@ -5,6 +5,14 @@
     <item
         android:id="@+id/action_logout"
         android:orderInCategory="100"
+        android:icon="@drawable/ic_settings_power_black_24dp"
         android:title="@string/action_logout"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_group"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_group_black_24dp"
+        android:title="@string/action_group"
+        app:showAsAction="ifRoom" />
 </menu>

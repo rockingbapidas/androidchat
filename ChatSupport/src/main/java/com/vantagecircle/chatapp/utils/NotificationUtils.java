@@ -13,15 +13,20 @@ import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.activity.ChatActivity;
+import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.model.UserM;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 /**
  * Created by bapidas on 12/07/17.
@@ -51,7 +56,22 @@ public class NotificationUtils {
                 System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setContentTitle(jsonObject.getString("title"));
-        mBuilder.setContentText(jsonObject.getString("text"));
+
+        if(jsonObject.getString("type").equals(Config.TEXT_TYPE)){
+            mBuilder.setContentText(jsonObject.getString("text"));
+        } else {
+            String imageUrl = jsonObject.getString("fileUri");
+            Log.d(TAG, "Image Url:" + imageUrl);
+            Bitmap bitmap = null;
+            try {
+                if (imageUrl != null && !imageUrl.isEmpty())
+                    bitmap = Picasso.with(Support.getInstance()).load(imageUrl).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mBuilder.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bitmap));
+        }
+
         showNotification();
     }
 

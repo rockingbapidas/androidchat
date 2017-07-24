@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.activity;
+package com.vantagecircle.chatapp.other;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -26,8 +26,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.adapter.ClickListener;
-import com.vantagecircle.chatapp.adapter.UsersAdapter;
+import com.vantagecircle.chatapp.activity.ChatActivity;
+import com.vantagecircle.chatapp.activity.LoginActivity;
 import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.UserM;
@@ -40,7 +40,7 @@ import java.util.Date;
  * Created by bapidas on 13/07/17.
  */
 
-public class AdminActivity extends AppCompatActivity implements ClickListener {
+public class AdminActivity extends AppCompatActivity {
     private static final String TAG = AdminActivity.class.getSimpleName();
     Activity activity;
     Context mContext;
@@ -50,7 +50,7 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
     LinearLayoutManager linearLayoutManager;
     LinearLayout data_layout, no_data_layout;
     ArrayList<UserM> userMs = null;
-    UsersAdapter usersAdapter;
+    //UsersAdapter usersAdapter;
     ProgressDialog progressDialog;
     Button btnTry;
     ChildEventListener childEventListener;
@@ -65,7 +65,6 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
         initView();
         initRecycler();
         initListener();
-        /*initData();*/
     }
 
     private void initToolbar() {
@@ -111,26 +110,18 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.e(TAG, "onChildAdded ");
-
                 UserM userM = dataSnapshot.getValue(UserM.class);
-
                 if (userM != null && userM.getUserType().equals(Config._USER)) {
+                    if (userMs == null || userMs.size() == 0) {
+                        userMs = new ArrayList<>();
+                        userMs.add(userM);
+                        setupData();
 
-                    if (userM.getLastMessage() != null
-                            && !userM.getLastMessage().equals("")
-                            && userM.getLastMessage().length() > 0) {
-
-                        if (userMs == null || userMs.size() == 0) {
-                            userMs = new ArrayList<>();
-                            userMs.add(userM);
-                            setupData();
-
-                        } else {
-                            for (int i = 0; i < userMs.size(); i++){
-                                if(!userMs.get(i).getUserId().equals(userM.getUserId())){
-                                    userMs.add(userM);
-                                    usersAdapter.notifyItemInserted(userMs.size());
-                                }
+                    } else {
+                        for (int i = 0; i < userMs.size(); i++){
+                            if(!userMs.get(i).getUserId().equals(userM.getUserId())){
+                                userMs.add(userM);
+                                //usersAdapter.notifyItemInserted(userMs.size());
                             }
                         }
                     }
@@ -140,23 +131,15 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Log.e(TAG, "onChildChanged ");
-
                 UserM userM = dataSnapshot.getValue(UserM.class);
-
                 if (userM != null && userM.getUserType().equals(Config._USER)) {
-
-                    if (userM.getLastMessage() != null
-                            && !userM.getLastMessage().equals("")
-                            && userM.getLastMessage().length() > 0) {
-
-                        if (userMs != null && userMs.size() > 0) {
-                            for (int i = 0; i < userMs.size(); i++){
-                                if(!userMs.get(i).getUserId().equals(userM.getUserId())){
-                                    userMs.add(userM);
-                                    usersAdapter.notifyItemInserted(userMs.size());
-                                } else {
-                                    usersAdapter.updateLastMessage(i, userM.getLastMessage());
-                                }
+                    if (userMs != null && userMs.size() > 0) {
+                        for (int i = 0; i < userMs.size(); i++){
+                            if(!userMs.get(i).getUserId().equals(userM.getUserId())){
+                                userMs.add(userM);
+                                //usersAdapter.notifyItemInserted(userMs.size());
+                            } else {
+                                //usersAdapter.updateLastMessage(i, userM.getLastMessage());
                             }
                         }
                     }
@@ -186,8 +169,8 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
             no_data_layout.setVisibility(View.GONE);
             data_layout.setVisibility(View.VISIBLE);
 
-            usersAdapter = new UsersAdapter(mContext, userMs, this);
-            recyclerView.setAdapter(usersAdapter);
+            //usersAdapter = new UsersAdapter(mContext, userMs, this);
+            //recyclerView.setAdapter(usersAdapter);
         } else {
             no_data_layout.setVisibility(View.VISIBLE);
             data_layout.setVisibility(View.GONE);
@@ -198,14 +181,6 @@ public class AdminActivity extends AppCompatActivity implements ClickListener {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home_menu, menu);
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public void onItemClick(int position) {
-        UserM userM = userMs.get(position);
-        Intent intent = new Intent(activity, ChatActivity.class);
-        intent.putExtra("data", new Gson().toJson(userM));
-        startActivity(intent);
     }
 
     @Override

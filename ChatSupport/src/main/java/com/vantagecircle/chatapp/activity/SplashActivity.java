@@ -14,6 +14,7 @@ import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.model.UserM;
+import com.vantagecircle.chatapp.other.AdminActivity;
 
 /**
  * Created by bapidas on 10/07/17.
@@ -43,18 +44,12 @@ public class SplashActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Log.e(TAG, "onDataChange ");
                     UserM userM = dataSnapshot.getValue(UserM.class);
-                    if (userM != null) {
+                    if (userM != null ) {
                         Support.id = Support.getUserInstance().getUid();
                         Support.userM = userM;
-                        if (userM.getUserType().equals(Config._ADMIN)) {
-                            Intent intent = new Intent(SplashActivity.this, AdminActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Intent intent = new Intent(SplashActivity.this, UserActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
+                        Intent intent = new Intent(SplashActivity.this, UserActivity.class);
+                        startActivity(intent);
+                        finish();
                     } else {
                         //logout from firebase and try again
                         Support.getAuthInstance().signOut();
@@ -97,14 +92,14 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         if (valueEventListener != null) {
-            Support.getUserReference().child(Support.getUserInstance().getUid())
+            Support.getUserReference()
+                    .child(Support.getUserInstance().getUid())
                     .removeEventListener(valueEventListener);
         }
     }

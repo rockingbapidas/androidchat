@@ -4,14 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="horizontal"
-    android:padding="5dp">
+    android:orientation="horizontal">
 
     <com.balysv.materialripple.MaterialRippleLayout
         style="@style/RippleStyle.Light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="6dp">
+        android:padding="8dp">
 
         <LinearLayout
             android:id="@+id/sub_holder"
@@ -74,7 +73,7 @@
                     android:maxLines="1"
                     android:visibility="visible"
                     android:text="Hii dere"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorLightBlue"
                     android:textSize="14sp"
                     app:fontFamily="roboto"
                     app:typeface="roboto_condensed_regular" />

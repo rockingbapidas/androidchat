@@ -12,14 +12,18 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.squareup.picasso.Picasso;
+import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 
 import org.json.JSONArray;
@@ -94,5 +98,24 @@ public class Tools {
             InputMethodManager imm = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    public static void loadPicasso(Context context, ImageView file_img, String path) {
+        Picasso.with(context)
+                .load(path)
+                .error(ContextCompat.getDrawable(context, R.drawable.ic_warning_black_24dp))
+                .placeholder(ContextCompat.getDrawable(context, R.drawable.ic_insert_photo_black_24dp))
+                .into(file_img);
+    }
+
+    public static boolean isHasPermissions(Context context, String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

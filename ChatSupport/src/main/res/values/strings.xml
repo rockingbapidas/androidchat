@@ -14,4 +14,8 @@
     <string name="just_now">Just now</string>
     <string name="dummy_text">Hello u Dere????</string>
     <string name="dummy_name">Bapi</string>
+    <string name="action_attach">Attach</string>
+    <string name="action_group">Create Group</string>
+    <string name="group_name">Group Name</string>
+    <string name="groups">Groups</string>
 </resources>

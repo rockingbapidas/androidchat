@@ -9,12 +9,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.utils.SharedPrefM;
-import com.vantagecircle.chatapp.utils.Tools;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * Created by bapidas on 10/07/17.
@@ -78,32 +74,44 @@ public class ConstantM {
                 });
     }
 
-    public static void setLastMessage(String message) {
-        try {
-            if (Support.getUserInstance() != null) {
-                HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put(Config.LAST_MESSAGE, message);
-                Support.getUserReference().child(Support.getUserInstance()
-                        .getUid())
-                        .updateChildren(hashMap)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Log.d(TAG, "Last Message updated successfully");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "Last Message updated error " + e.getMessage());
-                            }
-                        });
-            } else {
-                Log.d(TAG, "Firebase user is null");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void updateReadStatus(String room, long timeStamp) {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put(Config.READ_STATUS, true);
+        Support.getChatReference().child(room)
+                .child(String.valueOf(timeStamp))
+                .updateChildren(hashMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d(TAG, "Read status updated successfully");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Read status updated error " + e.getMessage());
+                    }
+                });
+    }
+
+    public static void updateFileUrl(String room, long timeStamp, String url) {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put(Config.FILE_URL, url);
+        Support.getChatReference().child(room)
+                .child(String.valueOf(timeStamp))
+                .updateChildren(hashMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d(TAG, "File uri updated successfully");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "File uri updated error " + e.getMessage());
+                    }
+                });
     }
 
     public static void setLastSeen(long timeStamp) {

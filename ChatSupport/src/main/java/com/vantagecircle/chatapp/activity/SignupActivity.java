@@ -24,6 +24,7 @@ import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.model.UserM;
+import com.vantagecircle.chatapp.other.AdminActivity;
 import com.vantagecircle.chatapp.utils.SharedPrefM;
 import com.vantagecircle.chatapp.utils.Tools;
 
@@ -136,7 +137,6 @@ public class SignupActivity extends AppCompatActivity {
                 new SharedPrefM(Support.getInstance()).saveString(Config.FIREBASE_TOKEN, fcmToken);
             }
             userM.setFcmToken(fcmToken);
-            userM.setLastMessage("");
             userM.setLastSeenTime(System.currentTimeMillis());
             userM.setNotificationCount(0);
             userM.setOnline(true);
@@ -150,9 +150,7 @@ public class SignupActivity extends AppCompatActivity {
     private void addUserData(final UserM userM){
         try {
             progressDialog.setMessage("Creating account and store data");
-            Support.getUserReference()
-                    .child(userM.getUserId())
-                    .setValue(userM)
+            Support.getUserReference().child(userM.getUserId()).setValue(userM)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {

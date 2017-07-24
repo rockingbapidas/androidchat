@@ -1,15 +1,16 @@
 package com.vantagecircle.chatapp.model;
 
+import java.io.Serializable;
+
 /**
  * Created by bapidas on 11/07/17.
  */
 
-public class UserM {
+public class UserM implements Serializable{
     private String userId;
     private String username;
     private String fullName;
     private String fcmToken;
-    private String lastMessage;
     private int notificationCount;
     private boolean isOnline;
     private long lastSeenTime;
@@ -47,14 +48,6 @@ public class UserM {
         this.fcmToken = fcmToken;
     }
 
-    public String getLastMessage() {
-        return lastMessage;
-    }
-
-    public void setLastMessage(String lastMessage) {
-        this.lastMessage = lastMessage;
-    }
-
     public int getNotificationCount() {
         return notificationCount;
     }
@@ -85,5 +78,19 @@ public class UserM {
 
     public void setUserType(String userType) {
         this.userType = userType;
+    }
+
+    @Override
+    public String toString() {
+        return "UserM{" +
+                "userId='" + userId + '\'' +
+                ", username='" + username + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", fcmToken='" + fcmToken + '\'' +
+                ", notificationCount=" + notificationCount +
+                ", isOnline=" + isOnline +
+                ", lastSeenTime=" + lastSeenTime +
+                ", userType='" + userType + '\'' +
+                '}';
     }
 }

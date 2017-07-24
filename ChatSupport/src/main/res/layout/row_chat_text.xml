@@ -38,6 +38,7 @@
                 app:fontFamily="roboto"
                 app:typeface="roboto_regular" />
 
+
             <com.vantagecircle.chatapp.widget.roboto.RobotoTextView
                 android:id="@+id/text_content"
                 style="@style/profileSubheader"

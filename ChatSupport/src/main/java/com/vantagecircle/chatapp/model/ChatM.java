@@ -11,21 +11,29 @@ public class ChatM implements Serializable {
     private String receiverName;
     private String senderUid;
     private String receiverUid;
+    private String chatType;
     private String messageText;
+    private String fileUrl;
     private long timeStamp;
     private boolean isSentSuccessfully;
+    private boolean isReadSuccessfully;
 
     public ChatM() {
     }
 
-    public ChatM(String senderName, String receiverName, String senderUid,
-                 String receiverUid, String messageText, long timeStamp) {
+    public ChatM(String senderName, String receiverName, String senderUid, String receiverUid,
+                 String chatType, String messageText, String fileUrl, long timeStamp,
+                 boolean isSentSuccessfully, boolean isReadSuccessfully) {
         this.senderName = senderName;
         this.receiverName = receiverName;
         this.senderUid = senderUid;
         this.receiverUid = receiverUid;
+        this.chatType = chatType;
         this.messageText = messageText;
+        this.fileUrl = fileUrl;
         this.timeStamp = timeStamp;
+        this.isSentSuccessfully = isSentSuccessfully;
+        this.isReadSuccessfully = isReadSuccessfully;
     }
 
     public String getSenderName() {
@@ -60,8 +68,24 @@ public class ChatM implements Serializable {
         this.receiverUid = receiverUid;
     }
 
+    public String getChatType() {
+        return chatType;
+    }
+
+    public void setChatType(String chatType) {
+        this.chatType = chatType;
+    }
+
     public String getMessageText() {
         return messageText;
+    }
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
     }
 
     public void setMessageText(String messageText) {
@@ -84,6 +108,14 @@ public class ChatM implements Serializable {
         isSentSuccessfully = sentSuccessfully;
     }
 
+    public boolean isReadSuccessfully() {
+        return isReadSuccessfully;
+    }
+
+    public void setReadSuccessfully(boolean read) {
+        isReadSuccessfully = read;
+    }
+
     @Override
     public String toString() {
         return "ChatM{" +
@@ -91,8 +123,12 @@ public class ChatM implements Serializable {
                 ", receiverName='" + receiverName + '\'' +
                 ", senderUid='" + senderUid + '\'' +
                 ", receiverUid='" + receiverUid + '\'' +
+                ", chatType='" + chatType + '\'' +
                 ", messageText='" + messageText + '\'' +
+                ", fileUrl='" + fileUrl + '\'' +
                 ", timeStamp=" + timeStamp +
+                ", isSentSuccessfully=" + isSentSuccessfully +
+                ", isReadSuccessfully=" + isReadSuccessfully +
                 '}';
     }
 }
