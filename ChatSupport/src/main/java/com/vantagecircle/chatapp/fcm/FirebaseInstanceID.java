@@ -43,7 +43,6 @@ public class FirebaseInstanceID extends FirebaseInstanceIdService {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.d(TAG, "Firebase Token updated error " + e.getMessage());
-                            //Do error handling for updating token
                         }
                     });
         } else {

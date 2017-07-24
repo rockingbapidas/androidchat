@@ -341,7 +341,8 @@ public class ChatActivity extends AppCompatActivity {
                             mActionBar.setSubtitle("Online");
                             Log.e(TAG, "User Online");
                         } else {
-                            mActionBar.setSubtitle("Last seen on " + DateUtils.getTime(model.getLastSeenTime()));
+                            mActionBar.setSubtitle("Last seen on " +
+                                    DateUtils.getTime(model.getLastSeenTime()));
                             Log.e(TAG, "User Offline");
                         }
                     }

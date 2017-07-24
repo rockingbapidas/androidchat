@@ -234,7 +234,7 @@ public class GroupChatActivity extends AppCompatActivity {
                             Log.e(TAG, "onComplete ");
                             if (task.isSuccessful()) {
                                 et_message.setText("");
-                                if(chatMAdapter != null){
+                                if (chatMAdapter != null) {
                                     recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount());
                                 }
                                 sendPushNotification(chatM, room);
@@ -281,7 +281,7 @@ public class GroupChatActivity extends AppCompatActivity {
         }
     }
 
-    private void getTokens(){
+    private void getTokens() {
         tokens = new ArrayList<>();
         tokenEventListener = new ChildEventListener() {
             @Override

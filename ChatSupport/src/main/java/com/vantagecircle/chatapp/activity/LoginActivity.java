@@ -148,10 +148,6 @@ public class LoginActivity extends AppCompatActivity {
                             Support.getAuthInstance().signOut();
                             Toast.makeText(mContext, "User invalid use another account",
                                     Toast.LENGTH_SHORT).show();
-
-                            /*Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
-                            startActivity(intent);
-                            finish();*/
                         } else {
                             Intent intent = new Intent(LoginActivity.this, UserActivity.class);
                             startActivity(intent);
