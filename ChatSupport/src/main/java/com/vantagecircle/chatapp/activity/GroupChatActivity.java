@@ -31,10 +31,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
@@ -52,6 +55,7 @@ import com.vantagecircle.chatapp.services.SendNotification;
 import com.vantagecircle.chatapp.utils.Tools;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -86,7 +90,7 @@ public class GroupChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         groupM = new Gson().fromJson(getIntent().getStringExtra("data"), GroupM.class);
         room = groupM.getId() + "_" + groupM.getName();
-        getTokens();
+
         if (getIntent().getBooleanExtra("isFromBar", false)) {
             ConstantM.setOnlineStatus(true);
             ConstantM.setLastSeen(new Date().getTime());
@@ -305,8 +309,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
             }
         };
-        Support.getGroupReference().child(groupM.getId())
-                .child("users")
+        Support.getGroupReference().child(groupM.getId()).child("users")
                 .addChildEventListener(tokenEventListener);
     }
 

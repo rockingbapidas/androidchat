@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
@@ -58,8 +59,6 @@ public class UserActivity extends AppCompatActivity implements UsersMAdapter.Use
     UsersMAdapter usersMAdapter;
     GroupMAdapter groupMAdapter;
     ProgressDialog progressDialog;
-    ValueEventListener lastMessageEvent;
-    ChildEventListener lastMessageChild;
     AlertDialog alertDialog;
 
     @Override
@@ -107,90 +106,14 @@ public class UserActivity extends AppCompatActivity implements UsersMAdapter.Use
         recyclerView1.addItemDecoration(new DividerItemDecoration(ContextCompat
                 .getDrawable(mContext, R.drawable.divider)));
 
-        usersMAdapter = new UsersMAdapter(Support.getUserReference().equalTo(Support.id), this);
+        Query myQuery =  Support.getUserReference();
+
+        usersMAdapter = new UsersMAdapter(myQuery, this);
         recyclerView.setAdapter(usersMAdapter);
 
-        groupMAdapter = new GroupMAdapter(Support.getGroupReference(), this);
+        Query myQuery1 =  Support.getGroupReference();
+        groupMAdapter = new GroupMAdapter(myQuery1, this);
         recyclerView1.setAdapter(groupMAdapter);
-    }
-
-    private void getLastMessage(UserM userM) {
-        try {
-            final String room_type_1 = userM.getUserId() + "_" + Support.id;
-            final String room_type_2 = Support.id + "_" + userM.getUserId();
-            lastMessageEvent = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.hasChild(room_type_1)) {
-                        lastMessageChild = new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                Log.e(TAG, "onChildAdded ");
-                            }
-
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                                Log.e(TAG, "onChildChanged ");
-                            }
-
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                                Log.e(TAG, "onChildRemoved ");
-                            }
-
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                                Log.e(TAG, "onChildMoved ");
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.e(TAG, "onCancelled " + databaseError.getMessage());
-                            }
-                        };
-                        Support.getChatReference().child(room_type_1).addChildEventListener(lastMessageChild);
-                    } else if (dataSnapshot.hasChild(room_type_2)) {
-                        lastMessageChild = new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                Log.e(TAG, "onChildAdded ");
-                            }
-
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                                Log.e(TAG, "onChildChanged ");
-                            }
-
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                                Log.e(TAG, "onChildRemoved ");
-                            }
-
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                                Log.e(TAG, "onChildMoved ");
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.e(TAG, "onCancelled " + databaseError.getMessage());
-                            }
-                        };
-                        Support.getChatReference().child(room_type_2).addChildEventListener(lastMessageChild);
-                    } else {
-                        Log.e(TAG, "last message not available");
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.e(TAG, "onCancelled Database error " + databaseError.getMessage());
-                }
-            };
-            Support.getChatReference().addListenerForSingleValueEvent(lastMessageEvent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

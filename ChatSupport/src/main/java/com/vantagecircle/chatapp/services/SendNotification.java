@@ -43,10 +43,10 @@ public class SendNotification {
     private static final String AUTHORIZATION = "Authorization";
     private static final String AUTH_KEY = "key=" + SERVER_API_KEY;
     private static final String FCM_USER_URL = "https://fcm.googleapis.com/fcm/send";
+    private static final String FCM_GROUP_URL = "https://gcm-http.googleapis.com/gcm/send";
 
     //Json keys from fcm data
     private static final String KEY_TO = "to";
-    private static final String KEY_TO_GROUP = "registration_ids";
     private static final String KEY_DATA = "data";
 
     private static final String KEY_TITLE = "title";
@@ -56,10 +56,6 @@ public class SendNotification {
     private static final String KEY_USERNAME = "senderUsername";
     private static final String KEY_UID = "senderUid";
     private static final String KEY_FCM_TOKEN = "senderToken";
-
-    private static final String FCM_GROUP_URL = "https://android.googleapis.com/gcm/googlenotification";
-    private static final String PROJECT_ID = "project_id";
-    private static final String PROJECT_ID_KEY = "802502493661";
 
     //Notification model
     private NotificationM notificationM;
@@ -106,7 +102,6 @@ public class SendNotification {
             RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON,
                     getGroupObject().toString());
             Request request = new Request.Builder()
-                    .addHeader(PROJECT_ID, PROJECT_ID_KEY)
                     .addHeader(ACCEPT, APPLICATION_JSON)
                     .addHeader(AUTHORIZATION, AUTH_KEY)
                     .addHeader(CONTENT_TYPE, APPLICATION_JSON)
@@ -155,15 +150,9 @@ public class SendNotification {
         return parentBody;
     }
 
-    private JSONObject getGroupObject() throws JSONException, IOException, GoogleAuthException {
+    private JSONObject getGroupObject() throws JSONException {
         JSONObject parentBody = new JSONObject();
-
-        parentBody.put("operation", "create");
-        parentBody.put("notification_key_name", Support.userM.getUsername());
-        String json = new Gson().toJson(notificationM.getTokenList());
-        JSONArray jsonArray = new JSONArray(json);
-        parentBody.put(KEY_TO_GROUP, jsonArray);
-        parentBody.put("id_token", "");
+        parentBody.put(KEY_TO, notificationM.getReceiverFcmToken());
 
         JSONObject childData = new JSONObject();
         childData.put(KEY_TITLE, notificationM.getTitle());

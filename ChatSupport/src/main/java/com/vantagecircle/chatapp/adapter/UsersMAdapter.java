@@ -1,16 +1,21 @@
 package com.vantagecircle.chatapp.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.model.UserM;
+
+import java.util.List;
 
 /**
  * Created by bapidas on 21/07/17.
@@ -30,15 +35,17 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
     }
 
     @Override
-    public DatabaseReference getRef(int position) {
-        return super.getRef(position);
+    protected UserM parseSnapshot(DataSnapshot snapshot) {
+        UserM userM = snapshot.getValue(UserM.class);
+        if(!Support.id.equals(userM.getUserId())){
+            return super.parseSnapshot(snapshot);
+        }
+        return null;
     }
 
     @Override
     protected void populateViewHolder(UsersMViewHolder viewHolder, UserM model, int position) {
-        if(!Support.id.equals(model.getUserId())){
-            viewHolder.setViewHolder(model, clickUser);
-        }
+        viewHolder.setViewHolder(model, clickUser);
     }
 
     public static class UsersMViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -56,15 +63,22 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
         }
 
         void setViewHolder(UserM userM, ClickUser clickUser){
-            this.clickUser = clickUser;
-            user_name.setText(userM.getFullName());
-            email_id.setText(userM.getUsername());
-            if(userM.getNotificationCount() != 0) {
-                last_message.setVisibility(View.VISIBLE);
-                String count = String.valueOf(userM.getNotificationCount()) + " New Message";
-                last_message.setText(count);
+            if(userM != null){
+                sub_holder.setVisibility(View.VISIBLE);
+                itemView.setVisibility(View.VISIBLE);
+                this.clickUser = clickUser;
+                user_name.setText(userM.getFullName());
+                email_id.setText(userM.getUsername());
+                if(userM.getNotificationCount() != 0) {
+                    last_message.setVisibility(View.VISIBLE);
+                    String count = String.valueOf(userM.getNotificationCount()) + " New Message";
+                    last_message.setText(count);
+                } else {
+                    last_message.setVisibility(View.GONE);
+                }
             } else {
-                last_message.setVisibility(View.GONE);
+                sub_holder.setVisibility(View.GONE);
+                itemView.setVisibility(View.GONE);
             }
         }
 

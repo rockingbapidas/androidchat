@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.vantagecircle.chatapp.R;
@@ -24,21 +25,22 @@ public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMAdapter
         this.clickGroup = clickGroup;
     }
 
+    @Override
+    protected GroupM parseSnapshot(DataSnapshot snapshot) {
+        if(snapshot.child("users").hasChild(Support.id)){
+            return super.parseSnapshot(snapshot);
+        }
+        return null;
+    }
+
     public GroupMAdapter(Query ref, GroupMViewHolder.ClickGroup clickGroup) {
         super(GroupM.class, R.layout.row_users, GroupMViewHolder.class, ref);
         this.clickGroup = clickGroup;
     }
 
     @Override
-    public DatabaseReference getRef(int position) {
-        return super.getRef(position);
-    }
-
-    @Override
     protected void populateViewHolder(GroupMViewHolder viewHolder, GroupM model, int position) {
-        if(Support.getGroupReference().child(model.getId()).child("users").child(Support.id).getKey() != null){
-            viewHolder.setHolderData(model, clickGroup);
-        }
+        viewHolder.setHolderData(model, clickGroup);
     }
 
     public static class GroupMViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -58,10 +60,17 @@ public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMAdapter
         }
 
         void setHolderData(GroupM groupM, ClickGroup clickGroup){
-            this.clickGroup = clickGroup;
-            user_name.setText(groupM.getName());
-            email_id.setVisibility(View.GONE);
-            last_message.setVisibility(View.GONE);
+            if(groupM != null){
+                sub_holder.setVisibility(View.VISIBLE);
+                itemView.setVisibility(View.VISIBLE);
+                this.clickGroup = clickGroup;
+                user_name.setText(groupM.getName());
+                email_id.setVisibility(View.GONE);
+                last_message.setVisibility(View.GONE);
+            } else {
+                sub_holder.setVisibility(View.GONE);
+                itemView.setVisibility(View.GONE);
+            }
         }
 
         @Override
