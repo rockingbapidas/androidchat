@@ -41,6 +41,7 @@ import com.vantagecircle.chatapp.adapter.UsersMAdapter;
 import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
+import com.vantagecircle.chatapp.services.SendNotification;
 import com.vantagecircle.chatapp.widget.customview.DividerItemDecoration;
 
 import java.util.Date;
@@ -154,11 +155,14 @@ public class UserActivity extends AppCompatActivity implements UsersMAdapter.Use
                     progressDialog = new ProgressDialog(activity);
                     progressDialog.setMessage("Please Wait");
                     progressDialog.show();
+
                     final String id = Support.getGroupReference().push().getKey();
-                    String name = editText.getText().toString();
+                    final String name = editText.getText().toString();
+
                     GroupM groupM = new GroupM();
                     groupM.setId(id);
                     groupM.setName(name);
+
                     Support.getGroupReference().child(id).setValue(groupM)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -167,6 +171,8 @@ public class UserActivity extends AppCompatActivity implements UsersMAdapter.Use
                                     progressDialog.dismiss();
                                     if (task.isSuccessful()) {
                                         addUsersToGroup(id);
+                                        final String roomName = id + "_" + name;
+                                        subscribeGroup(roomName);
                                     }
                                 }
                             })
@@ -201,8 +207,15 @@ public class UserActivity extends AppCompatActivity implements UsersMAdapter.Use
         }
         alertDialog.dismiss();
         progressDialog.dismiss();
-        Toast.makeText(mContext, "Group created success fully",
+        Toast.makeText(mContext, "Group created successfully",
                 Toast.LENGTH_SHORT).show();
+    }
+
+    private void subscribeGroup(String room){
+        for (int i = 0; i < usersMAdapter.getItemCount(); i++) {
+            UserM userM = usersMAdapter.getItem(i);
+            SendNotification.subscribeToken(userM.getFcmToken(), room);
+        }
     }
 
     @Override

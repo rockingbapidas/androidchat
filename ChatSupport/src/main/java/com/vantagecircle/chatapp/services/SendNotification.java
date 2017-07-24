@@ -42,8 +42,11 @@ public class SendNotification {
     private static final String APPLICATION_JSON = "application/json";
     private static final String AUTHORIZATION = "Authorization";
     private static final String AUTH_KEY = "key=" + SERVER_API_KEY;
+
     private static final String FCM_USER_URL = "https://fcm.googleapis.com/fcm/send";
     private static final String FCM_GROUP_URL = "https://gcm-http.googleapis.com/gcm/send";
+    private static final String TOPIC_SUBSCRIBE_URL1 = "https://iid.googleapis.com/iid/v1/";
+    private static final String TOPIC_SUBSCRIBE_URL2 = "/rel/topics/";
 
     //Json keys from fcm data
     private static final String KEY_TO = "to";
@@ -63,6 +66,35 @@ public class SendNotification {
 
     public SendNotification(NotificationM notificationM) {
         this.notificationM = notificationM;
+    }
+
+    public static void subscribeToken(String token, String groupName){
+        try {
+            String url = TOPIC_SUBSCRIBE_URL1 + token + TOPIC_SUBSCRIBE_URL2 + groupName;
+            Log.e(TAG, url);
+            RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, "");
+            Request request = new Request.Builder()
+                    .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                    .addHeader(AUTHORIZATION, AUTH_KEY)
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+            Call call = new OkHttpClient().newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e(TAG, "onFailure: " + e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    Log.e(TAG, "onResponse body: " + response.body().string());
+                    Log.e(TAG, "onResponse code: " + response.code());
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendForSingle() {
@@ -119,12 +151,10 @@ public class SendNotification {
                 public void onResponse(Call call, Response response) throws IOException {
                     Log.e(TAG, "onResponse body: " + response.body().string());
                     Log.e(TAG, "onResponse code: " + response.code());
-                    /*if (response.code() == 200) {
+                    if (response.code() == 200) {
                         ConstantM.updateSentStatus(notificationM.getChatRoom(),
                                 notificationM.getTimeStamp());
-                    }*/
-                    ConstantM.updateSentStatus(notificationM.getChatRoom(),
-                            notificationM.getTimeStamp());
+                    }
                 }
             });
         } catch (Exception e) {
@@ -152,7 +182,7 @@ public class SendNotification {
 
     private JSONObject getGroupObject() throws JSONException {
         JSONObject parentBody = new JSONObject();
-        parentBody.put(KEY_TO, notificationM.getReceiverFcmToken());
+        parentBody.put(KEY_TO, notificationM.getChatRoom());
 
         JSONObject childData = new JSONObject();
         childData.put(KEY_TITLE, notificationM.getTitle());

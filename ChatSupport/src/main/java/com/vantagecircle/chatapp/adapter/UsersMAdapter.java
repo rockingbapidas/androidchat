@@ -39,16 +39,6 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
     }
 
     @Override
-    protected UserM parseSnapshot(DataSnapshot snapshot) {
-        UserM userM = snapshot.getValue(UserM.class);
-        assert userM != null;
-        if (!Support.id.equals(userM.getUserId())) {
-            return super.parseSnapshot(snapshot);
-        }
-        return null;
-    }
-
-    @Override
     protected void populateViewHolder(UsersMViewHolder viewHolder, UserM model, int position) {
         viewHolder.setViewHolder(model, clickUser);
     }
@@ -68,7 +58,7 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
         }
 
         void setViewHolder(UserM userM, ClickUser clickUser) {
-            if (userM != null) {
+            if (!Support.id.equals(userM.getUserId())) {
                 sub_holder.setVisibility(View.VISIBLE);
                 itemView.setVisibility(View.VISIBLE);
                 this.clickUser = clickUser;
