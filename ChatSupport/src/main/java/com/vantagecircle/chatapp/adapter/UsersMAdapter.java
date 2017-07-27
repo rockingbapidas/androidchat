@@ -16,7 +16,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.core.GetChild;
+import com.vantagecircle.chatapp.core.GetParent;
 import com.vantagecircle.chatapp.data.Config;
+import com.vantagecircle.chatapp.interfacePref.ClickUser;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.UserM;
 
@@ -27,14 +30,14 @@ import java.util.List;
  */
 
 public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.UsersMViewHolder> {
-    private UsersMViewHolder.ClickUser clickUser;
+    private ClickUser clickUser;
 
-    public UsersMAdapter(DatabaseReference ref, UsersMViewHolder.ClickUser clickUser) {
+    public UsersMAdapter(DatabaseReference ref, ClickUser clickUser) {
         super(UserM.class, R.layout.row_users, UsersMViewHolder.class, ref);
         this.clickUser = clickUser;
     }
 
-    public UsersMAdapter(Query ref, UsersMViewHolder.ClickUser clickUser) {
+    public UsersMAdapter(Query ref, ClickUser clickUser) {
         super(UserM.class, R.layout.row_users, UsersMViewHolder.class, ref);
         this.clickUser = clickUser;
     }
@@ -44,7 +47,7 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
         viewHolder.setViewHolder(model, clickUser);
     }
 
-    public static class UsersMViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class UsersMViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView user_name, email_id, last_message;
         private LinearLayout sub_holder, lastImage;
         private ClickUser clickUser;
@@ -74,7 +77,7 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
         void getLastMessage(final UserM userM) {
             final String room_type_1 = Support.id + "_" + userM.getUserId();
             final String room_type_2 = userM.getUserId() + "_" + Support.id;
-            Support.getChatReference().addListenerForSingleValueEvent(new ValueEventListener() {
+            Support.getChatReference().addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(room_type_1)) {
@@ -195,10 +198,6 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
                     clickUser.onUserClick(getAdapterPosition());
                 }
             }
-        }
-
-        public interface ClickUser {
-            void onUserClick(int position);
         }
     }
 }

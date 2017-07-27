@@ -25,7 +25,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         if (Support.getUserInstance() != null) {
-            GetParent getParent = new GetParent() {
+            GetParent getParent = new GetParent(Support.getUserReference().child(Support.getUserInstance().getUid())) {
                 @Override
                 protected void onDataSuccess(DataSnapshot dataSnapshot) {
                     UserM userM = dataSnapshot.getValue(UserM.class);
@@ -56,36 +56,11 @@ public class SplashActivity extends AppCompatActivity {
                     finish();
                 }
             };
-            getParent.addSingleListener(Support.getUserReference().child(Support.getUserInstance().getUid()));
+            getParent.addSingleListener();
         } else {
             Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }

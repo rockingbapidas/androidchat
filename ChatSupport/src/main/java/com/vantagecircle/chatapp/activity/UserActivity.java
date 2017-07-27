@@ -40,6 +40,8 @@ import com.vantagecircle.chatapp.adapter.GroupMAdapter;
 import com.vantagecircle.chatapp.adapter.UsersMAdapter;
 import com.vantagecircle.chatapp.core.DataClass;
 import com.vantagecircle.chatapp.data.ConstantM;
+import com.vantagecircle.chatapp.interfacePref.ClickGroup;
+import com.vantagecircle.chatapp.interfacePref.ClickUser;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.services.SendNotification;
@@ -47,7 +49,7 @@ import com.vantagecircle.chatapp.widget.customview.DividerItemDecoration;
 
 import java.util.Date;
 
-public class UserActivity extends AppCompatActivity implements UsersMAdapter.UsersMViewHolder.ClickUser, GroupMAdapter.GroupMViewHolder.ClickGroup {
+public class UserActivity extends AppCompatActivity implements ClickUser, ClickGroup {
     private static final String TAG = UserActivity.class.getSimpleName();
     private Activity activity;
     private Context mContext;

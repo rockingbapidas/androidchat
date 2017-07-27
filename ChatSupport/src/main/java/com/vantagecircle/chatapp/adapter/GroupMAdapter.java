@@ -16,6 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.data.Config;
+import com.vantagecircle.chatapp.interfacePref.ClickGroup;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
@@ -25,14 +26,14 @@ import com.vantagecircle.chatapp.model.UserM;
  */
 
 public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMAdapter.GroupMViewHolder> {
-    private GroupMViewHolder.ClickGroup clickGroup;
+    private ClickGroup clickGroup;
 
-    public GroupMAdapter(DatabaseReference ref, GroupMViewHolder.ClickGroup clickGroup) {
+    public GroupMAdapter(DatabaseReference ref, ClickGroup clickGroup) {
         super(GroupM.class, R.layout.row_users, GroupMViewHolder.class, ref);
         this.clickGroup = clickGroup;
     }
 
-    public GroupMAdapter(Query ref, GroupMViewHolder.ClickGroup clickGroup) {
+    public GroupMAdapter(Query ref, ClickGroup clickGroup) {
         super(GroupM.class, R.layout.row_users, GroupMViewHolder.class, ref);
         this.clickGroup = clickGroup;
     }
@@ -50,7 +51,7 @@ public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMAdapter
         viewHolder.setHolderData(model, clickGroup);
     }
 
-    public static class GroupMViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class GroupMViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView user_name;
         private TextView email_id;
         private TextView last_message;
@@ -82,7 +83,7 @@ public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMAdapter
 
         void getLastMessage(final GroupM groupM) {
             final String room = groupM.getId() + "_" + groupM.getName();
-            Support.getChatReference().addListenerForSingleValueEvent(new ValueEventListener() {
+            Support.getChatReference().addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(room)) {
@@ -153,10 +154,6 @@ public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMAdapter
                     clickGroup.onGroupClick(getAdapterPosition());
                 }
             }
-        }
-
-        public interface ClickGroup{
-            void onGroupClick(int position);
         }
     }
 }

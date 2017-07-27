@@ -66,18 +66,6 @@ public class Support extends MultiDexApplication {
         return getStorageInstance().getReference(Config.STORAGE_CHAT_IMAGE_REF);
     }
 
-    public static synchronized StorageReference getChatFileReference(){
-        return getStorageInstance().getReference().child(Config.STORAGE_CHAT_FILE_REF);
-    }
-
-    public static synchronized StorageReference getChatVideoReference(){
-        return getStorageInstance().getReference().child(Config.STORAGE_CHAT_VIDEO_REF);
-    }
-
-    public static synchronized StorageReference getUserImageReference(){
-        return getStorageInstance().getReference().child(Config.STORAGE_USER_IMAGE_REF);
-    }
-
     public static synchronized void setIsChatWindowActive(boolean active) {
         isChatWindowActive = active;
     }

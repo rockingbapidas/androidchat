@@ -33,6 +33,10 @@ public class ChatMAdapter extends FirebaseRecyclerAdapter<ChatM, ChatMAdapter.Ch
         super(ChatM.class, 0, ChatMViewHolder.class, ref);
     }
 
+    public ChatMAdapter(Query ref) {
+        super(ChatM.class, 0, ChatMViewHolder.class, ref);
+    }
+
     @Override
     public int getItemViewType(int position) {
         ChatM model = getItem(position);

@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.core.DataClass;
 import com.vantagecircle.chatapp.utils.SharedPrefM;
 
 import java.util.HashMap;
@@ -28,27 +29,21 @@ public class ConstantM {
                 fcmToken = FirebaseInstanceId.getInstance().getToken();
                 new SharedPrefM(Support.getInstance()).saveString(Config.FIREBASE_TOKEN, fcmToken);
             }
-            if (Support.getUserInstance() != null) {
-                HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put(Config.FIREBASE_TOKEN, fcmToken);
-                Support.getUserReference().child(Support.getUserInstance()
-                        .getUid())
-                        .updateChildren(hashMap)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Log.d(TAG, "Firebase Token updated successfully");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "Firebase Token updated error " + e.getMessage());
-                            }
-                        });
-            } else {
-                Log.d(TAG, "Firebase user is null");
-            }
+            DataClass dataClass = new DataClass(Support.getUserReference()
+                    .child(Support.getUserInstance().getUid())) {
+                @Override
+                protected void onSuccess(String t) {
+                    Log.d(TAG, "Firebase Token updated successfully");
+                }
+
+                @Override
+                protected void onFail(String e) {
+                    Log.d(TAG, "Firebase Token updated error " + e);
+                }
+            };
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put(Config.FIREBASE_TOKEN, fcmToken);
+            dataClass.updateData(hashMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
