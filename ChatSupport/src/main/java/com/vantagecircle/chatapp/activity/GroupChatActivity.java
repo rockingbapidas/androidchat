@@ -60,7 +60,7 @@ import java.util.Date;
  * Created by bapidas on 19/07/17.
  */
 
-public class GroupChatActivity extends AppCompatActivity {
+public class GroupChatActivity extends BaseChatActivity {
     private static final String TAG = GroupChatActivity.class.getSimpleName();
     private ActionBar mActionBar;
     private Toolbar mToolbar;
@@ -78,29 +78,24 @@ public class GroupChatActivity extends AppCompatActivity {
     private ArrayList<String> tokens;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int loadView() {
+        return R.layout.activity_chat;
+    }
+
+    @Override
+    protected void initData() {
         mContext = getApplicationContext();
         activity = this;
-        setContentView(R.layout.activity_chat);
-        groupM = new Gson().fromJson(getIntent().getStringExtra("global"), GroupM.class);
+        groupM = new Gson().fromJson(getIntent().getStringExtra("data"), GroupM.class);
         room = groupM.getId() + "_" + groupM.getName();
-
         if (getIntent().getBooleanExtra("isFromBar", false)) {
             UpdateParamsM.setOnlineStatus(true);
             UpdateParamsM.setLastSeen(new Date().getTime());
         }
-
-        initToolbar();
-        initView();
-        initRecycler();
-        initListener();
-
-        tokens = null;
-        getTokens();
     }
 
-    private void initToolbar() {
+    @Override
+    protected void initToolBar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
@@ -109,13 +104,15 @@ public class GroupChatActivity extends AppCompatActivity {
         mActionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_chat);
         et_message = (EditText) findViewById(R.id.et_message);
         btn_send_txt = (ImageButton) findViewById(R.id.btn_send_txt);
     }
 
-    private void initRecycler() {
+    @Override
+    protected void initRecycler() {
         linearLayoutManager = new LinearLayoutManager(mContext);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         linearLayoutManager.setStackFromEnd(true);
@@ -123,12 +120,10 @@ public class GroupChatActivity extends AppCompatActivity {
         recyclerView.scrollToPosition(0);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
-                Support.getChatReference().child(room));
-        recyclerView.setAdapter(chatMAdapter);
     }
 
-    private void initListener() {
+    @Override
+    protected  void initListener() {
         btn_send_txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,6 +134,43 @@ public class GroupChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void getChatHistory(){
+        chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class, Support.getChatReference().child(room));
+        recyclerView.setAdapter(chatMAdapter);
+    }
+
+    private void getTokens() {
+        tokens = new ArrayList<>();
+        GetChild getChild = new GetChild( Support.getGroupReference().child(groupM.getId()).child("users")) {
+            @Override
+            protected void onChildNew(DataSnapshot dataSnapshot, String s) {
+                tokens.add(dataSnapshot.child("fcmToken").getValue().toString());
+            }
+
+            @Override
+            protected void onChildModified(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            protected void onChildDelete(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            protected void onChildRelocate(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            protected void onChildCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        getChild.addChildListener();
     }
 
     private ChatM prepareModelForText() {
@@ -278,37 +310,6 @@ public class GroupChatActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void getTokens() {
-        tokens = new ArrayList<>();
-        GetChild getChild = new GetChild( Support.getGroupReference().child(groupM.getId()).child("users")) {
-            @Override
-            protected void onChildNew(DataSnapshot dataSnapshot, String s) {
-                tokens.add(dataSnapshot.child("fcmToken").getValue().toString());
-            }
-
-            @Override
-            protected void onChildModified(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            protected void onChildDelete(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            protected void onChildRelocate(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            protected void onChildCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        getChild.addChildListener();
     }
 
     @Override
@@ -502,5 +503,13 @@ public class GroupChatActivity extends AppCompatActivity {
         Log.d(TAG, "onPause");
         super.onPause();
         Support.setIsChatWindowActive(false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
+        tokens = null;
+        getTokens();
     }
 }

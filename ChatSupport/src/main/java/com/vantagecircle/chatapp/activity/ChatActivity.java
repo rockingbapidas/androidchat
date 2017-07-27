@@ -59,7 +59,7 @@ import java.util.Date;
  * Created by bapidas on 10/07/17.
  */
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends BaseChatActivity {
     private static final String TAG = ChatActivity.class.getSimpleName();
     private ActionBar mActionBar;
     private Toolbar mToolbar;
@@ -76,25 +76,25 @@ public class ChatActivity extends AppCompatActivity {
     private ChatMAdapter chatMAdapter;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int loadView() {
+        return R.layout.activity_chat;
+    }
+
+    @Override
+    protected void initData() {
         mContext = getApplicationContext();
         activity = this;
-        setContentView(R.layout.activity_chat);
-        userM = new Gson().fromJson(getIntent().getStringExtra("global"), UserM.class);
+        userM = new Gson().fromJson(getIntent().getStringExtra("data"), UserM.class);
         room_type_1 = Support.id + "_" + userM.getUserId();
         room_type_2 = userM.getUserId() + "_" + Support.id;
         if (getIntent().getBooleanExtra("isFromBar", false)) {
             UpdateParamsM.setOnlineStatus(true);
             UpdateParamsM.setLastSeen(new Date().getTime());
         }
-        initToolbar();
-        initView();
-        initListener();
-        initRecycler();
     }
 
-    private void initToolbar() {
+    @Override
+    protected void initToolBar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
@@ -103,13 +103,15 @@ public class ChatActivity extends AppCompatActivity {
         mActionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_chat);
         et_message = (EditText) findViewById(R.id.et_message);
         btn_send_txt = (ImageButton) findViewById(R.id.btn_send_txt);
     }
 
-    private void initRecycler() {
+    @Override
+    protected void initRecycler() {
         linearLayoutManager = new LinearLayoutManager(mContext);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         linearLayoutManager.setStackFromEnd(true);
@@ -119,7 +121,8 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    private void initListener() {
+    @Override
+    protected  void initListener() {
         btn_send_txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,6 +133,57 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void getChatHistory() {
+        GetParent getParent = new GetParent(Support.getChatReference()) {
+            @Override
+            protected void onDataSuccess(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(room_type_1)) {
+                    chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
+                            Support.getChatReference().child(room_type_1));
+                    recyclerView.setAdapter(chatMAdapter);
+                } else if (dataSnapshot.hasChild(room_type_2)) {
+                    chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
+                            Support.getChatReference().child(room_type_2));
+                    recyclerView.setAdapter(chatMAdapter);
+                } else {
+                    Log.e(TAG, "No Chat room available yet");
+                }
+            }
+
+            @Override
+            protected void onDataCancelled(DatabaseError databaseError) {
+                Log.e(TAG, databaseError.getMessage());
+            }
+        };
+        getParent.addContinueListener();
+    }
+
+    private void getOnlineStatus() {
+        GetParent getParent = new GetParent(Support.getUserReference().child(userM.getUserId())) {
+            @Override
+            protected void onDataSuccess(DataSnapshot dataSnapshot) {
+                UserM model = dataSnapshot.getValue(UserM.class);
+                if (model != null) {
+                    if (model.isOnline()) {
+                        mActionBar.setSubtitle("Online");
+                        Log.e(TAG, "User Online");
+                    } else {
+                        mActionBar.setSubtitle("Last seen on " +
+                                DateUtils.getTime(model.getLastSeenTime()));
+                        Log.e(TAG, "User Offline");
+                    }
+                }
+            }
+
+            @Override
+            protected void onDataCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        getParent.addContinueListener();
     }
 
     private ChatM prepareModelForText() {
@@ -262,7 +316,7 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             protected void onDataCancelled(DatabaseError databaseError) {
-
+                Log.d(TAG, databaseError.getMessage());
             }
         };
         getParent.addSingleListener();
@@ -296,56 +350,6 @@ public class ChatActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void getChatHistory() {
-        GetParent getParent = new GetParent(Support.getChatReference()) {
-            @Override
-            protected void onDataSuccess(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(room_type_1)) {
-                    chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
-                            Support.getChatReference().child(room_type_1));
-                    recyclerView.setAdapter(chatMAdapter);
-                } else if (dataSnapshot.hasChild(room_type_2)) {
-                    chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
-                            Support.getChatReference().child(room_type_2));
-                    recyclerView.setAdapter(chatMAdapter);
-                } else {
-                    Log.e(TAG, "No Chat room available yet");
-                }
-            }
-
-            @Override
-            protected void onDataCancelled(DatabaseError databaseError) {
-                Log.e(TAG, databaseError.getMessage());
-            }
-        };
-        getParent.addContinueListener();
-    }
-
-    private void getOnlineStatus() {
-        GetParent getParent = new GetParent(Support.getUserReference().child(userM.getUserId())) {
-            @Override
-            protected void onDataSuccess(DataSnapshot dataSnapshot) {
-                UserM model = dataSnapshot.getValue(UserM.class);
-                if (model != null) {
-                    if (model.isOnline()) {
-                        mActionBar.setSubtitle("Online");
-                        Log.e(TAG, "User Online");
-                    } else {
-                        mActionBar.setSubtitle("Last seen on " +
-                                DateUtils.getTime(model.getLastSeenTime()));
-                        Log.e(TAG, "User Offline");
-                    }
-                }
-            }
-
-            @Override
-            protected void onDataCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        getParent.addContinueListener();
     }
 
     @Override
@@ -546,6 +550,5 @@ public class ChatActivity extends AppCompatActivity {
         Log.d(TAG, "onStart");
         super.onStart();
         getOnlineStatus();
-        getChatHistory();
     }
 }

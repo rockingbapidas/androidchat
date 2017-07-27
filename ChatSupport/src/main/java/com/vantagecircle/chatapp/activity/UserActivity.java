@@ -105,7 +105,6 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
                 .getDrawable(mContext, R.drawable.divider)));
 
         Query myQuery =  Support.getUserReference();
-
         usersMAdapter = new UsersMAdapter(UserM.class, R.layout.row_users, UserMViewHolder.class, myQuery, this);
         recyclerView.setAdapter(usersMAdapter);
 
@@ -255,7 +254,7 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     public void onUserClick(int position) {
         Intent intent = new Intent(activity, ChatActivity.class);
         intent.putExtra("isFormBar", false);
-        intent.putExtra("global", new Gson().toJson(usersMAdapter.getItem(position)));
+        intent.putExtra("data", new Gson().toJson(usersMAdapter.getItem(position)));
         startActivity(intent);
     }
 
@@ -263,7 +262,7 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     public void onGroupClick(int position) {
         Intent intent = new Intent(activity, GroupChatActivity.class);
         intent.putExtra("isFormBar", false);
-        intent.putExtra("global", new Gson().toJson(groupMAdapter.getItem(position)));
+        intent.putExtra("data", new Gson().toJson(groupMAdapter.getItem(position)));
         startActivity(intent);
     }
 }

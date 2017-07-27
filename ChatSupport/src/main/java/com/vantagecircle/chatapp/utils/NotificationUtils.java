@@ -44,7 +44,7 @@ public class NotificationUtils {
 
         Intent intent = new Intent(Support.getInstance(), ChatActivity.class);
         intent.putExtra("isFromBar", true);
-        intent.putExtra("global", new Gson().toJson(userM));
+        intent.putExtra("data", new Gson().toJson(userM));
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(Support.getInstance());
