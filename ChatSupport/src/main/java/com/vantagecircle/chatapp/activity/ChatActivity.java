@@ -42,6 +42,8 @@ import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.ChatMAdapter;
+import com.vantagecircle.chatapp.core.DataClass;
+import com.vantagecircle.chatapp.core.GetParent;
 import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.ChatM;
@@ -61,20 +63,19 @@ import java.util.Date;
 
 public class ChatActivity extends AppCompatActivity {
     private static final String TAG = ChatActivity.class.getSimpleName();
-    ActionBar mActionBar;
-    Toolbar mToolbar;
-    Context mContext;
-    Activity activity;
-    UserM userM;
-    EditText et_message;
-    ImageButton btn_send_txt;
-    RecyclerView recyclerView;
-    LinearLayoutManager linearLayoutManager;
-    String room_type_1, room_type_2, currentRoom;
-    String fileName;
-    File decodeFile;
-    ChatMAdapter chatMAdapter;
-    ValueEventListener statusEventListener, getMEventListener, sendMEventListener;
+    private ActionBar mActionBar;
+    private Toolbar mToolbar;
+    private Context mContext;
+    private Activity activity;
+    private UserM userM;
+    private EditText et_message;
+    private ImageButton btn_send_txt;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
+    private String room_type_1, room_type_2, currentRoom;
+    private String fileName;
+    private File decodeFile;
+    private ChatMAdapter chatMAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -215,66 +216,58 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendMessage(final ChatM chatM) {
-        sendMEventListener = new ValueEventListener() {
+        GetParent getParent = new GetParent(Support.getChatReference()) {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            protected void onDataSuccess(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(room_type_2)) {
-                    Support.getChatReference().child(room_type_2)
-                            .child(String.valueOf(chatM.getTimeStamp()))
-                            .setValue(chatM)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    Log.e(TAG, "onComplete ");
-                                    if (task.isSuccessful()) {
-                                        et_message.setText("");
-                                        if(chatMAdapter != null){
-                                            recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount());
-                                        }
-                                        currentRoom = room_type_2;
-                                        sendPushNotification(chatM, room_type_2);
-                                    }
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e(TAG, "onFailure " + e.getMessage());
-                                }
-                            });
+                    DataClass dataClass = new DataClass(Support.getChatReference()
+                            .child(room_type_2)
+                            .child(String.valueOf(chatM.getTimeStamp()))) {
+                        @Override
+                        protected void onSuccess(String t) {
+                            et_message.setText("");
+                            if(chatMAdapter != null){
+                                recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount());
+                            }
+                            currentRoom = room_type_2;
+                            sendPushNotification(chatM, room_type_2);
+                        }
+
+                        @Override
+                        protected void onFail(String e) {
+
+                        }
+                    };
+                    dataClass.insertData(chatM);
                 } else {
-                    Support.getChatReference().child(room_type_1)
-                            .child(String.valueOf(chatM.getTimeStamp()))
-                            .setValue(chatM)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    Log.e(TAG, "onComplete ");
-                                    if (task.isSuccessful()) {
-                                        et_message.setText("");
-                                        if(chatMAdapter != null){
-                                            recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount());
-                                        }
-                                        currentRoom = room_type_1;
-                                        sendPushNotification(chatM, room_type_1);
-                                    }
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e(TAG, "onFailure " + e.getMessage());
-                                }
-                            });
+                    DataClass dataClass = new DataClass(Support.getChatReference()
+                            .child(room_type_1)
+                            .child(String.valueOf(chatM.getTimeStamp()))) {
+                        @Override
+                        protected void onSuccess(String t) {
+                            et_message.setText("");
+                            if(chatMAdapter != null){
+                                recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount());
+                            }
+                            currentRoom = room_type_1;
+                            sendPushNotification(chatM, room_type_1);
+                        }
+
+                        @Override
+                        protected void onFail(String e) {
+
+                        }
+                    };
+                    dataClass.insertData(chatM);
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "onCancelled " + databaseError.getMessage());
+            protected void onDataCancelled(DatabaseError databaseError) {
+
             }
         };
-        Support.getChatReference().addListenerForSingleValueEvent(sendMEventListener);
+        getParent.addSingleListener();
     }
 
     private void sendPushNotification(ChatM chatM, String chat_room) {
@@ -308,9 +301,9 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void getChatHistory() {
-        getMEventListener = new ValueEventListener() {
+        GetParent getParent = new GetParent(Support.getChatReference()) {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            protected void onDataSuccess(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(room_type_1)) {
                     chatMAdapter = new ChatMAdapter(Support.getChatReference().child(room_type_1));
                     recyclerView.setAdapter(chatMAdapter);
@@ -323,40 +316,36 @@ public class ChatActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "onCancelled " + databaseError.getMessage());
+            protected void onDataCancelled(DatabaseError databaseError) {
+
             }
         };
-        Support.getChatReference().addValueEventListener(getMEventListener);
+        getParent.addContinueListener();
     }
 
     private void getOnlineStatus() {
-        try {
-            statusEventListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    UserM model = dataSnapshot.getValue(UserM.class);
-                    if (model != null) {
-                        if (model.isOnline()) {
-                            mActionBar.setSubtitle("Online");
-                            Log.e(TAG, "User Online");
-                        } else {
-                            mActionBar.setSubtitle("Last seen on " +
-                                    DateUtils.getTime(model.getLastSeenTime()));
-                            Log.e(TAG, "User Offline");
-                        }
+        GetParent getParent = new GetParent(Support.getUserReference().child(userM.getUserId())) {
+            @Override
+            protected void onDataSuccess(DataSnapshot dataSnapshot) {
+                UserM model = dataSnapshot.getValue(UserM.class);
+                if (model != null) {
+                    if (model.isOnline()) {
+                        mActionBar.setSubtitle("Online");
+                        Log.e(TAG, "User Online");
+                    } else {
+                        mActionBar.setSubtitle("Last seen on " +
+                                DateUtils.getTime(model.getLastSeenTime()));
+                        Log.e(TAG, "User Offline");
                     }
                 }
+            }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.d(TAG, "onCancelled " + databaseError.getMessage());
-                }
-            };
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Support.getUserReference().child(userM.getUserId()).addValueEventListener(statusEventListener);
+            @Override
+            protected void onDataCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        getParent.addContinueListener();
     }
 
     @Override
@@ -558,26 +547,5 @@ public class ChatActivity extends AppCompatActivity {
         super.onStart();
         getOnlineStatus();
         getChatHistory();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d(TAG, "onStop");
-        super.onStop();
-        if (statusEventListener != null) {
-            Support.getUserReference().child(userM.getUserId()).removeEventListener(statusEventListener);
-        }
-        if (getMEventListener != null) {
-            Support.getChatReference().removeEventListener(getMEventListener);
-        }
-        if (sendMEventListener != null) {
-            Support.getChatReference().removeEventListener(sendMEventListener);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
-        super.onDestroy();
     }
 }

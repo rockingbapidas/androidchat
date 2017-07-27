@@ -51,11 +51,11 @@ public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMAdapter
     }
 
     public static class GroupMViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView user_name;
-        TextView email_id;
-        TextView last_message;
-        LinearLayout sub_holder, lastImage;
-        ClickGroup clickGroup;
+        private TextView user_name;
+        private TextView email_id;
+        private TextView last_message;
+        private LinearLayout sub_holder, lastImage;
+        private ClickGroup clickGroup;
 
         GroupMViewHolder(View itemView) {
             super(itemView);

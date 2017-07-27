@@ -38,6 +38,7 @@ import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.GroupMAdapter;
 import com.vantagecircle.chatapp.adapter.UsersMAdapter;
+import com.vantagecircle.chatapp.core.DataClass;
 import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
@@ -48,19 +49,19 @@ import java.util.Date;
 
 public class UserActivity extends AppCompatActivity implements UsersMAdapter.UsersMViewHolder.ClickUser, GroupMAdapter.GroupMViewHolder.ClickGroup {
     private static final String TAG = UserActivity.class.getSimpleName();
-    Activity activity;
-    Context mContext;
-    Toolbar mToolbar;
-    ActionBar mActionBar;
-    RecyclerView recyclerView;
-    RecyclerView recyclerView1;
-    TextView groupTitle;
-    LinearLayoutManager linearLayoutManager;
-    LinearLayoutManager linearLayoutManager1;
-    UsersMAdapter usersMAdapter;
-    GroupMAdapter groupMAdapter;
-    ProgressDialog progressDialog;
-    AlertDialog alertDialog;
+    private Activity activity;
+    private Context mContext;
+    private Toolbar mToolbar;
+    private ActionBar mActionBar;
+    private RecyclerView recyclerView;
+    private RecyclerView recyclerView1;
+    private TextView groupTitle;
+    private LinearLayoutManager linearLayoutManager;
+    private LinearLayoutManager linearLayoutManager1;
+    private UsersMAdapter usersMAdapter;
+    private GroupMAdapter groupMAdapter;
+    private ProgressDialog progressDialog;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,27 +164,23 @@ public class UserActivity extends AppCompatActivity implements UsersMAdapter.Use
                     groupM.setId(id);
                     groupM.setName(name);
 
-                    Support.getGroupReference().child(id).setValue(groupM)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    alertDialog.dismiss();
-                                    progressDialog.dismiss();
-                                    if (task.isSuccessful()) {
-                                        addUsersToGroup(id);
-                                        final String roomName = id + "_" + name;
-                                        subscribeGroup(roomName);
-                                    }
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(mContext, e.getMessage(),
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                    DataClass dataClass = new DataClass(Support.getGroupReference().child(id)) {
+                        @Override
+                        protected void onSuccess(String t) {
+                            alertDialog.dismiss();
+                            progressDialog.dismiss();
+                            addUsersToGroup(id);
+                            final String roomName = id + "_" + name;
+                            subscribeGroup(roomName);
+                        }
+
+                        @Override
+                        protected void onFail(String e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(mContext, e, Toast.LENGTH_SHORT).show();
+                        }
+                    };
+                    dataClass.insertData(groupM);
                 } else {
                     Toast.makeText(mContext, "Enter Group Name",
                             Toast.LENGTH_SHORT).show();
@@ -199,11 +196,19 @@ public class UserActivity extends AppCompatActivity implements UsersMAdapter.Use
     private void addUsersToGroup(String id) {
         for (int i = 0; i < usersMAdapter.getItemCount(); i++) {
             UserM userM = usersMAdapter.getItem(i);
-            Support.getGroupReference().child(id)
-                    .child("users")
-                    .child(userM.getUserId())
-                    .child("fcmToken")
-                    .setValue(userM.getFcmToken());
+            DataClass dataClass = new DataClass(Support.getGroupReference().child(id)
+                    .child("users").child(userM.getUserId()).child("fcmToken")) {
+                @Override
+                protected void onSuccess(String t) {
+                    Log.d(TAG, t);
+                }
+
+                @Override
+                protected void onFail(String e) {
+                    Log.e(TAG, e);
+                }
+            };
+            dataClass.insertData(userM.getFcmToken());
         }
         alertDialog.dismiss();
         progressDialog.dismiss();

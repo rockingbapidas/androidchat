@@ -45,9 +45,9 @@ public class UsersMAdapter extends FirebaseRecyclerAdapter<UserM, UsersMAdapter.
     }
 
     public static class UsersMViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView user_name, email_id, last_message;
-        LinearLayout sub_holder, lastImage;
-        ClickUser clickUser;
+        private TextView user_name, email_id, last_message;
+        private LinearLayout sub_holder, lastImage;
+        private ClickUser clickUser;
 
         UsersMViewHolder(View itemView) {
             super(itemView);

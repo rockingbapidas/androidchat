@@ -5,26 +5,23 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.core.GetParent;
 import com.vantagecircle.chatapp.data.Config;
+import com.vantagecircle.chatapp.core.AuthClass;
 import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.utils.SharedPrefM;
@@ -41,7 +38,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText usernameEdit, passwordEdit;
     private Button btnLogin, btnSignup;
     private ProgressDialog progressDialog;
-    private ValueEventListener valueEventListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,115 +95,68 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void userLogin() {
-        try {
-            String username = usernameEdit.getText().toString();
-            String password = passwordEdit.getText().toString();
+        String username = usernameEdit.getText().toString();
+        String password = passwordEdit.getText().toString();
 
-            Support.getAuthInstance()
-                    .signInWithEmailAndPassword(username, password)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                progressDialog.setMessage("Authentication success");
-                                ConstantM.updateToken(new SharedPrefM(mContext)
-                                        .getString(Config.FIREBASE_TOKEN));
-                                setupData();
-                            }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            if (progressDialog != null && progressDialog.isShowing()) {
-                                progressDialog.dismiss();
-                            }
-                            Toast.makeText(mContext, e.getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        AuthClass authClass = new AuthClass(Support.getAuthInstance()) {
+            @Override
+            public void onSuccess(String t) {
+                progressDialog.setMessage("Authentication success");
+                ConstantM.updateToken(new SharedPrefM(mContext).getString(Config.FIREBASE_TOKEN));
+                getData();
+            }
+
+            @Override
+            public void onFail(String e) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                Toast.makeText(mContext, e, Toast.LENGTH_SHORT).show();
+            }
+        };
+        authClass.performLogin(username, password);
     }
 
-    private void setupData() {
-        try {
-            valueEventListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.e(TAG, "onDataChange ");
-                    UserM userM = dataSnapshot.getValue(UserM.class);
-                    if (userM != null) {
-                        Support.id = Support.getUserInstance().getUid();
-                        Support.userM = userM;
-                        if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                        if (userM.getUserType().equals(Config._ADMIN)) {
-                            Support.getAuthInstance().signOut();
-                            Toast.makeText(mContext, "User invalid use another account",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Intent intent = new Intent(LoginActivity.this, UserActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    } else {
-                        Support.getAuthInstance().signOut();
-                        if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                        Toast.makeText(mContext, "User data fetch error try again",
-                                Toast.LENGTH_SHORT).show();
+    private void getData(){
+        GetParent getParent = new GetParent(Support.getUserReference().child(Support.getUserInstance().getUid())) {
+            @Override
+            public void onDataSuccess(DataSnapshot dataSnapshot) {
+                UserM userM = dataSnapshot.getValue(UserM.class);
+                if (userM != null) {
+                    Support.id = Support.getUserInstance().getUid();
+                    Support.userM = userM;
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
                     }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.e(TAG, "onCancelled ");
+                    if (userM.getUserType().equals(Config._ADMIN)) {
+                        Support.getAuthInstance().signOut();
+                        Toast.makeText(mContext, "User invalid use another account",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent intent = new Intent(LoginActivity.this, UserActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                } else {
                     Support.getAuthInstance().signOut();
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    Toast.makeText(mContext, databaseError.getMessage(),
+                    Toast.makeText(mContext, "User data fetch error try again",
                             Toast.LENGTH_SHORT).show();
                 }
-            };
-            Support.getUserReference().child(Support.getUserInstance().getUid())
-                    .addListenerForSingleValueEvent(valueEventListener);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+            }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (valueEventListener != null) {
-            Support.getUserReference()
-                    .child(Support.getUserInstance().getUid())
-                    .removeEventListener(valueEventListener);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+            @Override
+            public void onDataCancelled(DatabaseError databaseError) {
+                Support.getAuthInstance().signOut();
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                Toast.makeText(mContext, databaseError.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        };
+        getParent.addSingleListener();
     }
 }

@@ -46,6 +46,7 @@ import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.ChatMAdapter;
+import com.vantagecircle.chatapp.core.GetChild;
 import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.data.ConstantM;
 import com.vantagecircle.chatapp.model.ChatM;
@@ -66,21 +67,20 @@ import java.util.Date;
 
 public class GroupChatActivity extends AppCompatActivity {
     private static final String TAG = GroupChatActivity.class.getSimpleName();
-    ActionBar mActionBar;
-    Toolbar mToolbar;
-    Context mContext;
-    Activity activity;
-    GroupM groupM;
-    EditText et_message;
-    ImageButton btn_send_txt;
-    RecyclerView recyclerView;
-    LinearLayoutManager linearLayoutManager;
-    ChatMAdapter chatMAdapter;
-    String fileName;
-    File decodeFile;
-    String room;
-    ChildEventListener tokenEventListener;
-    ArrayList<String> tokens;
+    private ActionBar mActionBar;
+    private Toolbar mToolbar;
+    private Context mContext;
+    private Activity activity;
+    private GroupM groupM;
+    private EditText et_message;
+    private ImageButton btn_send_txt;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
+    private ChatMAdapter chatMAdapter;
+    private String fileName;
+    private File decodeFile;
+    private String room;
+    private ArrayList<String> tokens;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,6 +100,9 @@ public class GroupChatActivity extends AppCompatActivity {
         initView();
         initRecycler();
         initListener();
+
+        tokens = null;
+        getTokens();
     }
 
     private void initToolbar() {
@@ -283,34 +286,33 @@ public class GroupChatActivity extends AppCompatActivity {
 
     private void getTokens() {
         tokens = new ArrayList<>();
-        tokenEventListener = new ChildEventListener() {
+        GetChild getChild = new GetChild( Support.getGroupReference().child(groupM.getId()).child("users")) {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            protected void onChildNew(DataSnapshot dataSnapshot, String s) {
                 tokens.add(dataSnapshot.child("fcmToken").getValue().toString());
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            protected void onChildModified(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            protected void onChildDelete(DataSnapshot dataSnapshot) {
 
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            protected void onChildRelocate(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            protected void onChildCancelled(DatabaseError databaseError) {
 
             }
         };
-        Support.getGroupReference().child(groupM.getId()).child("users")
-                .addChildEventListener(tokenEventListener);
+        getChild.addChildListener();
     }
 
     @Override
@@ -504,30 +506,5 @@ public class GroupChatActivity extends AppCompatActivity {
         Log.d(TAG, "onPause");
         super.onPause();
         Support.setIsChatWindowActive(false);
-    }
-
-    @Override
-    protected void onStart() {
-        Log.d(TAG, "onStart");
-        super.onStart();
-        tokens = null;
-        getTokens();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d(TAG, "onStop");
-        super.onStop();
-        if (tokenEventListener != null) {
-            Support.getGroupReference().child(groupM.getName())
-                    .child("users")
-                    .removeEventListener(tokenEventListener);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
-        super.onDestroy();
     }
 }

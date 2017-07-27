@@ -4,17 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.data.Config;
+import com.vantagecircle.chatapp.core.GetParent;
 import com.vantagecircle.chatapp.model.UserM;
-import com.vantagecircle.chatapp.other.AdminActivity;
 
 /**
  * Created by bapidas on 10/07/17.
@@ -22,27 +19,15 @@ import com.vantagecircle.chatapp.other.AdminActivity;
 
 public class SplashActivity extends AppCompatActivity {
     private static final String TAG = SplashActivity.class.getSimpleName();
-    ValueEventListener valueEventListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         if (Support.getUserInstance() != null) {
-            setupData();
-        } else {
-            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
-    }
-
-    private void setupData() {
-        try {
-            valueEventListener = new ValueEventListener() {
+            GetParent getParent = new GetParent() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.e(TAG, "onDataChange ");
+                protected void onDataSuccess(DataSnapshot dataSnapshot) {
                     UserM userM = dataSnapshot.getValue(UserM.class);
                     if (userM != null ) {
                         Support.id = Support.getUserInstance().getUid();
@@ -62,8 +47,7 @@ public class SplashActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.e(TAG, "onCancelled ");
+                protected void onDataCancelled(DatabaseError databaseError) {
                     Support.getAuthInstance().signOut();
                     Toast.makeText(getApplicationContext(), databaseError.getMessage(),
                             Toast.LENGTH_SHORT).show();
@@ -72,10 +56,11 @@ public class SplashActivity extends AppCompatActivity {
                     finish();
                 }
             };
-            Support.getUserReference().child(Support.getUserInstance().getUid())
-                    .addListenerForSingleValueEvent(valueEventListener);
-        } catch (Exception e) {
-            e.printStackTrace();
+            getParent.addSingleListener(Support.getUserReference().child(Support.getUserInstance().getUid()));
+        } else {
+            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 
@@ -97,11 +82,6 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (valueEventListener != null) {
-            Support.getUserReference()
-                    .child(Support.getUserInstance().getUid())
-                    .removeEventListener(valueEventListener);
-        }
     }
 
     @Override
