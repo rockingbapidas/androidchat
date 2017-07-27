@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -25,21 +24,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.GroupMAdapter;
+import com.vantagecircle.chatapp.holder.GroupMViewHolder;
+import com.vantagecircle.chatapp.holder.UserMViewHolder;
 import com.vantagecircle.chatapp.adapter.UsersMAdapter;
 import com.vantagecircle.chatapp.core.DataClass;
-import com.vantagecircle.chatapp.data.ConstantM;
+import com.vantagecircle.chatapp.utils.UpdateParamsM;
 import com.vantagecircle.chatapp.interfacePref.ClickGroup;
 import com.vantagecircle.chatapp.interfacePref.ClickUser;
 import com.vantagecircle.chatapp.model.GroupM;
@@ -75,8 +69,8 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
         initView();
         initRecycler();
 
-        ConstantM.setOnlineStatus(true);
-        ConstantM.setLastSeen(new Date().getTime());
+        UpdateParamsM.setOnlineStatus(true);
+        UpdateParamsM.setLastSeen(new Date().getTime());
     }
 
     private void initToolbar() {
@@ -112,11 +106,11 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
 
         Query myQuery =  Support.getUserReference();
 
-        usersMAdapter = new UsersMAdapter(myQuery, this);
+        usersMAdapter = new UsersMAdapter(UserM.class, R.layout.row_users, UserMViewHolder.class, myQuery, this);
         recyclerView.setAdapter(usersMAdapter);
 
         Query myQuery1 =  Support.getGroupReference();
-        groupMAdapter = new GroupMAdapter(myQuery1, this);
+        groupMAdapter = new GroupMAdapter(GroupM.class, R.layout.row_users, GroupMViewHolder.class, myQuery1, this);
         recyclerView1.setAdapter(groupMAdapter);
     }
 
@@ -130,8 +124,8 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
-                ConstantM.setOnlineStatus(false);
-                ConstantM.setLastSeen(new Date().getTime());
+                UpdateParamsM.setOnlineStatus(false);
+                UpdateParamsM.setLastSeen(new Date().getTime());
                 Support.getAuthInstance().signOut();
                 Intent intent = new Intent(activity, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -253,15 +247,15 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
-        ConstantM.setOnlineStatus(false);
-        ConstantM.setLastSeen(new Date().getTime());
+        UpdateParamsM.setOnlineStatus(false);
+        UpdateParamsM.setLastSeen(new Date().getTime());
     }
 
     @Override
     public void onUserClick(int position) {
         Intent intent = new Intent(activity, ChatActivity.class);
         intent.putExtra("isFormBar", false);
-        intent.putExtra("data", new Gson().toJson(usersMAdapter.getItem(position)));
+        intent.putExtra("global", new Gson().toJson(usersMAdapter.getItem(position)));
         startActivity(intent);
     }
 
@@ -269,7 +263,7 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     public void onGroupClick(int position) {
         Intent intent = new Intent(activity, GroupChatActivity.class);
         intent.putExtra("isFormBar", false);
-        intent.putExtra("data", new Gson().toJson(groupMAdapter.getItem(position)));
+        intent.putExtra("global", new Gson().toJson(groupMAdapter.getItem(position)));
         startActivity(intent);
     }
 }

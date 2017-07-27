@@ -38,7 +38,7 @@ public class SplashActivity extends AppCompatActivity {
                     } else {
                         //logout from firebase and try again
                         Support.getAuthInstance().signOut();
-                        Toast.makeText(getApplicationContext(), "User data fetch error try again",
+                        Toast.makeText(getApplicationContext(), "User global fetch error try again",
                                 Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                         startActivity(intent);

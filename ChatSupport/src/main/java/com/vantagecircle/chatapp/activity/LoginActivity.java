@@ -13,18 +13,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.core.GetParent;
-import com.vantagecircle.chatapp.data.Config;
+import com.vantagecircle.chatapp.utils.Config;
 import com.vantagecircle.chatapp.core.AuthClass;
-import com.vantagecircle.chatapp.data.ConstantM;
+import com.vantagecircle.chatapp.utils.UpdateParamsM;
 import com.vantagecircle.chatapp.model.UserM;
-import com.vantagecircle.chatapp.utils.SharedPrefM;
+import com.vantagecircle.chatapp.interfacePref.SharedPrefM;
 import com.vantagecircle.chatapp.utils.Tools;
 
 /**
@@ -102,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String t) {
                 progressDialog.setMessage("Authentication success");
-                ConstantM.updateToken(new SharedPrefM(mContext).getString(Config.FIREBASE_TOKEN));
+                UpdateParamsM.updateToken(new SharedPrefM(mContext).getString(Config.FIREBASE_TOKEN));
                 getData();
             }
 
@@ -142,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    Toast.makeText(mContext, "User data fetch error try again",
+                    Toast.makeText(mContext, "User global fetch error try again",
                             Toast.LENGTH_SHORT).show();
                 }
             }

@@ -9,9 +9,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.data.Config;
-import com.vantagecircle.chatapp.utils.SharedPrefM;
-import com.vantagecircle.chatapp.utils.Tools;
+import com.vantagecircle.chatapp.utils.Config;
+import com.vantagecircle.chatapp.interfacePref.SharedPrefM;
 
 import java.util.HashMap;
 

@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.data;
+package com.vantagecircle.chatapp.utils;
 
 /**
  * Created by bapidas on 10/07/17.

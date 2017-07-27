@@ -1,23 +1,14 @@
 package com.vantagecircle.chatapp.services;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.data.ConstantM;
+import com.vantagecircle.chatapp.utils.UpdateParamsM;
 import com.vantagecircle.chatapp.model.NotificationM;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -48,9 +39,9 @@ public class SendNotification {
     private static final String TOPIC_SUBSCRIBE_URL1 = "https://iid.googleapis.com/iid/v1/";
     private static final String TOPIC_SUBSCRIBE_URL2 = "/rel/topics/";
 
-    //Json keys from fcm data
+    //Json keys from fcm global
     private static final String KEY_TO = "to";
-    private static final String KEY_DATA = "data";
+    private static final String KEY_DATA = "global";
 
     private static final String KEY_TITLE = "title";
     private static final String KEY_TYPE= "type";
@@ -119,7 +110,7 @@ public class SendNotification {
                     Log.e(TAG, "onResponse body: " + response.body().string());
                     Log.e(TAG, "onResponse code: " + response.code());
                     if (response.code() == 200) {
-                        ConstantM.updateSentStatus(notificationM.getChatRoom(),
+                        UpdateParamsM.updateSentStatus(notificationM.getChatRoom(),
                                 notificationM.getTimeStamp());
                     }
                 }
@@ -152,7 +143,7 @@ public class SendNotification {
                     Log.e(TAG, "onResponse body: " + response.body().string());
                     Log.e(TAG, "onResponse code: " + response.code());
                     if (response.code() == 200) {
-                        ConstantM.updateSentStatus(notificationM.getChatRoom(),
+                        UpdateParamsM.updateSentStatus(notificationM.getChatRoom(),
                                 notificationM.getTimeStamp());
                     }
                 }

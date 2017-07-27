@@ -27,13 +27,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
@@ -42,10 +39,11 @@ import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.ChatMAdapter;
+import com.vantagecircle.chatapp.holder.ChatMViewHolder;
 import com.vantagecircle.chatapp.core.DataClass;
 import com.vantagecircle.chatapp.core.GetParent;
-import com.vantagecircle.chatapp.data.Config;
-import com.vantagecircle.chatapp.data.ConstantM;
+import com.vantagecircle.chatapp.utils.Config;
+import com.vantagecircle.chatapp.utils.UpdateParamsM;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.model.NotificationM;
@@ -83,12 +81,12 @@ public class ChatActivity extends AppCompatActivity {
         mContext = getApplicationContext();
         activity = this;
         setContentView(R.layout.activity_chat);
-        userM = new Gson().fromJson(getIntent().getStringExtra("data"), UserM.class);
+        userM = new Gson().fromJson(getIntent().getStringExtra("global"), UserM.class);
         room_type_1 = Support.id + "_" + userM.getUserId();
         room_type_2 = userM.getUserId() + "_" + Support.id;
         if (getIntent().getBooleanExtra("isFromBar", false)) {
-            ConstantM.setOnlineStatus(true);
-            ConstantM.setLastSeen(new Date().getTime());
+            UpdateParamsM.setOnlineStatus(true);
+            UpdateParamsM.setLastSeen(new Date().getTime());
         }
         initToolbar();
         initView();
@@ -207,7 +205,7 @@ public class ChatActivity extends AppCompatActivity {
                     // Handle successful uploads on complete
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     long timeStamp = Long.parseLong(taskSnapshot.getStorage().getName());
-                    ConstantM.updateFileUrl(currentRoom, timeStamp, downloadUrl.toString());
+                    UpdateParamsM.updateFileUrl(currentRoom, timeStamp, downloadUrl.toString());
                 }
             });
         } catch (Exception e) {
@@ -305,10 +303,12 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             protected void onDataSuccess(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(room_type_1)) {
-                    chatMAdapter = new ChatMAdapter(Support.getChatReference().child(room_type_1));
+                    chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
+                            Support.getChatReference().child(room_type_1));
                     recyclerView.setAdapter(chatMAdapter);
                 } else if (dataSnapshot.hasChild(room_type_2)) {
-                    chatMAdapter = new ChatMAdapter(Support.getChatReference().child(room_type_2));
+                    chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
+                            Support.getChatReference().child(room_type_2));
                     recyclerView.setAdapter(chatMAdapter);
                 } else {
                     Log.e(TAG, "No Chat room available yet");
@@ -317,7 +317,7 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             protected void onDataCancelled(DatabaseError databaseError) {
-
+                Log.e(TAG, databaseError.getMessage());
             }
         };
         getParent.addContinueListener();

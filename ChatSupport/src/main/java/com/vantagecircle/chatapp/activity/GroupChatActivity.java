@@ -31,13 +31,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
@@ -46,9 +41,10 @@ import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.ChatMAdapter;
+import com.vantagecircle.chatapp.holder.ChatMViewHolder;
 import com.vantagecircle.chatapp.core.GetChild;
-import com.vantagecircle.chatapp.data.Config;
-import com.vantagecircle.chatapp.data.ConstantM;
+import com.vantagecircle.chatapp.utils.Config;
+import com.vantagecircle.chatapp.utils.UpdateParamsM;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.NotificationM;
@@ -56,7 +52,6 @@ import com.vantagecircle.chatapp.services.SendNotification;
 import com.vantagecircle.chatapp.utils.Tools;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -88,12 +83,12 @@ public class GroupChatActivity extends AppCompatActivity {
         mContext = getApplicationContext();
         activity = this;
         setContentView(R.layout.activity_chat);
-        groupM = new Gson().fromJson(getIntent().getStringExtra("data"), GroupM.class);
+        groupM = new Gson().fromJson(getIntent().getStringExtra("global"), GroupM.class);
         room = groupM.getId() + "_" + groupM.getName();
 
         if (getIntent().getBooleanExtra("isFromBar", false)) {
-            ConstantM.setOnlineStatus(true);
-            ConstantM.setLastSeen(new Date().getTime());
+            UpdateParamsM.setOnlineStatus(true);
+            UpdateParamsM.setLastSeen(new Date().getTime());
         }
 
         initToolbar();
@@ -128,7 +123,8 @@ public class GroupChatActivity extends AppCompatActivity {
         recyclerView.scrollToPosition(0);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        chatMAdapter = new ChatMAdapter(Support.getChatReference().child(room));
+        chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
+                Support.getChatReference().child(room));
         recyclerView.setAdapter(chatMAdapter);
     }
 
@@ -218,7 +214,7 @@ public class GroupChatActivity extends AppCompatActivity {
                     // Handle successful uploads on complete
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     long timeStamp = Long.parseLong(taskSnapshot.getStorage().getName());
-                    ConstantM.updateFileUrl(room, timeStamp, downloadUrl.toString());
+                    UpdateParamsM.updateFileUrl(room, timeStamp, downloadUrl.toString());
                 }
             });
         } catch (Exception e) {

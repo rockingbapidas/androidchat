@@ -1,9 +1,9 @@
-package com.vantagecircle.chatapp.utils;
+package com.vantagecircle.chatapp.interfacePref;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.vantagecircle.chatapp.data.Config;
+import com.vantagecircle.chatapp.utils.Config;
 
 /**
  * Created by bapidas on 11/07/17.

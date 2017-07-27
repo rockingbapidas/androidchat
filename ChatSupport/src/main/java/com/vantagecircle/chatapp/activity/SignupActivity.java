@@ -13,16 +13,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.core.AuthClass;
 import com.vantagecircle.chatapp.core.DataClass;
-import com.vantagecircle.chatapp.data.Config;
+import com.vantagecircle.chatapp.utils.Config;
 import com.vantagecircle.chatapp.model.UserM;
-import com.vantagecircle.chatapp.utils.SharedPrefM;
+import com.vantagecircle.chatapp.interfacePref.SharedPrefM;
 import com.vantagecircle.chatapp.utils.Tools;
 
 /**
@@ -78,7 +76,7 @@ public class SignupActivity extends AppCompatActivity {
                     if (Tools.isNetworkAvailable(mContext)) {
                         Tools.hideKeyboard(activity);
                         progressDialog = new ProgressDialog(activity);
-                        progressDialog.setMessage("Validating fields and data");
+                        progressDialog.setMessage("Validating fields and global");
                         progressDialog.show();
                         userSignup();
                     } else {
@@ -98,7 +96,7 @@ public class SignupActivity extends AppCompatActivity {
         AuthClass authClass = new AuthClass(Support.getAuthInstance()) {
             @Override
             protected void onSuccess(String t) {
-                progressDialog.setMessage("Creating account and store data");
+                progressDialog.setMessage("Creating account and store global");
                 setupData();
             }
 

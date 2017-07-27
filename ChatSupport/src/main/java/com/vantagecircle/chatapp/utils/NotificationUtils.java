@@ -20,7 +20,6 @@ import com.squareup.picasso.Picasso;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.activity.ChatActivity;
-import com.vantagecircle.chatapp.data.Config;
 import com.vantagecircle.chatapp.model.UserM;
 
 import org.json.JSONException;
@@ -45,7 +44,7 @@ public class NotificationUtils {
 
         Intent intent = new Intent(Support.getInstance(), ChatActivity.class);
         intent.putExtra("isFromBar", true);
-        intent.putExtra("data", new Gson().toJson(userM));
+        intent.putExtra("global", new Gson().toJson(userM));
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(Support.getInstance());
