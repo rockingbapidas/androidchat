@@ -13,7 +13,7 @@ import com.google.firebase.database.Query;
 public abstract class GetChild {
     private DatabaseReference databaseReference;
 
-    public GetChild(DatabaseReference databaseReference) {
+    protected GetChild(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 

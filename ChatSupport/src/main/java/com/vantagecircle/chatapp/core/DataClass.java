@@ -16,7 +16,7 @@ import java.util.HashMap;
 public abstract class DataClass {
     private DatabaseReference databaseReference;
 
-    public DataClass(DatabaseReference databaseReference) {
+    protected DataClass(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 

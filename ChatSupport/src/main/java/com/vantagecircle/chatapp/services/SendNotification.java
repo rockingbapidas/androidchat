@@ -68,7 +68,7 @@ public class SendNotification {
         this.notificationM = notificationM;
     }
 
-    public static void subscribeToken(String token, String groupName){
+    public void subscribeToken(String token, String groupName){
         try {
             String url = TOPIC_SUBSCRIBE_URL1 + token + TOPIC_SUBSCRIBE_URL2 + groupName;
             Log.e(TAG, url);

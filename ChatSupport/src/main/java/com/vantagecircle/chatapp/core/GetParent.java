@@ -12,7 +12,7 @@ import com.google.firebase.database.ValueEventListener;
 public abstract class GetParent {
     private DatabaseReference databaseReference;
 
-    public GetParent(DatabaseReference databaseReference) {
+    protected GetParent(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 

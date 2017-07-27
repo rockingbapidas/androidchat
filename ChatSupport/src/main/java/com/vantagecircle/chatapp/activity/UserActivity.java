@@ -221,7 +221,7 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     private void subscribeGroup(String room){
         for (int i = 0; i < usersMAdapter.getItemCount(); i++) {
             UserM userM = usersMAdapter.getItem(i);
-            SendNotification.subscribeToken(userM.getFcmToken(), room);
+            new SendNotification(null).subscribeToken(userM.getFcmToken(), room);
         }
     }
 
