@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 
 import java.util.HashMap;
 
@@ -15,9 +16,14 @@ import java.util.HashMap;
 
 public abstract class DataClass {
     private DatabaseReference databaseReference;
+    private Query query;
 
     protected DataClass(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
+    }
+
+    protected DataClass(Query query){
+        this.query = query;
     }
 
     public void insertData(Object object){

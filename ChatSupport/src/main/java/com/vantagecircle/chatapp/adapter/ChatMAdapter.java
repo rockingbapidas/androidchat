@@ -2,11 +2,10 @@ package com.vantagecircle.chatapp.adapter;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.utils.Config;
 import com.vantagecircle.chatapp.holder.ChatMViewHolder;
 import com.vantagecircle.chatapp.model.ChatM;
+import com.vantagecircle.chatapp.utils.Config;
 
 /**
  * Created by bapidas on 20/07/17.
@@ -16,13 +15,13 @@ public class ChatMAdapter extends FirebaseRecyclerAdapter<ChatM, ChatMViewHolder
     private static final String TAG = ChatMAdapter.class.getSimpleName();
     private boolean isChatContinue;
 
-    public ChatMAdapter(Class<ChatM> modelClass, int modelLayout,
-                        Class<ChatMViewHolder> viewHolderClass, DatabaseReference ref) {
+    public ChatMAdapter(Class<ChatM> modelClass, int modelLayout, Class<ChatMViewHolder> viewHolderClass,
+                        DatabaseReference ref) {
         super(modelClass, modelLayout, viewHolderClass, ref);
     }
 
-    public ChatMAdapter(DatabaseReference databaseReference) {
-        super(ChatM.class, 0, ChatMViewHolder.class, databaseReference);
+    public ChatMAdapter(DatabaseReference reference) {
+        super(ChatM.class, 0, ChatMViewHolder.class, reference);
     }
 
     @Override
@@ -34,7 +33,7 @@ public class ChatMAdapter extends FirebaseRecyclerAdapter<ChatM, ChatMViewHolder
         }
         isChatContinue = model.getSenderName().equals(modelPrevious.getSenderName()) && position > 0;
 
-        if(super.getItemViewType(position) == 0){
+        if (super.getItemViewType(position) == 0) {
             switch (model.getChatType()) {
                 case Config.IMAGE_TYPE:
                     return R.layout.row_chat_image;

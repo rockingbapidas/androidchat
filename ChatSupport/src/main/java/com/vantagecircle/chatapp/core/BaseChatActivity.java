@@ -178,7 +178,7 @@ public abstract class BaseChatActivity extends AppCompatActivity {
 
             @Override
             protected void onDataCancelled(DatabaseError databaseError) {
-
+                Log.e(TAG, databaseError.getMessage());
             }
         };
         getParent.addContinueListener();

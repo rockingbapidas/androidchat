@@ -12,9 +12,14 @@ import com.google.firebase.database.Query;
 
 public abstract class GetChild {
     private DatabaseReference databaseReference;
+    private Query query;
 
     protected GetChild(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
+    }
+
+    protected GetChild(Query query){
+        this.query = query;
     }
 
     public void addChildListener(){
