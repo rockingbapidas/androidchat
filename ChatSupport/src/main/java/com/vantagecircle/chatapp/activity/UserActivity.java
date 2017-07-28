@@ -254,14 +254,16 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     public void onUserClick(int position) {
         Intent intent = new Intent(activity, ChatActivity.class);
         intent.putExtra("isFormBar", false);
+        intent.putExtra("isGroup", false);
         intent.putExtra("data", new Gson().toJson(usersMAdapter.getItem(position)));
         startActivity(intent);
     }
 
     @Override
     public void onGroupClick(int position) {
-        Intent intent = new Intent(activity, GroupChatActivity.class);
+        Intent intent = new Intent(activity, ChatActivity.class);
         intent.putExtra("isFormBar", false);
+        intent.putExtra("isGroup", true);
         intent.putExtra("data", new Gson().toJson(groupMAdapter.getItem(position)));
         startActivity(intent);
     }

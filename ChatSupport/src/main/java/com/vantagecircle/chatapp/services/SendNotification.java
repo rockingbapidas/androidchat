@@ -44,7 +44,7 @@ public class SendNotification {
     private static final String KEY_DATA = "global";
 
     private static final String KEY_TITLE = "title";
-    private static final String KEY_TYPE= "type";
+    private static final String KEY_TYPE = "type";
     private static final String KEY_TEXT = "text";
     private static final String KEY_URI = "fileUri";
     private static final String KEY_USERNAME = "senderUsername";
@@ -59,7 +59,7 @@ public class SendNotification {
         this.notificationM = notificationM;
     }
 
-    public void subscribeToken(String token, String groupName){
+    public void subscribeToken(String token, String groupName) {
         try {
             String url = TOPIC_SUBSCRIBE_URL1 + token + TOPIC_SUBSCRIBE_URL2 + groupName;
             Log.e(TAG, url);
@@ -88,10 +88,10 @@ public class SendNotification {
         }
     }
 
-    public void sendForSingle() {
+    public void sendToSingle() {
         try {
             RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON,
-                    getSingleObject().toString());
+                    getDataObject().toString());
             Request request = new Request.Builder()
                     .addHeader(CONTENT_TYPE, APPLICATION_JSON)
                     .addHeader(AUTHORIZATION, AUTH_KEY)
@@ -120,10 +120,10 @@ public class SendNotification {
         }
     }
 
-    public void sendForGroup(){
+    public void sendToGroup() {
         try {
             RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON,
-                    getGroupObject().toString());
+                    getDataObject().toString());
             Request request = new Request.Builder()
                     .addHeader(ACCEPT, APPLICATION_JSON)
                     .addHeader(AUTHORIZATION, AUTH_KEY)
@@ -153,27 +153,13 @@ public class SendNotification {
         }
     }
 
-    private JSONObject getSingleObject() throws JSONException {
+    private JSONObject getDataObject() throws JSONException {
         JSONObject parentBody = new JSONObject();
-        parentBody.put(KEY_TO, notificationM.getReceiverFcmToken());
-
-        JSONObject childData = new JSONObject();
-        childData.put(KEY_TITLE, notificationM.getTitle());
-        childData.put(KEY_TYPE, notificationM.getChatType());
-        childData.put(KEY_TEXT, notificationM.getMessageText());
-        childData.put(KEY_URI, notificationM.getFileUrl());
-
-        childData.put(KEY_USERNAME, notificationM.getSenderUsername());
-        childData.put(KEY_UID, notificationM.getSenderUid());
-        childData.put(KEY_FCM_TOKEN, notificationM.getSenderFcmToken());
-
-        parentBody.put(KEY_DATA, childData);
-        return parentBody;
-    }
-
-    private JSONObject getGroupObject() throws JSONException {
-        JSONObject parentBody = new JSONObject();
-        parentBody.put(KEY_TO, notificationM.getChatRoom());
+        if (notificationM.getReceiverFcmToken() != null) {
+            parentBody.put(KEY_TO, notificationM.getReceiverFcmToken());
+        } else {
+            parentBody.put(KEY_TO, notificationM.getChatRoom());
+        }
 
         JSONObject childData = new JSONObject();
         childData.put(KEY_TITLE, notificationM.getTitle());

@@ -11,9 +11,6 @@ public class Config {
     public static final String DATABASE_GROUP_REF = "groups";
 
     public static final String STORAGE_CHAT_IMAGE_REF = "chat_img/";
-    public static final String STORAGE_CHAT_VIDEO_REF = "chat_vid/";
-    public static final String STORAGE_CHAT_FILE_REF = "chat_file/";
-    public static final String STORAGE_USER_IMAGE_REF = "user_img/";
 
     public static final String _ADMIN = "admin";
     public static final String _USER = "user";

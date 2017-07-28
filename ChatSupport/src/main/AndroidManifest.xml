@@ -37,7 +37,6 @@
         <activity android:name=".activity.UserActivity" />
         <activity android:name=".other.AdminActivity" />
         <activity android:name=".activity.ChatActivity" />
-        <activity android:name=".activity.GroupChatActivity" />
 
         <service
             android:name=".fcm.FirebaseMessaging"
