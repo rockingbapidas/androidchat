@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.activity;
+package com.vantagecircle.chatapp.core;
 
 import android.Manifest;
 import android.app.Activity;
@@ -39,9 +39,6 @@ import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.ChatMAdapter;
-import com.vantagecircle.chatapp.core.DataClass;
-import com.vantagecircle.chatapp.core.GetChild;
-import com.vantagecircle.chatapp.core.GetParent;
 import com.vantagecircle.chatapp.holder.ChatMViewHolder;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.GroupM;
@@ -87,8 +84,6 @@ public abstract class BaseChatActivity extends AppCompatActivity {
         initToolBar();
         initView();
         initRecycler();
-        initializeUser();
-        getChatHistory();
         initListener();
     }
 
@@ -116,7 +111,7 @@ public abstract class BaseChatActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    protected void initializeUser() {
+    protected void initialize() {
         isFromNotification = getIntent().getBooleanExtra("isFromBar", false);
         isGroup = getIntent().getBooleanExtra("isGroup", false);
 
@@ -136,6 +131,7 @@ public abstract class BaseChatActivity extends AppCompatActivity {
             }
             getOnlineStatus();
         }
+        getChatHistory();
     }
 
     protected void getChatHistory() {

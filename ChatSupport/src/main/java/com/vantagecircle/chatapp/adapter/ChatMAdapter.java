@@ -16,12 +16,13 @@ public class ChatMAdapter extends FirebaseRecyclerAdapter<ChatM, ChatMViewHolder
     private static final String TAG = ChatMAdapter.class.getSimpleName();
     private boolean isChatContinue;
 
-    public ChatMAdapter(Class<ChatM> modelClass, int modelLayout, Class<ChatMViewHolder> viewHolderClass, Query ref) {
+    public ChatMAdapter(Class<ChatM> modelClass, int modelLayout,
+                        Class<ChatMViewHolder> viewHolderClass, DatabaseReference ref) {
         super(modelClass, modelLayout, viewHolderClass, ref);
     }
 
-    public ChatMAdapter(Class<ChatM> modelClass, int modelLayout, Class<ChatMViewHolder> viewHolderClass, DatabaseReference ref) {
-        super(modelClass, modelLayout, viewHolderClass, ref);
+    public ChatMAdapter(DatabaseReference databaseReference) {
+        super(ChatM.class, 0, ChatMViewHolder.class, databaseReference);
     }
 
     @Override
@@ -32,11 +33,16 @@ public class ChatMAdapter extends FirebaseRecyclerAdapter<ChatM, ChatMViewHolder
             modelPrevious = getItem(position - 1);
         }
         isChatContinue = model.getSenderName().equals(modelPrevious.getSenderName()) && position > 0;
-        switch (model.getChatType()) {
-            case Config.IMAGE_TYPE:
-                return R.layout.row_chat_image;
-            default:
-                return R.layout.row_chat_text;
+
+        if(super.getItemViewType(position) == 0){
+            switch (model.getChatType()) {
+                case Config.IMAGE_TYPE:
+                    return R.layout.row_chat_image;
+                default:
+                    return R.layout.row_chat_text;
+            }
+        } else {
+            return super.getItemViewType(position);
         }
     }
 
