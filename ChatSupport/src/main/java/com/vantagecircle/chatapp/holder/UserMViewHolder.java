@@ -12,7 +12,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.utils.Config;
+import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.interfacePref.ClickUser;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.UserM;
@@ -63,7 +63,7 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
                                     assert chatM != null;
                                     user_name.setText(userM.getFullName());
                                     email_id.setText(userM.getUsername());
-                                    if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
                                         lastImage.setVisibility(View.GONE);
                                         last_message.setVisibility(View.VISIBLE);
                                         last_message.setText(chatM.getMessageText());
@@ -77,7 +77,7 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
                                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                                     ChatM chatM = dataSnapshot.getValue(ChatM.class);
                                     assert chatM != null;
-                                    if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
                                         lastImage.setVisibility(View.GONE);
                                         last_message.setVisibility(View.VISIBLE);
                                         last_message.setText(chatM.getMessageText());
@@ -111,7 +111,7 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
                                     assert chatM != null;
                                     user_name.setText(userM.getFullName());
                                     email_id.setText(userM.getUsername());
-                                    if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
                                         lastImage.setVisibility(View.GONE);
                                         last_message.setVisibility(View.VISIBLE);
                                         last_message.setText(chatM.getMessageText());
@@ -125,7 +125,7 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
                                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                                     ChatM chatM = dataSnapshot.getValue(ChatM.class);
                                     assert chatM != null;
-                                    if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
                                         lastImage.setVisibility(View.GONE);
                                         last_message.setVisibility(View.VISIBLE);
                                         last_message.setText(chatM.getMessageText());

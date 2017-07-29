@@ -8,7 +8,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.vantagecircle.chatapp.utils.Config;
+import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.model.UserM;
 
 /**
@@ -47,15 +47,15 @@ public class Support extends MultiDexApplication {
     }
 
     public static synchronized DatabaseReference getUserReference() {
-        return getDatabaseInstance().getReference(Config.DATABASE_USER_REF);
+        return getDatabaseInstance().getReference(Constant.DATABASE_USER_REF);
     }
 
     public static synchronized DatabaseReference getChatReference() {
-        return getDatabaseInstance().getReference(Config.DATABASE_CHAT_REF);
+        return getDatabaseInstance().getReference(Constant.DATABASE_CHAT_REF);
     }
 
     public static synchronized DatabaseReference getGroupReference() {
-        return getDatabaseInstance().getReference(Config.DATABASE_GROUP_REF);
+        return getDatabaseInstance().getReference(Constant.DATABASE_GROUP_REF);
     }
 
     public static synchronized FirebaseStorage getStorageInstance(){
@@ -63,7 +63,7 @@ public class Support extends MultiDexApplication {
     }
 
     public static synchronized StorageReference getChatImageReference(){
-        return getStorageInstance().getReference(Config.STORAGE_CHAT_IMAGE_REF);
+        return getStorageInstance().getReference(Constant.STORAGE_CHAT_IMAGE_REF);
     }
 
     public static synchronized void setIsChatWindowActive(boolean active) {

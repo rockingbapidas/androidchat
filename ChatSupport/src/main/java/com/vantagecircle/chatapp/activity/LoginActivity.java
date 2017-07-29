@@ -18,7 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.core.GetParent;
-import com.vantagecircle.chatapp.utils.Config;
+import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.core.AuthClass;
 import com.vantagecircle.chatapp.utils.UpdateParamsM;
 import com.vantagecircle.chatapp.model.UserM;
@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String t) {
                 progressDialog.setMessage("Authentication success");
-                UpdateParamsM.updateToken(new SharedPrefM(mContext).getString(Config.FIREBASE_TOKEN));
+                UpdateParamsM.updateTokenToServer(new SharedPrefM(mContext).getString(Constant.FIREBASE_TOKEN));
                 getData();
             }
 
@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    if (userM.getUserType().equals(Config._ADMIN)) {
+                    if (userM.getUserType().equals(Constant._ADMIN)) {
                         Support.getAuthInstance().signOut();
                         Toast.makeText(mContext, "User invalid use another account",
                                 Toast.LENGTH_SHORT).show();

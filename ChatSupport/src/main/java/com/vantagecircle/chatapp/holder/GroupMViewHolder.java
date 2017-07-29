@@ -12,7 +12,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.utils.Config;
+import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.interfacePref.ClickGroup;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.GroupM;
@@ -64,7 +64,7 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
                                     ChatM chatM = dataSnapshot.getValue(ChatM.class);
                                     assert chatM != null;
                                     user_name.setText(groupM.getName());
-                                    if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
                                         lastImage.setVisibility(View.GONE);
                                         last_message.setVisibility(View.VISIBLE);
                                         last_message.setText(chatM.getMessageText());
@@ -78,7 +78,7 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
                                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                                     ChatM chatM = dataSnapshot.getValue(ChatM.class);
                                     assert chatM != null;
-                                    if(chatM.getChatType().equals(Config.TEXT_TYPE)){
+                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
                                         lastImage.setVisibility(View.GONE);
                                         last_message.setVisibility(View.VISIBLE);
                                         last_message.setText(chatM.getMessageText());

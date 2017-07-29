@@ -56,7 +56,7 @@ public class NotificationUtils {
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setContentTitle(jsonObject.getString("title"));
 
-        if(jsonObject.getString("type").equals(Config.TEXT_TYPE)){
+        if(jsonObject.getString("type").equals(Constant.TEXT_TYPE)){
             mBuilder.setContentText(jsonObject.getString("text"));
         } else {
             String imageUrl = jsonObject.getString("fileUri");

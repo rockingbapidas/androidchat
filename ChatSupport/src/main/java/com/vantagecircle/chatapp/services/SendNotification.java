@@ -23,33 +23,33 @@ import okhttp3.Response;
  */
 
 public class SendNotification {
-    private static final String TAG = SendNotification.class.getSimpleName();
+    private final String TAG = SendNotification.class.getSimpleName();
 
     //Http call configuration
-    private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-    private static final String SERVER_API_KEY = "AAAAutjgRd0:APA91bF-0Eo8AQhDPFv1q0hPCmB0vBrYaMA9_l0IYH_vi6gXdJv9JKM6m9BRgJjbjuBktd07HXLUsOae7sjGZAWDeJ-BE8d1SUVOmcMZFbo4vWzM0tvo-ON-G_JQqfhqPetc6IpxZGXB";
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String ACCEPT = "Accept";
-    private static final String APPLICATION_JSON = "application/json";
-    private static final String AUTHORIZATION = "Authorization";
-    private static final String AUTH_KEY = "key=" + SERVER_API_KEY;
+    private final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+    private final String SERVER_API_KEY = "AAAAutjgRd0:APA91bF-0Eo8AQhDPFv1q0hPCmB0vBrYaMA9_l0IYH_vi6gXdJv9JKM6m9BRgJjbjuBktd07HXLUsOae7sjGZAWDeJ-BE8d1SUVOmcMZFbo4vWzM0tvo-ON-G_JQqfhqPetc6IpxZGXB";
+    private final String CONTENT_TYPE = "Content-Type";
+    private final String ACCEPT = "Accept";
+    private final String APPLICATION_JSON = "application/json";
+    private final String AUTHORIZATION = "Authorization";
+    private final String AUTH_KEY = "key=" + SERVER_API_KEY;
 
-    private static final String FCM_USER_URL = "https://fcm.googleapis.com/fcm/send";
-    private static final String FCM_GROUP_URL = "https://gcm-http.googleapis.com/gcm/send";
-    private static final String TOPIC_SUBSCRIBE_URL1 = "https://iid.googleapis.com/iid/v1/";
-    private static final String TOPIC_SUBSCRIBE_URL2 = "/rel/topics/";
+    private final String FCM_USER_URL = "https://fcm.googleapis.com/fcm/send";
+    private final String FCM_GROUP_URL = "https://gcm-http.googleapis.com/gcm/send";
+    private final String TOPIC_SUBSCRIBE_URL1 = "https://iid.googleapis.com/iid/v1/";
+    private final String TOPIC_SUBSCRIBE_URL2 = "/rel/topics/";
 
     //Json keys from fcm global
-    private static final String KEY_TO = "to";
-    private static final String KEY_DATA = "global";
+    private final String KEY_TO = "to";
+    private final String KEY_DATA = "global";
 
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_TYPE = "type";
-    private static final String KEY_TEXT = "text";
-    private static final String KEY_URI = "fileUri";
-    private static final String KEY_USERNAME = "senderUsername";
-    private static final String KEY_UID = "senderUid";
-    private static final String KEY_FCM_TOKEN = "senderToken";
+    private final String KEY_TITLE = "title";
+    private final String KEY_TYPE = "type";
+    private final String KEY_TEXT = "text";
+    private final String KEY_URI = "fileUri";
+    private final String KEY_USERNAME = "senderUsername";
+    private final String KEY_UID = "senderUid";
+    private final String KEY_FCM_TOKEN = "senderToken";
 
     //Notification model
     private NotificationM notificationM;

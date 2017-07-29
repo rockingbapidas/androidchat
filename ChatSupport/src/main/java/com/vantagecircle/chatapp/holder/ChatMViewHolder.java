@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.utils.Config;
+import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.utils.DateUtils;
 import com.vantagecircle.chatapp.utils.Tools;
@@ -45,7 +45,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
 
     public void setDataToViews(ChatM chatM, boolean isChatContinue) {
         switch (chatM.getChatType()) {
-            case Config.IMAGE_TYPE:
+            case Constant.IMAGE_TYPE:
                 if (chatM.getFileUrl() != null) {
                     progressBar.setVisibility(View.GONE);
                     Tools.loadPicasso(context, fileImage, chatM.getFileUrl());

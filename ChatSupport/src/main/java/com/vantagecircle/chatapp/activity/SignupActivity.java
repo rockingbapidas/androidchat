@@ -18,7 +18,7 @@ import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.core.AuthClass;
 import com.vantagecircle.chatapp.core.DataClass;
-import com.vantagecircle.chatapp.utils.Config;
+import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.interfacePref.SharedPrefM;
 import com.vantagecircle.chatapp.utils.Tools;
@@ -117,17 +117,17 @@ public class SignupActivity extends AppCompatActivity {
             userM.setUsername(username);
             userM.setFullName(fullName);
             String fcmToken;
-            if (new SharedPrefM(mContext).getString(Config.FIREBASE_TOKEN) != null) {
-                fcmToken = new SharedPrefM(mContext).getString(Config.FIREBASE_TOKEN);
+            if (new SharedPrefM(mContext).getString(Constant.FIREBASE_TOKEN) != null) {
+                fcmToken = new SharedPrefM(mContext).getString(Constant.FIREBASE_TOKEN);
             } else {
                 fcmToken = FirebaseInstanceId.getInstance().getToken();
-                new SharedPrefM(Support.getInstance()).saveString(Config.FIREBASE_TOKEN, fcmToken);
+                new SharedPrefM(Support.getInstance()).saveString(Constant.FIREBASE_TOKEN, fcmToken);
             }
             userM.setFcmToken(fcmToken);
             userM.setLastSeenTime(System.currentTimeMillis());
             userM.setNotificationCount(0);
             userM.setOnline(true);
-            userM.setUserType(Config._USER);
+            userM.setUserType(Constant._USER);
 
             DataClass dataClass = new DataClass(Support.getUserReference().child(userM.getUserId())) {
                 @Override

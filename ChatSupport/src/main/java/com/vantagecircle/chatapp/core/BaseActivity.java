@@ -45,7 +45,7 @@ import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.NotificationM;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.services.SendNotification;
-import com.vantagecircle.chatapp.utils.Config;
+import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.utils.DateUtils;
 import com.vantagecircle.chatapp.utils.Tools;
 import com.vantagecircle.chatapp.utils.UpdateParamsM;
@@ -128,8 +128,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             room_type_1 = Support.id + "_" + userM.getUserId();
             room_type_2 = userM.getUserId() + "_" + Support.id;
             if (isFromNotification) {
-                UpdateParamsM.setOnlineStatus(true);
-                UpdateParamsM.setLastSeen(new Date().getTime());
+                UpdateParamsM.updateOnlineStatus(true);
+                UpdateParamsM.updateLastSeen(new Date().getTime());
             }
             getOnlineStatus();
         }
@@ -224,7 +224,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (et_message.getText().toString().length() > 0) {
-                    sendMessage(prepareChatModel(et_message.getText().toString(), Config.TEXT_TYPE, null));
+                    sendMessage(prepareChatModel(et_message.getText().toString(), Constant.TEXT_TYPE, null));
                 } else {
                     Toast.makeText(mContext, "Enter some message", Toast.LENGTH_SHORT).show();
                 }
@@ -423,18 +423,18 @@ public abstract class BaseActivity extends AppCompatActivity {
                 decodeFile = null;
                 String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 if (!Tools.isHasPermissions(this, PERMISSIONS)) {
-                    ActivityCompat.requestPermissions(this, PERMISSIONS, Config.REQUEST_STORAGE_PERMISSION);
+                    ActivityCompat.requestPermissions(this, PERMISSIONS, Constant.REQUEST_STORAGE_PERMISSION);
                 } else {
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     intent.setType("*/*");
-                    startActivityForResult(intent, Config.REQUEST_CODE_GALLERY);
+                    startActivityForResult(intent, Constant.REQUEST_CODE_GALLERY);
                 }
             } else {
                 fileName = null;
                 decodeFile = null;
                 String[] PERMISSIONS = {Manifest.permission.CAMERA};
                 if (!Tools.isHasPermissions(this, PERMISSIONS)) {
-                    ActivityCompat.requestPermissions(this, PERMISSIONS, Config.REQUEST_CAMERA_PERMISSION);
+                    ActivityCompat.requestPermissions(this, PERMISSIONS, Constant.REQUEST_CAMERA_PERMISSION);
                 } else {
                     Calendar c = Calendar.getInstance();
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -443,7 +443,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     decodeFile = new File(path, fileName);
                     Uri tempUri = Uri.fromFile(decodeFile);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
-                    startActivityForResult(intent, Config.REQUEST_CODE_CAMERA);
+                    startActivityForResult(intent, Constant.REQUEST_CODE_CAMERA);
                 }
             }
         } catch (Exception e) {
@@ -455,12 +455,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case Config.REQUEST_STORAGE_PERMISSION:
+            case Constant.REQUEST_STORAGE_PERMISSION:
                 try {
                     if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.setType("*/*");
-                        startActivityForResult(intent, Config.REQUEST_CODE_GALLERY);
+                        startActivityForResult(intent, Constant.REQUEST_CODE_GALLERY);
                     } else {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
                             Toast.makeText(mContext, "Gallery cannot be opened without this permission",
@@ -471,7 +471,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 break;
-            case Config.REQUEST_CAMERA_PERMISSION:
+            case Constant.REQUEST_CAMERA_PERMISSION:
                 try {
                     if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         Calendar c = Calendar.getInstance();
@@ -481,7 +481,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         decodeFile = new File(path, fileName);
                         Uri tempUri = Uri.fromFile(decodeFile);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
-                        startActivityForResult(intent, Config.REQUEST_CODE_CAMERA);
+                        startActivityForResult(intent, Constant.REQUEST_CODE_CAMERA);
                     } else {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
                             Toast.makeText(mContext, "Camera cannot be opened without this permission",
@@ -501,7 +501,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case Config.REQUEST_CODE_CAMERA:
+            case Constant.REQUEST_CODE_CAMERA:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         try {
@@ -512,7 +512,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     Toast.makeText(mContext, "There was an error saving the file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Config.IMAGE_TYPE, selectedImage.toString());
+                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, selectedImage.toString());
                                     sendMessage(chatM);
                                     uploadDataTask(selectedImage, chatM);
                                 }
@@ -530,7 +530,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         break;
                 }
                 break;
-            case Config.REQUEST_CODE_GALLERY:
+            case Constant.REQUEST_CODE_GALLERY:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         try {
@@ -541,7 +541,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     Toast.makeText(mContext, "There was an error saving the file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Config.IMAGE_TYPE, selectedImage.toString());
+                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, selectedImage.toString());
                                     sendMessage(chatM);
                                     uploadDataTask(selectedImage, chatM);
                                 }

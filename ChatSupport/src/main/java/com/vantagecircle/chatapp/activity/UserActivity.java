@@ -68,8 +68,8 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
         initView();
         initRecycler();
 
-        UpdateParamsM.setOnlineStatus(true);
-        UpdateParamsM.setLastSeen(new Date().getTime());
+        UpdateParamsM.updateOnlineStatus(true);
+        UpdateParamsM.updateLastSeen(new Date().getTime());
     }
 
     private void initToolbar() {
@@ -122,8 +122,8 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
-                UpdateParamsM.setOnlineStatus(false);
-                UpdateParamsM.setLastSeen(new Date().getTime());
+                UpdateParamsM.updateOnlineStatus(false);
+                UpdateParamsM.updateLastSeen(new Date().getTime());
                 Support.getAuthInstance().signOut();
                 Intent intent = new Intent(activity, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -245,8 +245,8 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
-        UpdateParamsM.setOnlineStatus(false);
-        UpdateParamsM.setLastSeen(new Date().getTime());
+        UpdateParamsM.updateOnlineStatus(false);
+        UpdateParamsM.updateLastSeen(new Date().getTime());
     }
 
     @Override

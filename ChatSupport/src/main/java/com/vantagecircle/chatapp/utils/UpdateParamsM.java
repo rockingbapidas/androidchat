@@ -16,36 +16,40 @@ import java.util.HashMap;
 public class UpdateParamsM {
     private static final String TAG = UpdateParamsM.class.getSimpleName();
 
-    public static void updateToken(String token) {
+    public static void updateTokenToServer(String token) {
         try {
             String fcmToken;
             if (token != null) {
                 fcmToken = token;
             } else {
                 fcmToken = FirebaseInstanceId.getInstance().getToken();
-                new SharedPrefM(Support.getInstance()).saveString(Config.FIREBASE_TOKEN, fcmToken);
             }
-            DataClass dataClass = new DataClass(Support.getUserReference()
-                    .child(Support.getUserInstance().getUid())) {
-                @Override
-                protected void onSuccess(String t) {
-                    Log.d(TAG, "Firebase Token updated successfully");
-                }
+            new SharedPrefM(Support.getInstance()).saveString(Constant.FIREBASE_TOKEN, fcmToken);
+            if (Support.getUserInstance() != null) {
+                DataClass dataClass = new DataClass(Support.getUserReference()
+                        .child(Support.getUserInstance().getUid())) {
+                    @Override
+                    protected void onSuccess(String t) {
+                        Log.d(TAG, "Firebase Token updated successfully");
+                    }
 
-                @Override
-                protected void onFail(String e) {
-                    Log.d(TAG, "Firebase Token updated error " + e);
-                }
-            };
-            HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put(Config.FIREBASE_TOKEN, fcmToken);
-            dataClass.updateData(hashMap);
+                    @Override
+                    protected void onFail(String e) {
+                        Log.d(TAG, "Firebase Token updated error " + e);
+                    }
+                };
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put(Constant.FIREBASE_TOKEN, fcmToken);
+                dataClass.updateData(hashMap);
+            } else {
+                Log.e(TAG, "Firebase user is null");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void setLastSeen(long timeStamp) {
+    public static void updateLastSeen(long timeStamp) {
         DataClass dataClass = new DataClass(Support.getUserReference()
                 .child(Support.getUserInstance().getUid())) {
             @Override
@@ -59,11 +63,11 @@ public class UpdateParamsM {
             }
         };
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put(Config.LAST_SEEN, timeStamp);
+        hashMap.put(Constant.LAST_SEEN, timeStamp);
         dataClass.updateData(hashMap);
     }
 
-    public static void setOnlineStatus(boolean status) {
+    public static void updateOnlineStatus(boolean status) {
         DataClass dataClass = new DataClass(Support.getUserReference()
                 .child(Support.getUserInstance().getUid())) {
             @Override
@@ -77,7 +81,7 @@ public class UpdateParamsM {
             }
         };
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put(Config.ONLINE_STATUS, status);
+        hashMap.put(Constant.ONLINE_STATUS, status);
         dataClass.updateData(hashMap);
     }
 
@@ -95,7 +99,7 @@ public class UpdateParamsM {
             }
         };
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put(Config.SENT_STATUS, true);
+        hashMap.put(Constant.SENT_STATUS, true);
         dataClass.updateData(hashMap);
     }
 
@@ -113,7 +117,7 @@ public class UpdateParamsM {
             }
         };
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put(Config.READ_STATUS, true);
+        hashMap.put(Constant.READ_STATUS, true);
         dataClass.updateData(hashMap);
     }
 
@@ -131,7 +135,7 @@ public class UpdateParamsM {
             }
         };
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put(Config.FILE_URL, url);
+        hashMap.put(Constant.FILE_URL, url);
         dataClass.updateData(hashMap);
     }
 }
