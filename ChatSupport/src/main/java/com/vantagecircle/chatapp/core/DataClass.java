@@ -22,36 +22,40 @@ public abstract class DataClass {
         this.databaseReference = databaseReference;
     }
 
-    protected DataClass(Query query){
+    protected DataClass(Query query) {
         this.query = query;
     }
 
-    public void insertData(Object object){
-        databaseReference.setValue(object).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                onSuccess(task.toString());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                onFail(e.getMessage());
-            }
-        });
+    public void insertData(Object object) {
+        databaseReference.setValue(object)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        onSuccess(task.toString());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        onFail(e.getMessage());
+                    }
+                });
     }
 
-    public void updateData(HashMap<String, Object> hashMap){
-        databaseReference.updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                onSuccess(task.toString());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                onFail(e.getMessage());
-            }
-        });
+    public void updateData(HashMap<String, Object> hashMap) {
+        databaseReference.updateChildren(hashMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        onSuccess(task.toString());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        onFail(e.getMessage());
+                    }
+                });
     }
 
     protected abstract void onSuccess(String t);

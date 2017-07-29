@@ -1,6 +1,5 @@
 package com.vantagecircle.chatapp.activity;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -45,7 +44,7 @@ import java.util.Date;
 
 public class UserActivity extends AppCompatActivity implements ClickUser, ClickGroup {
     private static final String TAG = UserActivity.class.getSimpleName();
-    private Activity activity;
+    private android.app.Activity activity;
     private Context mContext;
     private Toolbar mToolbar;
     private ActionBar mActionBar;

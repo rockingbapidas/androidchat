@@ -59,8 +59,8 @@ import java.util.Date;
  * Created by bapidas on 27/07/17.
  */
 
-public abstract class BaseChatActivity extends AppCompatActivity {
-    private static final String TAG = BaseChatActivity.class.getSimpleName();
+public abstract class BaseActivity extends AppCompatActivity {
+    private static final String TAG = BaseActivity.class.getSimpleName();
     private ActionBar mActionBar;
     private Toolbar mToolbar;
     private Context mContext;
@@ -79,13 +79,15 @@ public abstract class BaseChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        setContentView(loadView());
         mContext = getApplicationContext();
         initToolBar();
         initView();
         initRecycler();
         initListener();
     }
+
+    protected abstract int loadView();
 
     protected void initToolBar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
