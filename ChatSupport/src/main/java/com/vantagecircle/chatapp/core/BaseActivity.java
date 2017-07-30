@@ -116,7 +116,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void initialize() {
         isFromNotification = getIntent().getBooleanExtra("isFromBar", false);
         isGroup = getIntent().getBooleanExtra("isGroup", false);
-
         if (isGroup) {
             groupM = new Gson().fromJson(getIntent().getStringExtra("data"), GroupM.class);
             mActionBar.setTitle(groupM.getName());
@@ -137,14 +136,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void getChatHistory() {
-        GetParent getParent = new GetParent(Support.getChatReference()) {
+        ValueHandler valueHandler = new ValueHandler(Support.getChatReference()) {
             @Override
             protected void onDataSuccess(DataSnapshot dataSnapshot) {
                 if (room_type_1 != null && dataSnapshot.hasChild(room_type_1)) {
                     chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
                             Support.getChatReference().child(room_type_1));
                     recyclerView.setAdapter(chatMAdapter);
-                } else if (room_type_2 != null &&dataSnapshot.hasChild(room_type_2)) {
+                } else if (room_type_2 != null && dataSnapshot.hasChild(room_type_2)) {
                     chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
                             Support.getChatReference().child(room_type_2));
                     recyclerView.setAdapter(chatMAdapter);
@@ -158,11 +157,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Log.e(TAG, databaseError.getMessage());
             }
         };
-        getParent.addContinueListener();
+        valueHandler.addContinueListener();
     }
 
     protected void getOnlineStatus() {
-        GetParent getParent = new GetParent(Support.getUserReference().child(userM.getUserId())) {
+        ValueHandler valueHandler = new ValueHandler(Support.getUserReference().child(userM.getUserId())) {
             @Override
             protected void onDataSuccess(DataSnapshot dataSnapshot) {
                 UserM model = dataSnapshot.getValue(UserM.class);
@@ -183,12 +182,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Log.e(TAG, databaseError.getMessage());
             }
         };
-        getParent.addContinueListener();
+        valueHandler.addContinueListener();
     }
 
     protected void getTokens() {
         tokens = new ArrayList<>();
-        GetChild getChild = new GetChild(Support.getGroupReference()
+        ChildHandler childHandler = new ChildHandler(Support.getGroupReference()
                 .child(groupM.getId())
                 .child("users")) {
             @Override
@@ -216,7 +215,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
             }
         };
-        getChild.addChildListener();
+        childHandler.addChildListener();
     }
 
     protected void initListener() {
@@ -226,7 +225,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if (et_message.getText().toString().length() > 0) {
                     sendMessage(prepareChatModel(et_message.getText().toString(), Constant.TEXT_TYPE, null));
                 } else {
-                    Toast.makeText(mContext, "Enter some message", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Type some message", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -267,26 +266,29 @@ public abstract class BaseActivity extends AppCompatActivity {
             uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    // Handle progress uploads
                     double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                     Log.d(TAG, "Upload is " + progress + "% done");
                 }
             }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                    // Handle pause uploads
                     Log.d(TAG, "Upload is paused");
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle unsuccessful uploads
+                    Log.d(TAG, "Upload is failed");
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     // Handle successful uploads on complete
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    String downloadUrl = taskSnapshot.getDownloadUrl().toString();
                     long timeStamp = Long.parseLong(taskSnapshot.getStorage().getName());
-                    UpdateParamsM.updateFileUrl(currentRoom, timeStamp, downloadUrl.toString());
+                    UpdateParamsM.updateFileUrl(currentRoom, timeStamp, downloadUrl);
                 }
             });
         } catch (Exception e) {
@@ -295,11 +297,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void sendMessage(final ChatM chatM) {
-        GetParent getParent = new GetParent(Support.getChatReference()) {
+        ValueHandler valueHandler = new ValueHandler(Support.getChatReference()) {
             @Override
             protected void onDataSuccess(DataSnapshot dataSnapshot) {
                 if (room_type_2 != null && dataSnapshot.hasChild(room_type_2)) {
-                    DataClass dataClass = new DataClass(Support.getChatReference()
+                    DataHandler dataHandler = new DataHandler(Support.getChatReference()
                             .child(room_type_2)
                             .child(String.valueOf(chatM.getTimeStamp()))) {
                         @Override
@@ -314,12 +316,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         @Override
                         protected void onFail(String e) {
-
+                            Log.e(TAG, "Send Message " + e);
                         }
                     };
-                    dataClass.insertData(chatM);
+                    dataHandler.insertData(chatM);
                 } else {
-                    DataClass dataClass = new DataClass(Support.getChatReference()
+                    DataHandler dataHandler = new DataHandler(Support.getChatReference()
                             .child(room_type_1)
                             .child(String.valueOf(chatM.getTimeStamp()))) {
                         @Override
@@ -334,10 +336,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         @Override
                         protected void onFail(String e) {
-
+                            Log.e(TAG, "Send Message " + e);
                         }
                     };
-                    dataClass.insertData(chatM);
+                    dataHandler.insertData(chatM);
                 }
             }
 
@@ -346,7 +348,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Log.d(TAG, databaseError.getMessage());
             }
         };
-        getParent.addSingleListener();
+        valueHandler.addSingleListener();
     }
 
     protected void sendPushNotification(ChatM chatM, String chat_room) {
@@ -371,6 +373,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             notificationM.setChatRoom(chat_room);
 
             if (isGroup) {
+                notificationM.setReceiverFcmToken(null);
                 SendNotification sendNotification = new SendNotification(notificationM);
                 sendNotification.sendToGroup();
             } else {
@@ -509,15 +512,16 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 Uri selectedImage = Uri.fromFile(decodeFile);
                                 String mimeType = getContentResolver().getType(selectedImage);
                                 if (mimeType == null) {
-                                    Toast.makeText(mContext, "There was an error saving the file",
+                                    Toast.makeText(mContext, "There was an error in file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, selectedImage.toString());
+                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE,
+                                            selectedImage.toString());
                                     sendMessage(chatM);
                                     uploadDataTask(selectedImage, chatM);
                                 }
                             } else {
-                                Toast.makeText(mContext, "There was an error saving the file",
+                                Toast.makeText(mContext, "File is not exist",
                                         Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception e) {
@@ -538,15 +542,16 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 Uri selectedImage = data.getData();
                                 String mimeType = getContentResolver().getType(selectedImage);
                                 if (mimeType == null) {
-                                    Toast.makeText(mContext, "There was an error saving the file",
+                                    Toast.makeText(mContext, "There was an error in file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, selectedImage.toString());
+                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE,
+                                            selectedImage.toString());
                                     sendMessage(chatM);
                                     uploadDataTask(selectedImage, chatM);
                                 }
                             } else {
-                                Toast.makeText(mContext, "There was an error saving the file",
+                                Toast.makeText(mContext, "File is not exist",
                                         Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception e) {
@@ -559,6 +564,42 @@ public abstract class BaseActivity extends AppCompatActivity {
                         break;
                 }
                 break;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        super.onResume();
+        Support.setIsChatWindowActive(true);
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        super.onPause();
+        Support.setIsChatWindowActive(false);
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart");
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        super.onDestroy();
+        if(isFromNotification){
+            UpdateParamsM.updateOnlineStatus(false);
+            UpdateParamsM.updateLastSeen(new Date().getTime());
         }
     }
 }

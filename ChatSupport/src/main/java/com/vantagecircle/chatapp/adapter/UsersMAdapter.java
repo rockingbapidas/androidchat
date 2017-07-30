@@ -1,12 +1,8 @@
 package com.vantagecircle.chatapp.adapter;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
-import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.GetChild;
 import com.vantagecircle.chatapp.holder.UserMViewHolder;
 import com.vantagecircle.chatapp.interfacePref.ClickUser;
 import com.vantagecircle.chatapp.model.UserM;

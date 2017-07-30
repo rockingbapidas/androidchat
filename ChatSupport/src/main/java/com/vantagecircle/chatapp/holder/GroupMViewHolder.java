@@ -9,9 +9,9 @@ import android.widget.TextView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.core.ValueHandler;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.interfacePref.ClickGroup;
 import com.vantagecircle.chatapp.model.ChatM;
@@ -53,9 +53,9 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
 
     private void getLastMessage(final GroupM groupM) {
         final String room = groupM.getId() + "_" + groupM.getName();
-        Support.getChatReference().addValueEventListener(new ValueEventListener() {
+        ValueHandler valueHandler = new ValueHandler(Support.getChatReference()) {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            protected void onDataSuccess(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(room)) {
                     Support.getChatReference().child(room).orderByKey().limitToLast(1)
                             .addChildEventListener(new ChildEventListener() {
@@ -100,7 +100,7 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
 
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {
-
+                                    Log.e("onCancelled", databaseError.getMessage());
                                 }
                             });
                 } else {
@@ -111,10 +111,11 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d("onCancelled == ", databaseError.getMessage());
+            protected void onDataCancelled(DatabaseError databaseError) {
+                Log.e("onDataCancelled", databaseError.getMessage());
             }
-        });
+        };
+        valueHandler.addContinueListener();
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.GetParent;
+import com.vantagecircle.chatapp.core.ValueHandler;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.core.AuthClass;
 import com.vantagecircle.chatapp.utils.UpdateParamsM;
@@ -116,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void getData(){
-        GetParent getParent = new GetParent(Support.getUserReference().child(Support.getUserInstance().getUid())) {
+        ValueHandler valueHandler = new ValueHandler(Support.getUserReference().child(Support.getUserInstance().getUid())) {
             @Override
             public void onDataSuccess(DataSnapshot dataSnapshot) {
                 UserM userM = dataSnapshot.getValue(UserM.class);
@@ -155,6 +156,36 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         };
-        getParent.addSingleListener();
+        valueHandler.addSingleListener();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart");
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        super.onDestroy();
     }
 }

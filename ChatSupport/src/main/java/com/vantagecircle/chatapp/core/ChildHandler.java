@@ -10,15 +10,15 @@ import com.google.firebase.database.Query;
  * Created by bapidas on 26/07/17.
  */
 
-public abstract class GetChild {
+public abstract class ChildHandler {
     private DatabaseReference databaseReference;
     private Query query;
 
-    protected GetChild(DatabaseReference databaseReference) {
+    protected ChildHandler(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 
-    protected GetChild(Query query){
+    protected ChildHandler(Query query){
         this.query = query;
     }
 

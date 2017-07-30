@@ -31,7 +31,7 @@ import com.vantagecircle.chatapp.adapter.GroupMAdapter;
 import com.vantagecircle.chatapp.holder.GroupMViewHolder;
 import com.vantagecircle.chatapp.holder.UserMViewHolder;
 import com.vantagecircle.chatapp.adapter.UsersMAdapter;
-import com.vantagecircle.chatapp.core.DataClass;
+import com.vantagecircle.chatapp.core.DataHandler;
 import com.vantagecircle.chatapp.utils.UpdateParamsM;
 import com.vantagecircle.chatapp.interfacePref.ClickGroup;
 import com.vantagecircle.chatapp.interfacePref.ClickUser;
@@ -67,9 +67,6 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
         initToolbar();
         initView();
         initRecycler();
-
-        UpdateParamsM.updateOnlineStatus(true);
-        UpdateParamsM.updateLastSeen(new Date().getTime());
     }
 
     private void initToolbar() {
@@ -158,7 +155,7 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
                     groupM.setId(id);
                     groupM.setName(name);
 
-                    DataClass dataClass = new DataClass(Support.getGroupReference().child(id)) {
+                    DataHandler dataHandler = new DataHandler(Support.getGroupReference().child(id)) {
                         @Override
                         protected void onSuccess(String t) {
                             alertDialog.dismiss();
@@ -174,7 +171,7 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
                             Toast.makeText(mContext, e, Toast.LENGTH_SHORT).show();
                         }
                     };
-                    dataClass.insertData(groupM);
+                    dataHandler.insertData(groupM);
                 } else {
                     Toast.makeText(mContext, "Enter Group Name",
                             Toast.LENGTH_SHORT).show();
@@ -190,7 +187,7 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     private void addUsersToGroup(String id) {
         for (int i = 0; i < usersMAdapter.getItemCount(); i++) {
             UserM userM = usersMAdapter.getItem(i);
-            DataClass dataClass = new DataClass(Support.getGroupReference().child(id)
+            DataHandler dataHandler = new DataHandler(Support.getGroupReference().child(id)
                     .child("users").child(userM.getUserId()).child("fcmToken")) {
                 @Override
                 protected void onSuccess(String t) {
@@ -202,7 +199,7 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
                     Log.e(TAG, e);
                 }
             };
-            dataClass.insertData(userM.getFcmToken());
+            dataHandler.insertData(userM.getFcmToken());
         }
         alertDialog.dismiss();
         progressDialog.dismiss();
@@ -215,38 +212,6 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
             UserM userM = usersMAdapter.getItem(i);
             new SendNotification(null).subscribeToken(userM.getFcmToken(), room);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d(TAG, "onResume");
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d(TAG, "onPause");
-        super.onPause();
-    }
-
-    @Override
-    protected void onStart() {
-        Log.d(TAG, "onStart");
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d(TAG, "onStop");
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
-        super.onDestroy();
-        UpdateParamsM.updateOnlineStatus(false);
-        UpdateParamsM.updateLastSeen(new Date().getTime());
     }
 
     @Override
@@ -265,5 +230,39 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
         intent.putExtra("isGroup", true);
         intent.putExtra("data", new Gson().toJson(groupMAdapter.getItem(position)));
         startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart");
+        super.onStart();
+        UpdateParamsM.updateOnlineStatus(true);
+        UpdateParamsM.updateLastSeen(new Date().getTime());
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        super.onDestroy();
+        UpdateParamsM.updateOnlineStatus(false);
+        UpdateParamsM.updateLastSeen(new Date().getTime());
     }
 }

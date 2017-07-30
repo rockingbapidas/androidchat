@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.core.AuthClass;
-import com.vantagecircle.chatapp.core.DataClass;
+import com.vantagecircle.chatapp.core.DataHandler;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.interfacePref.SharedPrefM;
@@ -33,8 +34,7 @@ public class SignupActivity extends AppCompatActivity {
     private Context mContext;
     private EditText usernameEdit, passwordEdit, fullNameEdit;
     private Button btnSignup;
-    private String username;
-    private String fullName;
+    private String username, password, fullName;
     private ProgressDialog progressDialog;
 
     @Override
@@ -90,13 +90,13 @@ public class SignupActivity extends AppCompatActivity {
 
     private void userSignup() {
         username = usernameEdit.getText().toString();
-        String password = passwordEdit.getText().toString();
+        password = passwordEdit.getText().toString();
         fullName = fullNameEdit.getText().toString();
 
         AuthClass authClass = new AuthClass(Support.getAuthInstance()) {
             @Override
             protected void onSuccess(String t) {
-                progressDialog.setMessage("Creating account and store global");
+                progressDialog.setMessage("Creating account");
                 setupData();
             }
 
@@ -129,7 +129,7 @@ public class SignupActivity extends AppCompatActivity {
             userM.setOnline(true);
             userM.setUserType(Constant._USER);
 
-            DataClass dataClass = new DataClass(Support.getUserReference().child(userM.getUserId())) {
+            DataHandler dataHandler = new DataHandler(Support.getUserReference().child(userM.getUserId())) {
                 @Override
                 protected void onSuccess(String t) {
                     Support.userM = userM;
@@ -154,6 +154,36 @@ public class SignupActivity extends AppCompatActivity {
                     Toast.makeText(mContext, e, Toast.LENGTH_SHORT).show();
                 }
             };
-            dataClass.insertData(userM);
+            dataHandler.insertData(userM);
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart");
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        super.onDestroy();
     }
 }

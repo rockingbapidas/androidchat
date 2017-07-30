@@ -14,15 +14,15 @@ import java.util.HashMap;
  * Created by bapidas on 26/07/17.
  */
 
-public abstract class DataClass {
+public abstract class DataHandler {
     private DatabaseReference databaseReference;
     private Query query;
 
-    protected DataClass(DatabaseReference databaseReference) {
+    protected DataHandler(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 
-    protected DataClass(Query query) {
+    protected DataHandler(Query query) {
         this.query = query;
     }
 

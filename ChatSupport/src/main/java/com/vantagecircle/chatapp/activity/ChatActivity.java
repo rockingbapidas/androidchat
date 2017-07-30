@@ -15,33 +15,13 @@ public class ChatActivity extends BaseActivity {
     private static final String TAG = ChatActivity.class.getSimpleName();
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initialize();
-    }
-
-    @Override
     protected int loadView() {
         return R.layout.activity_chat;
     }
 
     @Override
-    protected void onResume() {
-        Log.d(TAG, "onResume");
-        super.onResume();
-        Support.setIsChatWindowActive(true);
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d(TAG, "onPause");
-        super.onPause();
-        Support.setIsChatWindowActive(false);
-    }
-
-    @Override
-    protected void onStart() {
-        Log.d(TAG, "onStart");
-        super.onStart();
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initialize();
     }
 }

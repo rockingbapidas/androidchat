@@ -11,15 +11,15 @@ import com.google.firebase.database.ValueEventListener;
  * Created by bapidas on 26/07/17.
  */
 
-public abstract class GetParent {
+public abstract class ValueHandler {
     private DatabaseReference databaseReference;
     private Query query;
 
-    protected GetParent(DatabaseReference databaseReference) {
+    protected ValueHandler(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 
-    protected GetParent(Query query){
+    protected ValueHandler(Query query){
         this.query = query;
     }
 

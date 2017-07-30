@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.DataClass;
+import com.vantagecircle.chatapp.core.DataHandler;
 import com.vantagecircle.chatapp.interfacePref.SharedPrefM;
 
 import java.util.HashMap;
@@ -25,8 +25,9 @@ public class UpdateParamsM {
                 fcmToken = FirebaseInstanceId.getInstance().getToken();
             }
             new SharedPrefM(Support.getInstance()).saveString(Constant.FIREBASE_TOKEN, fcmToken);
+
             if (Support.getUserInstance() != null) {
-                DataClass dataClass = new DataClass(Support.getUserReference()
+                DataHandler dataHandler = new DataHandler(Support.getUserReference()
                         .child(Support.getUserInstance().getUid())) {
                     @Override
                     protected void onSuccess(String t) {
@@ -40,9 +41,9 @@ public class UpdateParamsM {
                 };
                 HashMap<String, Object> hashMap = new HashMap<>();
                 hashMap.put(Constant.FIREBASE_TOKEN, fcmToken);
-                dataClass.updateData(hashMap);
+                dataHandler.updateData(hashMap);
             } else {
-                Log.e(TAG, "Firebase user is null");
+                Log.e(TAG, "Token cannot updated because firebase user is null");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,7 +51,7 @@ public class UpdateParamsM {
     }
 
     public static void updateLastSeen(long timeStamp) {
-        DataClass dataClass = new DataClass(Support.getUserReference()
+        DataHandler dataHandler = new DataHandler(Support.getUserReference()
                 .child(Support.getUserInstance().getUid())) {
             @Override
             protected void onSuccess(String t) {
@@ -64,11 +65,11 @@ public class UpdateParamsM {
         };
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(Constant.LAST_SEEN, timeStamp);
-        dataClass.updateData(hashMap);
+        dataHandler.updateData(hashMap);
     }
 
     public static void updateOnlineStatus(boolean status) {
-        DataClass dataClass = new DataClass(Support.getUserReference()
+        DataHandler dataHandler = new DataHandler(Support.getUserReference()
                 .child(Support.getUserInstance().getUid())) {
             @Override
             protected void onSuccess(String t) {
@@ -82,11 +83,11 @@ public class UpdateParamsM {
         };
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(Constant.ONLINE_STATUS, status);
-        dataClass.updateData(hashMap);
+        dataHandler.updateData(hashMap);
     }
 
     public static void updateSentStatus(String room, long timeStamp) {
-        DataClass dataClass = new DataClass(Support.getChatReference()
+        DataHandler dataHandler = new DataHandler(Support.getChatReference()
                 .child(room).child(String.valueOf(timeStamp))) {
             @Override
             protected void onSuccess(String t) {
@@ -100,11 +101,11 @@ public class UpdateParamsM {
         };
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(Constant.SENT_STATUS, true);
-        dataClass.updateData(hashMap);
+        dataHandler.updateData(hashMap);
     }
 
     public static void updateReadStatus(String room, long timeStamp) {
-        DataClass dataClass = new DataClass(Support.getChatReference()
+        DataHandler dataHandler = new DataHandler(Support.getChatReference()
                 .child(room).child(String.valueOf(timeStamp))) {
             @Override
             protected void onSuccess(String t) {
@@ -118,11 +119,11 @@ public class UpdateParamsM {
         };
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(Constant.READ_STATUS, true);
-        dataClass.updateData(hashMap);
+        dataHandler.updateData(hashMap);
     }
 
     public static void updateFileUrl(String room, long timeStamp, String url) {
-        DataClass dataClass = new DataClass(Support.getChatReference()
+        DataHandler dataHandler = new DataHandler(Support.getChatReference()
                 .child(room).child(String.valueOf(timeStamp))) {
             @Override
             protected void onSuccess(String t) {
@@ -136,6 +137,6 @@ public class UpdateParamsM {
         };
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(Constant.FILE_URL, url);
-        dataClass.updateData(hashMap);
+        dataHandler.updateData(hashMap);
     }
 }
