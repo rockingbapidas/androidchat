@@ -11,6 +11,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.core.ChildHandler;
 import com.vantagecircle.chatapp.core.ValueHandler;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.interfacePref.ClickGroup;
@@ -57,52 +58,55 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
             @Override
             protected void onDataSuccess(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(room)) {
-                    Support.getChatReference().child(room).orderByKey().limitToLast(1)
-                            .addChildEventListener(new ChildEventListener() {
-                                @Override
-                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                    ChatM chatM = dataSnapshot.getValue(ChatM.class);
-                                    assert chatM != null;
-                                    user_name.setText(groupM.getName());
-                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
-                                        lastImage.setVisibility(View.GONE);
-                                        last_message.setVisibility(View.VISIBLE);
-                                        last_message.setText(chatM.getMessageText());
-                                    } else {
-                                        lastImage.setVisibility(View.VISIBLE);
-                                        last_message.setVisibility(View.GONE);
-                                    }
-                                }
+                    ChildHandler childHandler = new ChildHandler(Support.getChatReference()
+                            .child(room)
+                            .orderByKey()
+                            .limitToLast(1)) {
+                        @Override
+                        protected void onChildNew(DataSnapshot dataSnapshot, String s) {
+                            ChatM chatM = dataSnapshot.getValue(ChatM.class);
+                            assert chatM != null;
+                            user_name.setText(groupM.getName());
+                            if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
+                                lastImage.setVisibility(View.GONE);
+                                last_message.setVisibility(View.VISIBLE);
+                                last_message.setText(chatM.getMessageText());
+                            } else {
+                                lastImage.setVisibility(View.VISIBLE);
+                                last_message.setVisibility(View.GONE);
+                            }
+                        }
 
-                                @Override
-                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                                    ChatM chatM = dataSnapshot.getValue(ChatM.class);
-                                    assert chatM != null;
-                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
-                                        lastImage.setVisibility(View.GONE);
-                                        last_message.setVisibility(View.VISIBLE);
-                                        last_message.setText(chatM.getMessageText());
-                                    } else {
-                                        lastImage.setVisibility(View.VISIBLE);
-                                        last_message.setVisibility(View.GONE);
-                                    }
-                                }
+                        @Override
+                        protected void onChildModified(DataSnapshot dataSnapshot, String s) {
+                            ChatM chatM = dataSnapshot.getValue(ChatM.class);
+                            assert chatM != null;
+                            if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
+                                lastImage.setVisibility(View.GONE);
+                                last_message.setVisibility(View.VISIBLE);
+                                last_message.setText(chatM.getMessageText());
+                            } else {
+                                lastImage.setVisibility(View.VISIBLE);
+                                last_message.setVisibility(View.GONE);
+                            }
+                        }
 
-                                @Override
-                                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        @Override
+                        protected void onChildDelete(DataSnapshot dataSnapshot) {
 
-                                }
+                        }
 
-                                @Override
-                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        @Override
+                        protected void onChildRelocate(DataSnapshot dataSnapshot, String s) {
 
-                                }
+                        }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Log.e("onCancelled", databaseError.getMessage());
-                                }
-                            });
+                        @Override
+                        protected void onChildCancelled(DatabaseError databaseError) {
+                            Log.e("onCancelled", databaseError.getMessage());
+                        }
+                    };
+                    childHandler.addChildQueryListener();
                 } else {
                     user_name.setText(groupM.getName());
                     last_message.setVisibility(View.GONE);

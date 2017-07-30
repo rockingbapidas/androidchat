@@ -22,8 +22,37 @@ public abstract class ChildHandler {
         this.query = query;
     }
 
-    public void addChildListener(){
+    public void addChildRefListener(){
         databaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                onChildNew(dataSnapshot, s);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                onChildModified(dataSnapshot, s);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                onChildDelete(dataSnapshot);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                onChildRelocate(dataSnapshot, s);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                onChildCancelled(databaseError);
+            }
+        });
+    }
+
+    public void addChildQueryListener(){
+        query.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 onChildNew(dataSnapshot, s);

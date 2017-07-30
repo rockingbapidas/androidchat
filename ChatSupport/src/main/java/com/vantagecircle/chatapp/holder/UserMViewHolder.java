@@ -12,6 +12,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.core.ChildHandler;
+import com.vantagecircle.chatapp.core.DataHandler;
+import com.vantagecircle.chatapp.core.ValueHandler;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.interfacePref.ClickUser;
 import com.vantagecircle.chatapp.model.ChatM;
@@ -51,118 +54,80 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
     private void getLastMessage(final UserM userM) {
         final String room_type_1 = Support.id + "_" + userM.getUserId();
         final String room_type_2 = userM.getUserId() + "_" + Support.id;
-        Support.getChatReference().addValueEventListener(new ValueEventListener() {
+        ValueHandler valueHandler = new ValueHandler(Support.getChatReference()) {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(room_type_1)) {
-                    Support.getChatReference().child(room_type_1).orderByKey().limitToLast(1)
-                            .addChildEventListener(new ChildEventListener() {
-                                @Override
-                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                    ChatM chatM = dataSnapshot.getValue(ChatM.class);
-                                    assert chatM != null;
-                                    user_name.setText(userM.getFullName());
-                                    email_id.setText(userM.getUsername());
-                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
-                                        lastImage.setVisibility(View.GONE);
-                                        last_message.setVisibility(View.VISIBLE);
-                                        last_message.setText(chatM.getMessageText());
-                                    } else {
-                                        lastImage.setVisibility(View.VISIBLE);
-                                        last_message.setVisibility(View.GONE);
-                                    }
-                                }
-
-                                @Override
-                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                                    ChatM chatM = dataSnapshot.getValue(ChatM.class);
-                                    assert chatM != null;
-                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
-                                        lastImage.setVisibility(View.GONE);
-                                        last_message.setVisibility(View.VISIBLE);
-                                        last_message.setText(chatM.getMessageText());
-                                    } else {
-                                        lastImage.setVisibility(View.VISIBLE);
-                                        last_message.setVisibility(View.GONE);
-                                    }
-                                }
-
-                                @Override
-                                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                                }
-
-                                @Override
-                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                } else if (dataSnapshot.hasChild(room_type_2)) {
-                    Support.getChatReference().child(room_type_2).orderByKey().limitToLast(1)
-                            .addChildEventListener(new ChildEventListener() {
-                                @Override
-                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                    ChatM chatM = dataSnapshot.getValue(ChatM.class);
-                                    assert chatM != null;
-                                    user_name.setText(userM.getFullName());
-                                    email_id.setText(userM.getUsername());
-                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
-                                        lastImage.setVisibility(View.GONE);
-                                        last_message.setVisibility(View.VISIBLE);
-                                        last_message.setText(chatM.getMessageText());
-                                    } else {
-                                        lastImage.setVisibility(View.VISIBLE);
-                                        last_message.setVisibility(View.GONE);
-                                    }
-                                }
-
-                                @Override
-                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                                    ChatM chatM = dataSnapshot.getValue(ChatM.class);
-                                    assert chatM != null;
-                                    if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
-                                        lastImage.setVisibility(View.GONE);
-                                        last_message.setVisibility(View.VISIBLE);
-                                        last_message.setText(chatM.getMessageText());
-                                    } else {
-                                        lastImage.setVisibility(View.VISIBLE);
-                                        last_message.setVisibility(View.GONE);
-                                    }
-                                }
-
-                                @Override
-                                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                                }
-
-                                @Override
-                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
+            protected void onDataSuccess(DataSnapshot dataSnapshot) {
+                String activeRoom;
+                if (dataSnapshot.hasChild(room_type_1)){
+                    activeRoom = room_type_1;
+                } else if (dataSnapshot.hasChild(room_type_2)){
+                    activeRoom = room_type_2;
                 } else {
-                    user_name.setText(userM.getFullName());
-                    email_id.setText(userM.getUsername());
-                    last_message.setVisibility(View.GONE);
-                    lastImage.setVisibility(View.GONE);
+                    activeRoom = null;
+                }
+                ChildHandler childHandler = null;
+                if (activeRoom != null) {
+                    childHandler = new ChildHandler(Support.getChatReference()
+                            .child(activeRoom)
+                            .orderByKey()
+                            .limitToLast(1)) {
+                        @Override
+                        protected void onChildNew(DataSnapshot dataSnapshot, String s) {
+                            ChatM chatM = dataSnapshot.getValue(ChatM.class);
+                            assert chatM != null;
+                            user_name.setText(userM.getFullName());
+                            email_id.setText(userM.getUsername());
+                            if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
+                                lastImage.setVisibility(View.GONE);
+                                last_message.setVisibility(View.VISIBLE);
+                                last_message.setText(chatM.getMessageText());
+                            } else {
+                                lastImage.setVisibility(View.VISIBLE);
+                                last_message.setVisibility(View.GONE);
+                            }
+                        }
+
+                        @Override
+                        protected void onChildModified(DataSnapshot dataSnapshot, String s) {
+                            ChatM chatM = dataSnapshot.getValue(ChatM.class);
+                            assert chatM != null;
+                            if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
+                                lastImage.setVisibility(View.GONE);
+                                last_message.setVisibility(View.VISIBLE);
+                                last_message.setText(chatM.getMessageText());
+                            } else {
+                                lastImage.setVisibility(View.VISIBLE);
+                                last_message.setVisibility(View.GONE);
+                            }
+                        }
+
+                        @Override
+                        protected void onChildDelete(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        protected void onChildRelocate(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        protected void onChildCancelled(DatabaseError databaseError) {
+
+                        }
+                    };
+                }
+                if (childHandler != null) {
+                    childHandler.addChildQueryListener();
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d("onCancelled == ", databaseError.getMessage());
+            protected void onDataCancelled(DatabaseError databaseError) {
+
             }
-        });
+        };
+        valueHandler.addContinueListener();
     }
 
     @Override

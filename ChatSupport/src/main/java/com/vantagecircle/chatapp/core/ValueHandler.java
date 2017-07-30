@@ -13,14 +13,9 @@ import com.google.firebase.database.ValueEventListener;
 
 public abstract class ValueHandler {
     private DatabaseReference databaseReference;
-    private Query query;
 
     protected ValueHandler(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
-    }
-
-    protected ValueHandler(Query query){
-        this.query = query;
     }
 
     public void addSingleListener() {

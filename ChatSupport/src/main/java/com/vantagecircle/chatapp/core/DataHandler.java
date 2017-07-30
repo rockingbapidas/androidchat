@@ -16,14 +16,9 @@ import java.util.HashMap;
 
 public abstract class DataHandler {
     private DatabaseReference databaseReference;
-    private Query query;
 
     protected DataHandler(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
-    }
-
-    protected DataHandler(Query query) {
-        this.query = query;
     }
 
     public void insertData(Object object) {

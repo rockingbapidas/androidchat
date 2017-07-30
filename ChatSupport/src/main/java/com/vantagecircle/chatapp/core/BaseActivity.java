@@ -215,7 +215,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
             }
         };
-        childHandler.addChildListener();
+        childHandler.addChildRefListener();
     }
 
     protected void initListener() {
