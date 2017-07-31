@@ -33,6 +33,10 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
     public ChatMViewHolder(View itemView) {
         super(itemView);
         context = itemView.getContext();
+        initViews(itemView);
+    }
+
+    public void initViews(View itemView){
         userName = (TextView) itemView.findViewById(R.id.sender);
         messageText = (TextView) itemView.findViewById(R.id.text_content);
         dateTime = (TextView) itemView.findViewById(R.id.text_time);

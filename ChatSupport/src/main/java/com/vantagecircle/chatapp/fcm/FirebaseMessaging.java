@@ -1,6 +1,7 @@
 package com.vantagecircle.chatapp.fcm;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -27,9 +28,9 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                 }
             } else {
                 if(Support.getIsChatWindowActive()){
-
+                    Log.d(TAG, "New Message arrived");
                 } else {
-
+                    Toast.makeText(Support.getInstance(), "New Message arrived", Toast.LENGTH_SHORT).show();
                 }
             }
         }
