@@ -1,20 +1,19 @@
 package com.vantagecircle.chatapp.holder;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.ChildHandler;
-import com.vantagecircle.chatapp.core.DataHandler;
-import com.vantagecircle.chatapp.core.ValueHandler;
+import com.vantagecircle.chatapp.core.DataModel;
+import com.vantagecircle.chatapp.core.SetDataHandler;
+import com.vantagecircle.chatapp.core.GetDataHandler;
+import com.vantagecircle.chatapp.core.interfacep.ChildInterface;
+import com.vantagecircle.chatapp.core.interfacep.ValueInterface;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.interfacePref.ClickUser;
 import com.vantagecircle.chatapp.model.ChatM;
@@ -54,26 +53,31 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
     private void getLastMessage(final UserM userM) {
         final String room_type_1 = Support.id + "_" + userM.getUserId();
         final String room_type_2 = userM.getUserId() + "_" + Support.id;
-        ValueHandler valueHandler = new ValueHandler(Support.getChatReference()) {
+        GetDataHandler getDataHandler = new GetDataHandler();
+        getDataHandler.setDataReference(Support.getChatReference());
+        getDataHandler.setValueEventListener(new ValueInterface() {
             @Override
-            protected void onDataSuccess(DataSnapshot dataSnapshot) {
+            public void onDataSuccess(DataModel dataModel) {
+                //check room avail
                 String activeRoom;
-                if (dataSnapshot.hasChild(room_type_1)){
+                if (dataModel.getDataSnapshot().hasChild(room_type_1)){
                     activeRoom = room_type_1;
-                } else if (dataSnapshot.hasChild(room_type_2)){
+                } else if (dataModel.getDataSnapshot().hasChild(room_type_2)){
                     activeRoom = room_type_2;
                 } else {
                     activeRoom = null;
                 }
-                ChildHandler childHandler = null;
+                //set listener
                 if (activeRoom != null) {
-                    childHandler = new ChildHandler(Support.getChatReference()
+                    GetDataHandler getDataHandler1 = new GetDataHandler();
+                    getDataHandler1.setQueryReference(Support.getChatReference()
                             .child(activeRoom)
                             .orderByKey()
-                            .limitToLast(1)) {
+                            .limitToLast(1));
+                    getDataHandler1.setChildValueListener(new ChildInterface() {
                         @Override
-                        protected void onChildNew(DataSnapshot dataSnapshot, String s) {
-                            ChatM chatM = dataSnapshot.getValue(ChatM.class);
+                        public void onChildNew(DataModel dataModel) {
+                            ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
                             assert chatM != null;
                             user_name.setText(userM.getFullName());
                             email_id.setText(userM.getUsername());
@@ -88,9 +92,11 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
                         }
 
                         @Override
-                        protected void onChildModified(DataSnapshot dataSnapshot, String s) {
-                            ChatM chatM = dataSnapshot.getValue(ChatM.class);
+                        public void onChildModified(DataModel dataModel) {
+                            ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
                             assert chatM != null;
+                            user_name.setText(userM.getFullName());
+                            email_id.setText(userM.getUsername());
                             if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
                                 lastImage.setVisibility(View.GONE);
                                 last_message.setVisibility(View.VISIBLE);
@@ -102,32 +108,33 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
                         }
 
                         @Override
-                        protected void onChildDelete(DataSnapshot dataSnapshot) {
+                        public void onChildDelete(DataModel dataModel) {
 
                         }
 
                         @Override
-                        protected void onChildRelocate(DataSnapshot dataSnapshot, String s) {
+                        public void onChildRelocate(DataModel dataModel) {
 
                         }
 
                         @Override
-                        protected void onChildCancelled(DatabaseError databaseError) {
+                        public void onChildCancelled(DataModel dataModel) {
 
                         }
-                    };
-                }
-                if (childHandler != null) {
-                    childHandler.addChildQueryListener();
+                    });
+                } else {
+                    user_name.setText(userM.getFullName());
+                    email_id.setText(userM.getUsername());
+                    last_message.setVisibility(View.GONE);
+                    lastImage.setVisibility(View.GONE);
                 }
             }
 
             @Override
-            protected void onDataCancelled(DatabaseError databaseError) {
+            public void onDataCancelled(DataModel dataModel) {
 
             }
-        };
-        valueHandler.addContinueListener();
+        });
     }
 
     @Override

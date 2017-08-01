@@ -28,10 +28,11 @@ import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.GroupMAdapter;
+import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
 import com.vantagecircle.chatapp.holder.GroupMViewHolder;
 import com.vantagecircle.chatapp.holder.UserMViewHolder;
 import com.vantagecircle.chatapp.adapter.UsersMAdapter;
-import com.vantagecircle.chatapp.core.DataHandler;
+import com.vantagecircle.chatapp.core.SetDataHandler;
 import com.vantagecircle.chatapp.utils.UpdateParamsM;
 import com.vantagecircle.chatapp.interfacePref.ClickGroup;
 import com.vantagecircle.chatapp.interfacePref.ClickUser;
@@ -155,9 +156,11 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
                     groupM.setId(id);
                     groupM.setName(name);
 
-                    DataHandler dataHandler = new DataHandler(Support.getGroupReference().child(id)) {
+                    SetDataHandler setDataHandler = new SetDataHandler();
+                    setDataHandler.setDatabaseReference(Support.getGroupReference().child(id));
+                    setDataHandler.insertData(groupM, new ResultInterface() {
                         @Override
-                        protected void onSuccess(String t) {
+                        public void onSuccess(String t) {
                             alertDialog.dismiss();
                             progressDialog.dismiss();
                             addUsersToGroup(id);
@@ -166,12 +169,11 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
                         }
 
                         @Override
-                        protected void onFail(String e) {
+                        public void onFail(String e) {
                             progressDialog.dismiss();
                             Toast.makeText(mContext, e, Toast.LENGTH_SHORT).show();
                         }
-                    };
-                    dataHandler.insertData(groupM);
+                    });
                 } else {
                     Toast.makeText(mContext, "Enter Group Name",
                             Toast.LENGTH_SHORT).show();
@@ -187,19 +189,20 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     private void addUsersToGroup(String id) {
         for (int i = 0; i < usersMAdapter.getItemCount(); i++) {
             UserM userM = usersMAdapter.getItem(i);
-            DataHandler dataHandler = new DataHandler(Support.getGroupReference().child(id)
-                    .child("users").child(userM.getUserId()).child("fcmToken")) {
+            SetDataHandler setDataHandler = new SetDataHandler();
+            setDataHandler.setDatabaseReference(Support.getGroupReference().child(id)
+                    .child("users").child(userM.getUserId()).child("fcmToken"));
+            setDataHandler.insertData(userM.getFcmToken(), new ResultInterface() {
                 @Override
-                protected void onSuccess(String t) {
+                public void onSuccess(String t) {
                     Log.d(TAG, t);
                 }
 
                 @Override
-                protected void onFail(String e) {
+                public void onFail(String e) {
                     Log.e(TAG, e);
                 }
-            };
-            dataHandler.insertData(userM.getFcmToken());
+            });
         }
         alertDialog.dismiss();
         progressDialog.dismiss();

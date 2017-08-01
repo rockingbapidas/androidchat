@@ -1,5 +1,7 @@
 package com.vantagecircle.chatapp.model;
 
+import com.vantagecircle.chatapp.utils.DateUtils;
+
 import java.io.Serializable;
 
 /**
@@ -92,5 +94,13 @@ public class UserM implements Serializable{
                 ", lastSeenTime=" + lastSeenTime +
                 ", userType='" + userType + '\'' +
                 '}';
+    }
+
+    public String isOnlineString() {
+        if (isOnline) {
+            return "Online";
+        } else {
+            return "Last seen on " + DateUtils.getTime(getLastSeenTime());
+        }
     }
 }

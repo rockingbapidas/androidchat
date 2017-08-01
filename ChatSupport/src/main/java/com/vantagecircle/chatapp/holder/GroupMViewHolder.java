@@ -6,13 +6,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.ChildHandler;
-import com.vantagecircle.chatapp.core.ValueHandler;
+import com.vantagecircle.chatapp.core.DataModel;
+import com.vantagecircle.chatapp.core.GetDataHandler;
+import com.vantagecircle.chatapp.core.interfacep.ChildInterface;
+import com.vantagecircle.chatapp.core.interfacep.ValueInterface;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.interfacePref.ClickGroup;
 import com.vantagecircle.chatapp.model.ChatM;
@@ -54,32 +55,21 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
 
     private void getLastMessage(final GroupM groupM) {
         final String room = groupM.getId() + "_" + groupM.getName();
-        ValueHandler valueHandler = new ValueHandler(Support.getChatReference()) {
+        GetDataHandler getDataHandler = new GetDataHandler();
+        getDataHandler.setDataReference(Support.getChatReference());
+        getDataHandler.setValueEventListener(new ValueInterface() {
             @Override
-            protected void onDataSuccess(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(room)) {
-                    ChildHandler childHandler = new ChildHandler(Support.getChatReference()
+            public void onDataSuccess(DataModel dataModel) {
+                if (dataModel.getDataSnapshot().hasChild(room)) {
+                    GetDataHandler getDataHandler1 = new GetDataHandler();
+                    getDataHandler1.setQueryReference(Support.getChatReference()
                             .child(room)
                             .orderByKey()
-                            .limitToLast(1)) {
+                            .limitToLast(1));
+                    getDataHandler1.setChildValueListener(new ChildInterface() {
                         @Override
-                        protected void onChildNew(DataSnapshot dataSnapshot, String s) {
-                            ChatM chatM = dataSnapshot.getValue(ChatM.class);
-                            assert chatM != null;
-                            user_name.setText(groupM.getName());
-                            if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
-                                lastImage.setVisibility(View.GONE);
-                                last_message.setVisibility(View.VISIBLE);
-                                last_message.setText(chatM.getMessageText());
-                            } else {
-                                lastImage.setVisibility(View.VISIBLE);
-                                last_message.setVisibility(View.GONE);
-                            }
-                        }
-
-                        @Override
-                        protected void onChildModified(DataSnapshot dataSnapshot, String s) {
-                            ChatM chatM = dataSnapshot.getValue(ChatM.class);
+                        public void onChildNew(DataModel dataModel) {
+                            ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
                             assert chatM != null;
                             if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
                                 lastImage.setVisibility(View.GONE);
@@ -92,21 +82,34 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
                         }
 
                         @Override
-                        protected void onChildDelete(DataSnapshot dataSnapshot) {
+                        public void onChildModified(DataModel dataModel) {
+                            ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
+                            assert chatM != null;
+                            if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
+                                lastImage.setVisibility(View.GONE);
+                                last_message.setVisibility(View.VISIBLE);
+                                last_message.setText(chatM.getMessageText());
+                            } else {
+                                lastImage.setVisibility(View.VISIBLE);
+                                last_message.setVisibility(View.GONE);
+                            }
+                        }
+
+                        @Override
+                        public void onChildDelete(DataModel dataModel) {
 
                         }
 
                         @Override
-                        protected void onChildRelocate(DataSnapshot dataSnapshot, String s) {
+                        public void onChildRelocate(DataModel dataModel) {
 
                         }
 
                         @Override
-                        protected void onChildCancelled(DatabaseError databaseError) {
-                            Log.e("onCancelled", databaseError.getMessage());
+                        public void onChildCancelled(DataModel dataModel) {
+
                         }
-                    };
-                    childHandler.addChildQueryListener();
+                    });
                 } else {
                     user_name.setText(groupM.getName());
                     last_message.setVisibility(View.GONE);
@@ -115,11 +118,10 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
             }
 
             @Override
-            protected void onDataCancelled(DatabaseError databaseError) {
-                Log.e("onDataCancelled", databaseError.getMessage());
+            public void onDataCancelled(DataModel dataModel) {
+
             }
-        };
-        valueHandler.addContinueListener();
+        });
     }
 
     @Override

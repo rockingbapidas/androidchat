@@ -14,11 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.ValueHandler;
+import com.vantagecircle.chatapp.core.DataModel;
+import com.vantagecircle.chatapp.core.GetDataHandler;
+import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
+import com.vantagecircle.chatapp.core.interfacep.ValueInterface;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.core.AuthClass;
 import com.vantagecircle.chatapp.utils.UpdateParamsM;
@@ -97,7 +98,9 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameEdit.getText().toString();
         String password = passwordEdit.getText().toString();
 
-        AuthClass authClass = new AuthClass(Support.getAuthInstance()) {
+        AuthClass authClass = new AuthClass();
+        authClass.setFirebaseAuth(Support.getAuthInstance());
+        authClass.performLogin(username, password, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
                 progressDialog.setMessage("Authentication success");
@@ -112,15 +115,16 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 Toast.makeText(mContext, e, Toast.LENGTH_SHORT).show();
             }
-        };
-        authClass.performLogin(username, password);
+        });
     }
 
     private void getData(){
-        ValueHandler valueHandler = new ValueHandler(Support.getUserReference().child(Support.getUserInstance().getUid())) {
+        GetDataHandler getDataHandler = new GetDataHandler();
+        getDataHandler.setDataReference(Support.getUserReference().child(Support.getUserInstance().getUid()));
+        getDataHandler.setSingleValueEventListener(new ValueInterface() {
             @Override
-            public void onDataSuccess(DataSnapshot dataSnapshot) {
-                UserM userM = dataSnapshot.getValue(UserM.class);
+            public void onDataSuccess(DataModel dataModel) {
+                UserM userM = dataModel.getDataSnapshot().getValue(UserM.class);
                 if (userM != null) {
                     Support.id = Support.getUserInstance().getUid();
                     Support.userM = userM;
@@ -147,16 +151,15 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onDataCancelled(DatabaseError databaseError) {
+            public void onDataCancelled(DataModel databaseError) {
                 Support.getAuthInstance().signOut();
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                Toast.makeText(mContext, databaseError.getMessage(),
+                Toast.makeText(mContext, databaseError.getDatabaseError().getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
-        };
-        valueHandler.addSingleListener();
+        });
     }
 
     @Override

@@ -7,11 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.ValueHandler;
+import com.vantagecircle.chatapp.core.DataModel;
+import com.vantagecircle.chatapp.core.GetDataHandler;
+import com.vantagecircle.chatapp.core.interfacep.ValueInterface;
 import com.vantagecircle.chatapp.model.UserM;
 
 /**
@@ -26,10 +26,12 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         if (Support.getUserInstance() != null) {
-            ValueHandler valueHandler = new ValueHandler(Support.getUserReference().child(Support.getUserInstance().getUid())) {
+            GetDataHandler getDataHandler = new GetDataHandler();
+            getDataHandler.setDataReference(Support.getUserReference().child(Support.getUserInstance().getUid()));
+            getDataHandler.setSingleValueEventListener(new ValueInterface() {
                 @Override
-                protected void onDataSuccess(DataSnapshot dataSnapshot) {
-                    UserM userM = dataSnapshot.getValue(UserM.class);
+                public void onDataSuccess(DataModel dataModel) {
+                    UserM userM = dataModel.getDataSnapshot().getValue(UserM.class);
                     if (userM != null ) {
                         Support.id = Support.getUserInstance().getUid();
                         Support.userM = userM;
@@ -48,16 +50,15 @@ public class SplashActivity extends AppCompatActivity {
                 }
 
                 @Override
-                protected void onDataCancelled(DatabaseError databaseError) {
+                public void onDataCancelled(DataModel dataModel) {
                     Support.getAuthInstance().signOut();
-                    Toast.makeText(getApplicationContext(), databaseError.getMessage(),
+                    Toast.makeText(getApplicationContext(), dataModel.getDatabaseError().getMessage(),
                             Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
                 }
-            };
-            valueHandler.addSingleListener();
+            });
         } else {
             Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
             startActivity(intent);

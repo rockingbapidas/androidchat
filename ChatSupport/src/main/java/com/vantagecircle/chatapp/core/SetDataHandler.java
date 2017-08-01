@@ -6,7 +6,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
+import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
 
 import java.util.HashMap;
 
@@ -14,46 +14,42 @@ import java.util.HashMap;
  * Created by bapidas on 26/07/17.
  */
 
-public abstract class DataHandler {
+public class SetDataHandler {
     private DatabaseReference databaseReference;
 
-    protected DataHandler(DatabaseReference databaseReference) {
+    public void setDatabaseReference(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 
-    public void insertData(Object object) {
+    public void insertData(Object object, final ResultInterface resultInterface) {
         databaseReference.setValue(object)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        onSuccess(task.toString());
+                        resultInterface.onSuccess(task.toString());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        onFail(e.getMessage());
+                        resultInterface.onFail(e.getMessage());
                     }
                 });
     }
 
-    public void updateData(HashMap<String, Object> hashMap) {
+    public void updateData(HashMap<String, Object> hashMap, final ResultInterface resultInterface) {
         databaseReference.updateChildren(hashMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        onSuccess(task.toString());
+                        resultInterface.onSuccess(task.toString());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        onFail(e.getMessage());
+                        resultInterface.onFail(e.getMessage());
                     }
                 });
     }
-
-    protected abstract void onSuccess(String t);
-
-    protected abstract void onFail(String e);
 }
