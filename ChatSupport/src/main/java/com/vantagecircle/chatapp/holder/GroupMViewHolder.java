@@ -46,6 +46,8 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
             itemView.setVisibility(View.VISIBLE);
             this.clickGroup = clickGroup;
             email_id.setVisibility(View.GONE);
+            user_name.setText(groupM.getName());
+
             getLastMessage(groupM);
         } else {
             sub_holder.setVisibility(View.GONE);
@@ -111,7 +113,6 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
                         }
                     });
                 } else {
-                    user_name.setText(groupM.getName());
                     last_message.setVisibility(View.GONE);
                     lastImage.setVisibility(View.GONE);
                 }

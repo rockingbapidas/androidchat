@@ -44,6 +44,9 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
             sub_holder.setVisibility(View.VISIBLE);
             itemView.setVisibility(View.VISIBLE);
             this.clickUser = clickUser;
+            user_name.setText(userM.getFullName());
+            email_id.setText(userM.getUsername());
+
             getLastMessage(userM);
         } else {
             sub_holder.setVisibility(View.GONE);
@@ -80,8 +83,6 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
                         public void onChildNew(DataModel dataModel) {
                             ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
                             assert chatM != null;
-                            user_name.setText(userM.getFullName());
-                            email_id.setText(userM.getUsername());
                             if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
                                 lastImage.setVisibility(View.GONE);
                                 last_message.setVisibility(View.VISIBLE);
@@ -96,8 +97,6 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
                         public void onChildModified(DataModel dataModel) {
                             ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
                             assert chatM != null;
-                            user_name.setText(userM.getFullName());
-                            email_id.setText(userM.getUsername());
                             if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
                                 lastImage.setVisibility(View.GONE);
                                 last_message.setVisibility(View.VISIBLE);
@@ -124,8 +123,6 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
                         }
                     });
                 } else {
-                    user_name.setText(userM.getFullName());
-                    email_id.setText(userM.getUsername());
                     last_message.setVisibility(View.GONE);
                     lastImage.setVisibility(View.GONE);
                 }

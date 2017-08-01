@@ -23,10 +23,11 @@ public class ConfigUtils {
         getDataHandler.setSingleValueEventListener(new ValueInterface() {
             @Override
             public void onDataSuccess(DataModel dataModel) {
-                String room_type_1 = null;
-                String room_type_2 = null;
+                String room_type_1;
+                String room_type_2;
                 if (groupM != null) {
-                    room_type_1 = groupM.getId() + "_" + groupM.getId();
+                    room_type_1 = groupM.getName() + "_" + groupM.getId();
+                    room_type_2 = groupM.getId() + "_" + groupM.getName();
                 } else {
                     room_type_1 = userM.getUserId() + "_" + Support.id;
                     room_type_2 = Support.id + "_" + userM.getUserId();
@@ -35,7 +36,7 @@ public class ConfigUtils {
                 if (dataModel.getDataSnapshot().hasChild(room_type_1)) {
                     Log.e(TAG, "Chat room available " + room_type_1);
                     resultInterface.onSuccess(room_type_1);
-                } else if (room_type_2 != null && dataModel.getDataSnapshot().hasChild(room_type_2)) {
+                } else if (dataModel.getDataSnapshot().hasChild(room_type_2)) {
                     Log.e(TAG, "Chat room available " + room_type_2);
                     resultInterface.onSuccess(room_type_2);
                 } else {
