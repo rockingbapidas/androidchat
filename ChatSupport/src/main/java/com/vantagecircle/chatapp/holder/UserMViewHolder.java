@@ -1,6 +1,7 @@
 package com.vantagecircle.chatapp.holder;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -119,7 +120,7 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
                         @Override
                         public void onChildCancelled(DataModel dataModel) {
-
+                            Log.d("onDataCancelled", "Error " + dataModel.getDatabaseError().getMessage());
                         }
                     });
                 } else {
@@ -132,7 +133,7 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
             @Override
             public void onDataCancelled(DataModel dataModel) {
-
+                Log.d("onDataCancelled", "Error " + dataModel.getDatabaseError().getMessage());
             }
         });
     }

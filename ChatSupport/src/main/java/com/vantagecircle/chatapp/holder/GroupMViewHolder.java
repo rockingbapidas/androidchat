@@ -119,7 +119,7 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
 
             @Override
             public void onDataCancelled(DataModel dataModel) {
-
+                Log.d("onDataCancelled", "Error " + dataModel.getDatabaseError().getMessage());
             }
         });
     }
