@@ -77,7 +77,7 @@ public class SignupActivity extends AppCompatActivity {
                     if (Tools.isNetworkAvailable(mContext)) {
                         Tools.hideKeyboard(activity);
                         progressDialog = new ProgressDialog(activity);
-                        progressDialog.setMessage("Validating fields and global");
+                        progressDialog.setMessage("Validating fields and data");
                         progressDialog.show();
                         userSignup();
                     } else {
@@ -132,7 +132,7 @@ public class SignupActivity extends AppCompatActivity {
         userM.setUserType(Constant._USER);
 
         SetDataHandler setDataHandler = new SetDataHandler();
-        setDataHandler.setDatabaseReference(Support.getUserReference());
+        setDataHandler.setDatabaseReference(Support.getUserReference().child(userM.getUserId()));
         setDataHandler.insertData(userM, new ResultInterface() {
             @Override
             public void onSuccess(String t) {

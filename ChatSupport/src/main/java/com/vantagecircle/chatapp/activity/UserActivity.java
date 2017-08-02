@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +52,7 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     private ActionBar mActionBar;
     private RecyclerView recyclerView;
     private RecyclerView recyclerView1;
-    private TextView groupTitle;
+    private LinearLayout groupTitle;
     private LinearLayoutManager linearLayoutManager;
     private LinearLayoutManager linearLayoutManager1;
     private UsersMAdapter usersMAdapter;
@@ -81,7 +82,7 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     private void initView() {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView1 = (RecyclerView) findViewById(R.id.recyclerView1);
-        groupTitle = (TextView) findViewById(R.id.groupTitle);
+        groupTitle = (LinearLayout) findViewById(R.id.groupTitle);
     }
 
     private void initRecycler() {
@@ -108,6 +109,11 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
         Query myQuery1 =  Support.getGroupReference();
         groupMAdapter = new GroupMAdapter(GroupM.class, R.layout.row_users, GroupMViewHolder.class, myQuery1, this);
         recyclerView1.setAdapter(groupMAdapter);
+        if(groupMAdapter.getItemCount() > 0){
+            groupTitle.setVisibility(View.VISIBLE);
+        } else {
+            groupTitle.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -120,8 +126,6 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
-                UpdateParamsM.updateOnlineStatus(false);
-                UpdateParamsM.updateLastSeen(new Date().getTime());
                 Support.getAuthInstance().signOut();
                 Intent intent = new Intent(activity, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

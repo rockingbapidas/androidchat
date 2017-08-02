@@ -14,6 +14,9 @@ public class Constant {
 
     public static final String _ADMIN = "admin";
     public static final String _USER = "user";
+    public static final String NO_ROOM = "noRoom";
+    public static final String CONV_GR = "group";
+    public static final String CONV_SN = "one";
 
     public static final String FIREBASE_TOKEN = "fcmToken";
     static final String ONLINE_STATUS = "online";

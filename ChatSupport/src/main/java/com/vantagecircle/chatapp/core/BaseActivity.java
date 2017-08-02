@@ -29,8 +29,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
@@ -90,6 +88,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         initListener();
     }
 
+
+    //cast and bind view from layout
     protected abstract int loadView();
 
     protected void initToolBar() {
@@ -116,6 +116,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
+    protected void initListener() {
+        btn_send_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (et_message.getText().toString().length() > 0) {
+                    pushMessage(prepareChatModel(et_message.getText().toString(), Constant.TEXT_TYPE, null));
+                } else {
+                    Toast.makeText(mContext, "Type some message", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
+    //initialize app for chat
     protected void initialize() {
         isFromNotification = getIntent().getBooleanExtra("isFromBar", false);
         isGroup = getIntent().getBooleanExtra("isGroup", false);
@@ -135,15 +150,24 @@ public abstract class BaseActivity extends AppCompatActivity {
         getChatHistory();
     }
 
+
+    //get all messages from firebase db and bind
     protected void getChatHistory() {
-        if(isGroup){
-            ConfigUtils.getRoom(groupM, null, new ResultInterface() {
+        if (isGroup) {
+            ConfigUtils.checkRooms(groupM, new ResultInterface() {
                 @Override
                 public void onSuccess(String t) {
-                    chatMAdapter = new ChatMAdapter(ChatM.class, 0,
-                            ChatMViewHolder.class,
-                            Support.getChatReference().child(t));
-                    recyclerView.setAdapter(chatMAdapter);
+                    if (t.equals(Constant.NO_ROOM)) {
+                        currentRoom = ConfigUtils.createRoom(groupM);
+                    } else {
+                        currentRoom = t;
+                        if (chatMAdapter == null) {
+                            chatMAdapter = new ChatMAdapter(ChatM.class, 0,
+                                    ChatMViewHolder.class,
+                                    Support.getChatReference().child(t));
+                            recyclerView.setAdapter(chatMAdapter);
+                        }
+                    }
                 }
 
                 @Override
@@ -152,13 +176,20 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
             });
         } else {
-            ConfigUtils.getRoom(null, userM, new ResultInterface() {
+            ConfigUtils.checkRooms(userM, new ResultInterface() {
                 @Override
                 public void onSuccess(String t) {
-                    chatMAdapter = new ChatMAdapter(ChatM.class, 0,
-                            ChatMViewHolder.class,
-                            Support.getChatReference().child(t));
-                    recyclerView.setAdapter(chatMAdapter);
+                    if (t.equals(Constant.NO_ROOM)) {
+                        currentRoom = ConfigUtils.createRoom(userM);
+                    } else {
+                        currentRoom = t;
+                        if (chatMAdapter == null) {
+                            chatMAdapter = new ChatMAdapter(ChatM.class, 0,
+                                    ChatMViewHolder.class,
+                                    Support.getChatReference().child(t));
+                            recyclerView.setAdapter(chatMAdapter);
+                        }
+                    }
                 }
 
                 @Override
@@ -199,7 +230,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         getDataHandler.setChildValueListener(new ChildInterface() {
             @Override
             public void onChildNew(DataModel dataModel) {
-                tokens.add(dataModel.getDataSnapshot().child("fcmToken").getValue().toString());
+                tokens.add(dataModel.getDataSnapshot()
+                        .child("fcmToken")
+                        .getValue().toString());
             }
 
             @Override
@@ -224,24 +257,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
     }
 
-    protected void initListener() {
-        btn_send_txt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (et_message.getText().toString().length() > 0) {
-                    sendMessage(prepareChatModel(et_message.getText().toString(), Constant.TEXT_TYPE, null));
-                } else {
-                    Toast.makeText(mContext, "Type some message", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
 
+    //push message to firebase db
     protected ChatM prepareChatModel(String text, String type, String uri) {
         ChatM chatM = null;
         try {
             String senderName = Support.userM.getFullName();
             String senderUid = Support.id;
+
             String receiverName;
             String receiverUid;
             if (isGroup) {
@@ -251,6 +274,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 receiverName = userM.getFullName();
                 receiverUid = userM.getUserId();
             }
+
             long timeStamp = System.currentTimeMillis();
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
                     type, text, uri, timeStamp, false, false);
@@ -260,7 +284,34 @@ public abstract class BaseActivity extends AppCompatActivity {
         return chatM;
     }
 
-    protected void uploadDataTask(Uri fileUri, ChatM chatM) {
+    private void pushMessage(final ChatM chatM) {
+        //config handler and push chat data to current room
+        SetDataHandler setDataHandler = new SetDataHandler();
+        setDataHandler.setDatabaseReference(Support.getChatReference()
+                .child(currentRoom)
+                .child(String.valueOf(chatM.getTimeStamp())));
+        setDataHandler.insertData(chatM, new ResultInterface() {
+            @Override
+            public void onSuccess(String t) {
+                //clear edit text and scroll recycler view to bottom
+                et_message.setText("");
+                if (chatMAdapter != null) {
+                    recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount());
+                }
+                //send push notification to the user if chat type is text type than
+                if (chatM.getChatType().equals(Constant.TEXT_TYPE)) {
+                    sendPushNotification(chatM, currentRoom);
+                }
+            }
+
+            @Override
+            public void onFail(String e) {
+                Log.d(TAG, "Error " + e);
+            }
+        });
+    }
+
+    protected void uploadDataTask(Uri fileUri, final ChatM chatM) {
         try {
             StorageMetadata metadata = new StorageMetadata.Builder()
                     .setContentType("image/jpeg")
@@ -295,6 +346,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                     String downloadUrl = taskSnapshot.getDownloadUrl().toString();
                     long timeStamp = Long.parseLong(taskSnapshot.getStorage().getName());
                     UpdateParamsM.updateFileUrl(currentRoom, timeStamp, downloadUrl);
+                    chatM.setFileUrl(downloadUrl);
+                    sendPushNotification(chatM, currentRoom);
                 }
             });
         } catch (Exception e) {
@@ -302,99 +355,35 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void sendMessage(final ChatM chatM) {
-        if(isGroup){
-            ConfigUtils.getRoom(groupM, null, new ResultInterface() {
-                @Override
-                public void onSuccess(String t) {
-                    currentRoom = t;
-                    SetDataHandler setDataHandler = new SetDataHandler();
-                    setDataHandler.setDatabaseReference(Support.getChatReference()
-                            .child(currentRoom)
-                            .child(String.valueOf(chatM.getTimeStamp())));
-                    setDataHandler.insertData(chatM, new ResultInterface() {
-                        @Override
-                        public void onSuccess(String t) {
-                            et_message.setText("");
-                            if (chatMAdapter != null) {
-                                recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount());
-                            }
-                            sendPushNotification(chatM, currentRoom);
-                        }
-
-                        @Override
-                        public void onFail(String e) {
-                            Log.d(TAG, "Error " + e);
-                        }
-                    });
-                }
-
-                @Override
-                public void onFail(String e) {
-                    Log.d(TAG, "Error " + e);
-                }
-            });
-        } else {
-            ConfigUtils.getRoom(null, userM, new ResultInterface() {
-                @Override
-                public void onSuccess(String t) {
-                    currentRoom = t;
-                    SetDataHandler setDataHandler = new SetDataHandler();
-                    setDataHandler.setDatabaseReference(Support.getChatReference()
-                            .child(currentRoom)
-                            .child(String.valueOf(chatM.getTimeStamp())));
-                    setDataHandler.insertData(chatM, new ResultInterface() {
-                        @Override
-                        public void onSuccess(String t) {
-                            et_message.setText("");
-                            if (chatMAdapter != null) {
-                                recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount());
-                            }
-                            sendPushNotification(chatM, currentRoom);
-                        }
-
-                        @Override
-                        public void onFail(String e) {
-                            Log.d(TAG, "Error " + e);
-                        }
-                    });
-                }
-
-                @Override
-                public void onFail(String e) {
-                    Log.d(TAG, "Error " + e);
-                }
-            });
-        }
-    }
-
     protected void sendPushNotification(ChatM chatM, String chat_room) {
         try {
-            String senderUsername = chatM.getSenderName();
-            String senderUserId = chatM.getSenderUid();
-            String senderFcmToken = Support.userM.getFcmToken();
             String chatType = chatM.getChatType();
             String messageText = chatM.getMessageText();
             String fileUrl = chatM.getFileUrl();
             long timeStamp = chatM.getTimeStamp();
 
             NotificationM notificationM = new NotificationM();
-            notificationM.setTitle(senderUsername);
+            notificationM.setTitle(chatM.getSenderName());
             notificationM.setChatType(chatType);
             notificationM.setMessageText(messageText);
             notificationM.setFileUrl(fileUrl);
-            notificationM.setSenderUsername(senderUsername);
-            notificationM.setSenderUid(senderUserId);
-            notificationM.setSenderFcmToken(senderFcmToken);
             notificationM.setTimeStamp(timeStamp);
             notificationM.setChatRoom(chat_room);
 
             if (isGroup) {
-                notificationM.setReceiverFcmToken(null);
+                notificationM.setConversationType(Constant.CONV_GR);
+                notificationM.setReceiverUserName(chatM.getReceiverName());
+                notificationM.setReceiverUid(chatM.getReceiverUid());
+
                 SendNotification sendNotification = new SendNotification(notificationM);
                 sendNotification.sendToGroup();
             } else {
+                notificationM.setConversationType(Constant.CONV_SN);
+                notificationM.setSenderUsername(chatM.getSenderName());
+                notificationM.setSenderUid(chatM.getSenderUid());
+                notificationM.setSenderFcmToken(Support.userM.getFcmToken());
                 notificationM.setReceiverFcmToken(userM.getFcmToken());
+
                 SendNotification sendNotification = new SendNotification(notificationM);
                 sendNotification.sendToSingle();
             }
@@ -403,6 +392,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+
+    //file choose config and funtion
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.attach_menu, menu);
@@ -534,7 +525,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 } else {
                                     ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE,
                                             selectedImage.toString());
-                                    sendMessage(chatM);
+                                    pushMessage(chatM);
                                     uploadDataTask(selectedImage, chatM);
                                 }
                             } else {
@@ -564,7 +555,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 } else {
                                     ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE,
                                             selectedImage.toString());
-                                    sendMessage(chatM);
+                                    pushMessage(chatM);
                                     uploadDataTask(selectedImage, chatM);
                                 }
                             } else {
@@ -584,37 +575,39 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+
+    //handle activity life cycle
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
-        Support.setIsChatWindowActive(true);
     }
 
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
         super.onPause();
-        Support.setIsChatWindowActive(false);
     }
 
     @Override
     protected void onStart() {
         Log.d(TAG, "onStart");
         super.onStart();
+        Support.setIsChatWindowActive(true);
     }
 
     @Override
     protected void onStop() {
         Log.d(TAG, "onStop");
         super.onStop();
+        Support.setIsChatWindowActive(false);
     }
 
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
-        if(isFromNotification){
+        if (isFromNotification) {
             UpdateParamsM.updateOnlineStatus(false);
             UpdateParamsM.updateLastSeen(new Date().getTime());
         }

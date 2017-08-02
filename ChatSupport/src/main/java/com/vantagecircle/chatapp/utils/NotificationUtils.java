@@ -20,6 +20,7 @@ import com.squareup.picasso.Picasso;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.activity.ChatActivity;
+import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
 
 import org.json.JSONException;
@@ -37,14 +38,24 @@ public class NotificationUtils {
 
     public static void setNotification(JSONObject jsonObject) throws JSONException {
         mBuilder = new NotificationCompat.Builder(Support.getInstance());
-        UserM userM = new UserM();
-        userM.setFullName(jsonObject.getString("senderUsername"));
-        userM.setUserId(jsonObject.getString("senderUid"));
-        userM.setFcmToken(jsonObject.getString("senderToken"));
-
+        UserM userM;
+        GroupM groupM;
         Intent intent = new Intent(Support.getInstance(), ChatActivity.class);
         intent.putExtra("isFromBar", true);
-        intent.putExtra("data", new Gson().toJson(userM));
+        if(jsonObject.getString("conType").equals(Constant.CONV_SN)){
+            userM = new UserM();
+            userM.setFullName(jsonObject.getString("userName"));
+            userM.setUserId(jsonObject.getString("userID"));
+            userM.setFcmToken(jsonObject.getString("userToken"));
+            intent.putExtra("isGroup", false);
+            intent.putExtra("data", new Gson().toJson(userM));
+        } else {
+            groupM = new GroupM();
+            groupM.setName(jsonObject.getString("userName"));
+            groupM.setId(jsonObject.getString("userID"));
+            intent.putExtra("isGroup", true);
+            intent.putExtra("data", new Gson().toJson(groupM));
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(Support.getInstance());

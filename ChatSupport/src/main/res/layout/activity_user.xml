@@ -35,35 +35,43 @@
 
                 </android.support.v7.widget.RecyclerView>
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/divider"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="5dp"
-                    android:scaleType="fitXY"/>
-
-                <com.vantagecircle.chatapp.widget.roboto.RobotoTextView
+                <LinearLayout
                     android:id="@+id/groupTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:text="@string/groups"
-                    android:textSize="@dimen/text16"
-                    app:fontFamily="roboto"
-                    app:typeface="roboto_regular"
-                    android:visibility="visible"/>
-
-                <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/divider"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="5dp"
-                    android:scaleType="fitXY"/>
+                    android:gravity="left"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/divider" />
+
+                    <com.vantagecircle.chatapp.widget.roboto.RobotoTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/groups"
+                        android:textSize="@dimen/text16"
+                        android:visibility="visible"
+                        app:fontFamily="roboto"
+                        app:typeface="roboto_regular" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/divider" />
+                </LinearLayout>
+
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView1"

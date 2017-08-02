@@ -14,10 +14,13 @@ public class NotificationM {
     private String senderUsername;
     private String senderUid;
     private String senderFcmToken;
+    private String receiverUserName;
+    private String receiverUid;
     private String receiverFcmToken;
     private ArrayList<String> tokenList;
     private String chatRoom;
     private long timeStamp;
+    private String conversationType;
 
     public String getTitle() {
         return title;
@@ -75,6 +78,22 @@ public class NotificationM {
         this.senderFcmToken = senderFcmToken;
     }
 
+    public String getReceiverUserName() {
+        return receiverUserName;
+    }
+
+    public void setReceiverUserName(String receiverUserName) {
+        this.receiverUserName = receiverUserName;
+    }
+
+    public String getReceiverUid() {
+        return receiverUid;
+    }
+
+    public void setReceiverUid(String receiverUid) {
+        this.receiverUid = receiverUid;
+    }
+
     public String getReceiverFcmToken() {
         return receiverFcmToken;
     }
@@ -105,5 +124,13 @@ public class NotificationM {
 
     public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public String getConversationType() {
+        return conversationType;
+    }
+
+    public void setConversationType(String conversationType) {
+        this.conversationType = conversationType;
     }
 }

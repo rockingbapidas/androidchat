@@ -145,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    Toast.makeText(mContext, "User global fetch error try again",
+                    Toast.makeText(mContext, "User data fetch error try again",
                             Toast.LENGTH_SHORT).show();
                 }
             }

@@ -2,6 +2,7 @@ package com.vantagecircle.chatapp.services;
 
 import android.util.Log;
 
+import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.utils.UpdateParamsM;
 import com.vantagecircle.chatapp.model.NotificationM;
 
@@ -39,17 +40,18 @@ public class SendNotification {
     private final String TOPIC_SUBSCRIBE_URL1 = "https://iid.googleapis.com/iid/v1/";
     private final String TOPIC_SUBSCRIBE_URL2 = "/rel/topics/";
 
-    //Json keys from fcm global
+    //Json keys from fcm data
     private final String KEY_TO = "to";
-    private final String KEY_DATA = "global";
+    private final String KEY_DATA = "data";
 
     private final String KEY_TITLE = "title";
     private final String KEY_TYPE = "type";
     private final String KEY_TEXT = "text";
     private final String KEY_URI = "fileUri";
-    private final String KEY_USERNAME = "senderUsername";
-    private final String KEY_UID = "senderUid";
-    private final String KEY_FCM_TOKEN = "senderToken";
+    private final String KEY_CON_TYPE = "conType";
+    private final String KEY_USERNAME = "userName";
+    private final String KEY_UID = "userID";
+    private final String KEY_FCM_TOKEN = "userToken";
 
     //Notification model
     private NotificationM notificationM;
@@ -62,7 +64,7 @@ public class SendNotification {
     public void subscribeToken(String token, String groupName) {
         try {
             String url = TOPIC_SUBSCRIBE_URL1 + token + TOPIC_SUBSCRIBE_URL2 + groupName;
-            Log.e(TAG, url);
+            Log.e(TAG, "subscribeToken ==== " + url);
             RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, "");
             Request request = new Request.Builder()
                     .addHeader(CONTENT_TYPE, APPLICATION_JSON)
@@ -90,6 +92,7 @@ public class SendNotification {
 
     public void sendToSingle() {
         try {
+            Log.e(TAG, "sendToSingle ==== ");
             RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON,
                     getDataObject().toString());
             Request request = new Request.Builder()
@@ -122,6 +125,7 @@ public class SendNotification {
 
     public void sendToGroup() {
         try {
+            Log.e(TAG, "sendToGroup ==== ");
             RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON,
                     getDataObject().toString());
             Request request = new Request.Builder()
@@ -155,7 +159,7 @@ public class SendNotification {
 
     private JSONObject getDataObject() throws JSONException {
         JSONObject parentBody = new JSONObject();
-        if (notificationM.getReceiverFcmToken() != null) {
+        if (notificationM.getConversationType().equals(Constant.CONV_SN)) {
             parentBody.put(KEY_TO, notificationM.getReceiverFcmToken());
         } else {
             parentBody.put(KEY_TO, notificationM.getChatRoom());
@@ -166,12 +170,19 @@ public class SendNotification {
         childData.put(KEY_TYPE, notificationM.getChatType());
         childData.put(KEY_TEXT, notificationM.getMessageText());
         childData.put(KEY_URI, notificationM.getFileUrl());
+        childData.put(KEY_CON_TYPE, notificationM.getConversationType());
 
-        childData.put(KEY_USERNAME, notificationM.getSenderUsername());
-        childData.put(KEY_UID, notificationM.getSenderUid());
-        childData.put(KEY_FCM_TOKEN, notificationM.getSenderFcmToken());
+        if (notificationM.getConversationType().equals(Constant.CONV_SN)) {
+            childData.put(KEY_USERNAME, notificationM.getSenderUsername());
+            childData.put(KEY_UID, notificationM.getSenderUid());
+            childData.put(KEY_FCM_TOKEN, notificationM.getSenderFcmToken());
+        } else {
+            childData.put(KEY_USERNAME, notificationM.getReceiverUserName());
+            childData.put(KEY_UID, notificationM.getReceiverUid());
+        }
 
         parentBody.put(KEY_DATA, childData);
+        Log.e(TAG, "noti data === " + parentBody);
         return parentBody;
     }
 }

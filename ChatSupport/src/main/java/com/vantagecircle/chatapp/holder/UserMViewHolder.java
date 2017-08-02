@@ -6,15 +6,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.core.DataModel;
-import com.vantagecircle.chatapp.core.SetDataHandler;
 import com.vantagecircle.chatapp.core.GetDataHandler;
 import com.vantagecircle.chatapp.core.interfacep.ChildInterface;
-import com.vantagecircle.chatapp.core.interfacep.ValueInterface;
+import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
+import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.interfacePref.ClickUser;
 import com.vantagecircle.chatapp.model.ChatM;
@@ -55,82 +53,72 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
     }
 
     private void getLastMessage(final UserM userM) {
-        final String room_type_1 = Support.id + "_" + userM.getUserId();
-        final String room_type_2 = userM.getUserId() + "_" + Support.id;
-        GetDataHandler getDataHandler = new GetDataHandler();
-        getDataHandler.setDataReference(Support.getChatReference());
-        getDataHandler.setValueEventListener(new ValueInterface() {
+        ConfigUtils.checkRooms(userM, new ResultInterface() {
             @Override
-            public void onDataSuccess(DataModel dataModel) {
-                //check room avail
-                String activeRoom;
-                if (dataModel.getDataSnapshot().hasChild(room_type_1)){
-                    activeRoom = room_type_1;
-                } else if (dataModel.getDataSnapshot().hasChild(room_type_2)){
-                    activeRoom = room_type_2;
-                } else {
-                    activeRoom = null;
-                }
-                //set listener
-                if (activeRoom != null) {
-                    GetDataHandler getDataHandler1 = new GetDataHandler();
-                    getDataHandler1.setQueryReference(Support.getChatReference()
-                            .child(activeRoom)
-                            .orderByKey()
-                            .limitToLast(1));
-                    getDataHandler1.setChildValueListener(new ChildInterface() {
-                        @Override
-                        public void onChildNew(DataModel dataModel) {
-                            ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
-                            assert chatM != null;
-                            if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
-                                lastImage.setVisibility(View.GONE);
-                                last_message.setVisibility(View.VISIBLE);
-                                last_message.setText(chatM.getMessageText());
-                            } else {
-                                lastImage.setVisibility(View.VISIBLE);
-                                last_message.setVisibility(View.GONE);
-                            }
-                        }
-
-                        @Override
-                        public void onChildModified(DataModel dataModel) {
-                            ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
-                            assert chatM != null;
-                            if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
-                                lastImage.setVisibility(View.GONE);
-                                last_message.setVisibility(View.VISIBLE);
-                                last_message.setText(chatM.getMessageText());
-                            } else {
-                                lastImage.setVisibility(View.VISIBLE);
-                                last_message.setVisibility(View.GONE);
-                            }
-                        }
-
-                        @Override
-                        public void onChildDelete(DataModel dataModel) {
-
-                        }
-
-                        @Override
-                        public void onChildRelocate(DataModel dataModel) {
-
-                        }
-
-                        @Override
-                        public void onChildCancelled(DataModel dataModel) {
-                            Log.d("onDataCancelled", "Error " + dataModel.getDatabaseError().getMessage());
-                        }
-                    });
-                } else {
+            public void onSuccess(String t) {
+                if(t.equals(Constant.NO_ROOM)){
                     last_message.setVisibility(View.GONE);
                     lastImage.setVisibility(View.GONE);
+                } else {
+                    bindLastMessage(t);
                 }
             }
 
             @Override
-            public void onDataCancelled(DataModel dataModel) {
-                Log.d("onDataCancelled", "Error " + dataModel.getDatabaseError().getMessage());
+            public void onFail(String e) {
+                Log.d("onFail", "Error " + e);
+            }
+        });
+    }
+
+    private void bindLastMessage(String room){
+        GetDataHandler getDataHandler1 = new GetDataHandler();
+        getDataHandler1.setQueryReference(Support.getChatReference()
+                .child(room)
+                .orderByKey()
+                .limitToLast(1));
+        getDataHandler1.setChildValueListener(new ChildInterface() {
+            @Override
+            public void onChildNew(DataModel dataModel) {
+                ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
+                assert chatM != null;
+                if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
+                    lastImage.setVisibility(View.GONE);
+                    last_message.setVisibility(View.VISIBLE);
+                    last_message.setText(chatM.getMessageText());
+                } else {
+                    lastImage.setVisibility(View.VISIBLE);
+                    last_message.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onChildModified(DataModel dataModel) {
+                ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
+                assert chatM != null;
+                if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
+                    lastImage.setVisibility(View.GONE);
+                    last_message.setVisibility(View.VISIBLE);
+                    last_message.setText(chatM.getMessageText());
+                } else {
+                    lastImage.setVisibility(View.VISIBLE);
+                    last_message.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onChildDelete(DataModel dataModel) {
+
+            }
+
+            @Override
+            public void onChildRelocate(DataModel dataModel) {
+
+            }
+
+            @Override
+            public void onChildCancelled(DataModel dataModel) {
+                Log.d("onChildCancelled", "Error " + dataModel.getDatabaseError().getMessage());
             }
         });
     }

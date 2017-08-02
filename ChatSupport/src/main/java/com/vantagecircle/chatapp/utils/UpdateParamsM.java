@@ -57,40 +57,49 @@ public class UpdateParamsM {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(Constant.LAST_SEEN, timeStamp);
 
-        SetDataHandler setDataHandler = new SetDataHandler();
-        setDataHandler.setDatabaseReference(Support.getUserReference()
-                .child(Support.getUserInstance().getUid()));
-        setDataHandler.updateData(hashMap, new ResultInterface() {
-            @Override
-            public void onSuccess(String t) {
-                Log.d(TAG, "Last seen time updated successfully");
-            }
+        if (Support.getUserInstance() != null) {
+            SetDataHandler setDataHandler = new SetDataHandler();
+            setDataHandler.setDatabaseReference(Support.getUserReference()
+                    .child(Support.getUserInstance().getUid()));
+            setDataHandler.updateData(hashMap, new ResultInterface() {
+                @Override
+                public void onSuccess(String t) {
+                    Log.d(TAG, "Last seen time updated successfully");
+                }
 
-            @Override
-            public void onFail(String e) {
-                Log.d(TAG, "Last seen time not updated " + e);
-            }
-        });
+                @Override
+                public void onFail(String e) {
+                    Log.d(TAG, "Last seen time not updated " + e);
+                }
+            });
+        } else {
+            Log.e(TAG, "Last seen cannot updated because firebase user is null");
+        }
     }
 
     public static void updateOnlineStatus(boolean status) {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(Constant.ONLINE_STATUS, status);
 
-        SetDataHandler setDataHandler = new SetDataHandler();
-        setDataHandler.setDatabaseReference(Support.getUserReference()
-                .child(Support.getUserInstance().getUid()));
-        setDataHandler.updateData(hashMap, new ResultInterface() {
-            @Override
-            public void onSuccess(String t) {
-                Log.d(TAG, "Online status updated successfully");
-            }
+        if (Support.getUserInstance() != null) {
+            SetDataHandler setDataHandler = new SetDataHandler();
+            setDataHandler.setDatabaseReference(Support.getUserReference()
+                    .child(Support.getUserInstance().getUid()));
+            setDataHandler.updateData(hashMap, new ResultInterface() {
+                @Override
+                public void onSuccess(String t) {
+                    Log.d(TAG, "Online status updated successfully");
+                }
 
-            @Override
-            public void onFail(String e) {
-                Log.d(TAG, "Online status not updated  " + e);
-            }
-        });
+                @Override
+                public void onFail(String e) {
+                    Log.d(TAG, "Online status not updated  " + e);
+                }
+            });
+        } else {
+            Log.e(TAG, "Online status cannot updated because firebase user is null");
+        }
+
     }
 
     public static void updateSentStatus(String room, long timeStamp) {
