@@ -524,7 +524,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                 } else {
                                     ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE,
-                                            selectedImage.toString());
+                                            null);
                                     pushMessage(chatM);
                                     uploadDataTask(selectedImage, chatM);
                                 }
@@ -554,7 +554,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                 } else {
                                     ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE,
-                                            selectedImage.toString());
+                                            null);
                                     pushMessage(chatM);
                                     uploadDataTask(selectedImage, chatM);
                                 }
