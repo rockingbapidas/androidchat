@@ -46,7 +46,6 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
             this.clickGroup = clickGroup;
             email_id.setVisibility(View.GONE);
             user_name.setText(groupM.getName());
-
             getLastMessage(groupM);
         } else {
             sub_holder.setVisibility(View.GONE);
