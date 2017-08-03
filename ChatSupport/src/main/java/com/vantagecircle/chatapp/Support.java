@@ -1,5 +1,6 @@
 package com.vantagecircle.chatapp;
 
+import android.os.Environment;
 import android.support.multidex.MultiDexApplication;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -10,6 +11,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.model.UserM;
+
+import java.io.File;
 
 /**
  * Created by bapidas on 10/07/17.
@@ -25,6 +28,7 @@ public class Support extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        makeDir();
         getDatabaseInstance().setPersistenceEnabled(true);
         getUserReference().keepSynced(true);
         getChatReference().keepSynced(true);
@@ -72,5 +76,33 @@ public class Support extends MultiDexApplication {
 
     public static synchronized boolean getIsChatWindowActive() {
         return isChatWindowActive;
+    }
+
+    public static void makeDir() {
+        File appFile = new File(Environment.getExternalStorageDirectory() + File.separator + Constant.APPNAME);
+        try {
+            if (!appFile.isDirectory()) {
+                appFile.mkdir();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            makeInnnerDir();
+        }
+    }
+
+    public static void makeInnnerDir() {
+        String s_folder[] = mInstance.getResources().getStringArray(R.array.folders_name);
+        for (String aS_folder : s_folder) {
+            File appFile = new File(Environment.getExternalStorageDirectory() + File.separator +
+                    Constant.APPNAME + File.separator + aS_folder);
+            try {
+                if (!appFile.isDirectory()) {
+                    appFile.mkdir();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

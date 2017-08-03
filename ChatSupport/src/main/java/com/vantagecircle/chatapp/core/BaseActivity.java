@@ -49,6 +49,7 @@ import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.services.SendNotification;
 import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constant;
+import com.vantagecircle.chatapp.utils.FileUtils;
 import com.vantagecircle.chatapp.utils.Tools;
 import com.vantagecircle.chatapp.utils.UpdateParamsM;
 
@@ -266,6 +267,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     //push message to firebase db
     protected ChatM prepareChatModel(String text, String type, String uri) {
+        Log.d(TAG, "Current Room === " + currentRoom);
         ChatM chatM = null;
         try {
             String senderName = Support.userM.getFullName();
@@ -283,7 +285,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
             long timeStamp = System.currentTimeMillis();
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
-                    type, text, uri, timeStamp, false, false);
+                    type, text, uri, timeStamp, false, false, currentRoom);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -291,7 +293,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void pushMessage(final ChatM chatM) {
-        Log.d(TAG, "Current Room === " + currentRoom);
         //config handler and push chat data to current room
         SetDataHandler setDataHandler = new SetDataHandler();
         setDataHandler.setDatabaseReference(Support.getChatReference()
@@ -532,6 +533,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 } else {
                                     ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, null);
                                     pushMessage(chatM);
+                                    /*FileUtils.copyFile(FileUtils.getSentPath(), selectedImage,
+                                            String.valueOf(chatM.getTimeStamp()));*/
                                     uploadDataTask(selectedImage, chatM);
                                 }
                             } else {
@@ -561,6 +564,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 } else {
                                     ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, null);
                                     pushMessage(chatM);
+                                    /*FileUtils.copyFile(FileUtils.getSentPath(), selectedImage,
+                                            String.valueOf(chatM.getTimeStamp()));*/
                                     uploadDataTask(selectedImage, chatM);
                                 }
                             } else {

@@ -1,10 +1,19 @@
 package com.vantagecircle.chatapp.utils;
 
+import android.os.Environment;
+
+import java.io.File;
+
 /**
  * Created by bapidas on 10/07/17.
  */
 
 public class Constant {
+    public static final String APPNAME = "ChatApp";
+    public static final String SDCARD_PATH = Environment.getExternalStorageDirectory() + File.separator + APPNAME;
+    public static final String DIR_SENT = "Sent";
+    public static final String DIR_RECEIVED = "Received";
+
     public static final String APP_PREFS = "preferences";
     public static final String DATABASE_USER_REF = "users";
     public static final String DATABASE_CHAT_REF = "chat_msg";

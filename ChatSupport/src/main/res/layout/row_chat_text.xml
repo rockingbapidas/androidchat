@@ -70,8 +70,8 @@
 
                 <ImageView
                     android:id="@+id/chat_status"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
                     android:src="@drawable/single_tick"

@@ -11,12 +11,17 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.storage.StorageReference;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.utils.DateUtils;
+import com.vantagecircle.chatapp.utils.FileUtils;
 import com.vantagecircle.chatapp.utils.Tools;
+import com.vantagecircle.chatapp.utils.UpdateParamsM;
+
+import java.io.File;
 
 /**
  * Created by bapidas on 27/07/17.
@@ -36,7 +41,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         initViews(itemView);
     }
 
-    public void initViews(View itemView){
+    public void initViews(View itemView) {
         userName = (TextView) itemView.findViewById(R.id.sender);
         messageText = (TextView) itemView.findViewById(R.id.text_content);
         dateTime = (TextView) itemView.findViewById(R.id.text_time);
@@ -50,6 +55,47 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
     public void setDataToViews(ChatM chatM, boolean isChatContinue) {
         switch (chatM.getChatType()) {
             case Constant.IMAGE_TYPE:
+
+                /*if (chatM.getSenderUid().equals(Support.id)) {
+                    if (chatM.getFileUrl() != null) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        StorageReference fileref = Support.getStorageInstance()
+                                .getReferenceFromUrl(chatM.getFileUrl());
+                        File file = FileUtils.isFilePresent(FileUtils.getSentPath(),
+                                fileref.getName());
+                        if (file != null) {
+                            Tools.loadPicasso(context, fileImage, file.getAbsolutePath());
+                            progressBar.setVisibility(View.GONE);
+                        } else {
+                            FileUtils.downloadData(FileUtils.getSentPath(), chatM.getFileUrl(),
+                                    fileref.getName());
+                            Tools.loadPicasso(context, fileImage, chatM.getFileUrl());
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    } else {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    if (chatM.getFileUrl() != null) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        StorageReference fileref = Support.getStorageInstance()
+                                .getReferenceFromUrl(chatM.getFileUrl());
+                        File file = FileUtils.isFilePresent(FileUtils.getReceivedPath(),
+                                fileref.getName());
+                        if (file != null) {
+                            Tools.loadPicasso(context, fileImage, file.getAbsolutePath());
+                            progressBar.setVisibility(View.GONE);
+                        } else {
+                            FileUtils.downloadData(FileUtils.getReceivedPath(), chatM.getFileUrl(),
+                                    fileref.getName());
+                            Tools.loadPicasso(context, fileImage, chatM.getFileUrl());
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    } else {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+                }*/
+
                 if (chatM.getFileUrl() != null) {
                     progressBar.setVisibility(View.GONE);
                     Tools.loadPicasso(context, fileImage, chatM.getFileUrl());
@@ -71,7 +117,11 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             userName.setVisibility(View.VISIBLE);
         }
         if (chatM.isSentSuccessfully()) {
-            statusImage.setImageResource(R.drawable.single_tick);
+            if (chatM.isReadSuccessfully()) {
+                statusImage.setImageResource(R.drawable.double_tick);
+            } else {
+                statusImage.setImageResource(R.drawable.single_tick);
+            }
         } else {
             statusImage.setImageResource(R.drawable.ic_msg_wait);
         }
@@ -88,6 +138,11 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             lyt_parent.setPadding(15, 10, 100, 10);
             lyt_parent.setGravity(Gravity.START);
             lyt_thread.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
+            if (!chatM.isReadSuccessfully()) {
+                if (Support.getIsChatWindowActive()) {
+                    UpdateParamsM.updateReadStatus(chatM.getChatRoom(), chatM.getTimeStamp());
+                }
+            }
         }
     }
 }

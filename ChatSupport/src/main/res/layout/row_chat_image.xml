@@ -43,8 +43,7 @@
                     android:id="@+id/image_status"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_insert_photo_black_24dp" />
+                    android:scaleType="fitCenter"/>
 
                 <ProgressBar
                     android:id="@+id/progressBar"
@@ -73,8 +72,8 @@
 
                 <ImageView
                     android:id="@+id/chat_status"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
                     android:src="@drawable/ic_msg_wait" />

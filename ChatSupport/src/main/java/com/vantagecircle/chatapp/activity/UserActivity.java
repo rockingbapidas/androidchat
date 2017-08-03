@@ -1,8 +1,14 @@
 package com.vantagecircle.chatapp.activity;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -35,6 +41,8 @@ import com.vantagecircle.chatapp.holder.GroupMViewHolder;
 import com.vantagecircle.chatapp.holder.UserMViewHolder;
 import com.vantagecircle.chatapp.adapter.UsersMAdapter;
 import com.vantagecircle.chatapp.core.SetDataHandler;
+import com.vantagecircle.chatapp.utils.Constant;
+import com.vantagecircle.chatapp.utils.Tools;
 import com.vantagecircle.chatapp.utils.UpdateParamsM;
 import com.vantagecircle.chatapp.interfacePref.ClickGroup;
 import com.vantagecircle.chatapp.interfacePref.ClickUser;
@@ -67,10 +75,33 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
         setContentView(R.layout.activity_user);
         mContext = getApplicationContext();
         activity = this;
+        initPermission();
         initToolbar();
         initView();
         initRecycler();
         setData();
+    }
+
+    private void initPermission() {
+        String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (!Tools.isHasPermissions(this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, Constant.REQUEST_STORAGE_PERMISSION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Permission granted");
+                } else {
+                    Log.d(TAG, "Permission not granted");
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private void initToolbar() {

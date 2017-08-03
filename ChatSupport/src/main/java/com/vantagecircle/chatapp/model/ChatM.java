@@ -17,13 +17,14 @@ public class ChatM implements Serializable {
     private long timeStamp;
     private boolean isSentSuccessfully;
     private boolean isReadSuccessfully;
+    private String chatRoom;
 
     public ChatM() {
     }
 
     public ChatM(String senderName, String receiverName, String senderUid, String receiverUid,
                  String chatType, String messageText, String fileUrl, long timeStamp,
-                 boolean isSentSuccessfully, boolean isReadSuccessfully) {
+                 boolean isSentSuccessfully, boolean isReadSuccessfully, String chatRoom) {
         this.senderName = senderName;
         this.receiverName = receiverName;
         this.senderUid = senderUid;
@@ -34,6 +35,7 @@ public class ChatM implements Serializable {
         this.timeStamp = timeStamp;
         this.isSentSuccessfully = isSentSuccessfully;
         this.isReadSuccessfully = isReadSuccessfully;
+        this.chatRoom = chatRoom;
     }
 
     public String getSenderName() {
@@ -116,6 +118,14 @@ public class ChatM implements Serializable {
         isReadSuccessfully = read;
     }
 
+    public String getChatRoom() {
+        return chatRoom;
+    }
+
+    public void setChatRoom(String chatRoom) {
+        this.chatRoom = chatRoom;
+    }
+
     @Override
     public String toString() {
         return "ChatM{" +
@@ -129,6 +139,7 @@ public class ChatM implements Serializable {
                 ", timeStamp=" + timeStamp +
                 ", isSentSuccessfully=" + isSentSuccessfully +
                 ", isReadSuccessfully=" + isReadSuccessfully +
+                ", chatRoom='" + chatRoom + '\'' +
                 '}';
     }
 }

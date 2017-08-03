@@ -18,4 +18,8 @@
     <string name="action_group">Create Group</string>
     <string name="group_name">Group Name</string>
     <string name="groups">Groups</string>
+    <string-array name="folders_name">
+        <item>Sent</item>
+        <item>Received</item>
+    </string-array>
 </resources>
