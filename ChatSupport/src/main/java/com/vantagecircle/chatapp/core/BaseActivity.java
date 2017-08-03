@@ -137,7 +137,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     //initialize app for chat
     protected void initialize() {
+        //initialize app data and set user online if user came from notification bar
         isFromNotification = getIntent().getBooleanExtra("isFromBar", false);
+        if (isFromNotification) {
+            ConfigUtils.initializeApp();
+            UpdateParamsM.updateOnlineStatus(true);
+            UpdateParamsM.updateLastSeen(new Date().getTime());
+        }
+
+        //check intent is group chat or not
         isGroup = getIntent().getBooleanExtra("isGroup", false);
         if (isGroup) {
             groupM = new Gson().fromJson(getIntent().getStringExtra("data"), GroupM.class);
@@ -146,12 +154,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else {
             userM = new Gson().fromJson(getIntent().getStringExtra("data"), UserM.class);
             mActionBar.setTitle(userM.getFullName());
-            if (isFromNotification) {
-                UpdateParamsM.updateOnlineStatus(true);
-                UpdateParamsM.updateLastSeen(new Date().getTime());
-            }
             getOnlineStatus();
         }
+
+        //get all chat history
         getChatHistory();
     }
 
@@ -293,6 +299,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void pushMessage(final ChatM chatM) {
+        //clear edit text and scroll recycler view to bottom
+        et_message.setText("");
+
         //config handler and push chat data to current room
         SetDataHandler setDataHandler = new SetDataHandler();
         setDataHandler.setDatabaseReference(Support.getChatReference()
@@ -301,11 +310,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         setDataHandler.insertData(chatM, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
-                //clear edit text and scroll recycler view to bottom
-                et_message.setText("");
-                if (chatMAdapter != null) {
-                    recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount());
-                }
+                recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount() == 0 ? 0 :
+                        chatMAdapter.getItemCount() - 1);
                 //send push notification to the user if chat type is text type than
                 if (chatM.getChatType().equals(Constant.TEXT_TYPE)) {
                     sendPushNotification(chatM, currentRoom);
@@ -410,13 +416,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-            case R.id.action_attach:
-                showContextMenu(getCurrentFocus());
-                break;
+        int i = item.getItemId();
+        if (i == android.R.id.home) {
+            finish();
+        } else if (i == R.id.action_attach) {
+            showContextMenu(getCurrentFocus());
+
         }
         return super.onOptionsItemSelected(item);
     }

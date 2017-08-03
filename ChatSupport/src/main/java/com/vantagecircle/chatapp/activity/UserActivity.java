@@ -162,17 +162,17 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_logout:
-                Support.getAuthInstance().signOut();
-                Intent intent = new Intent(activity, LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-                break;
-            case R.id.action_group:
-                showDialog();
-                break;
+        int i = item.getItemId();
+        if (i == R.id.action_logout) {
+            Support.getAuthInstance().signOut();
+            Intent intent = new Intent(activity, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+
+        } else if (i == R.id.action_group) {
+            showDialog();
+
         }
         return super.onOptionsItemSelected(item);
     }

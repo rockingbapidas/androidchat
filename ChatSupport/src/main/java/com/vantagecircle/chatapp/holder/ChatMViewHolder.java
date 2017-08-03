@@ -55,47 +55,6 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
     public void setDataToViews(ChatM chatM, boolean isChatContinue) {
         switch (chatM.getChatType()) {
             case Constant.IMAGE_TYPE:
-
-                /*if (chatM.getSenderUid().equals(Support.id)) {
-                    if (chatM.getFileUrl() != null) {
-                        progressBar.setVisibility(View.VISIBLE);
-                        StorageReference fileref = Support.getStorageInstance()
-                                .getReferenceFromUrl(chatM.getFileUrl());
-                        File file = FileUtils.isFilePresent(FileUtils.getSentPath(),
-                                fileref.getName());
-                        if (file != null) {
-                            Tools.loadPicasso(context, fileImage, file.getAbsolutePath());
-                            progressBar.setVisibility(View.GONE);
-                        } else {
-                            FileUtils.downloadData(FileUtils.getSentPath(), chatM.getFileUrl(),
-                                    fileref.getName());
-                            Tools.loadPicasso(context, fileImage, chatM.getFileUrl());
-                            progressBar.setVisibility(View.GONE);
-                        }
-                    } else {
-                        progressBar.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    if (chatM.getFileUrl() != null) {
-                        progressBar.setVisibility(View.VISIBLE);
-                        StorageReference fileref = Support.getStorageInstance()
-                                .getReferenceFromUrl(chatM.getFileUrl());
-                        File file = FileUtils.isFilePresent(FileUtils.getReceivedPath(),
-                                fileref.getName());
-                        if (file != null) {
-                            Tools.loadPicasso(context, fileImage, file.getAbsolutePath());
-                            progressBar.setVisibility(View.GONE);
-                        } else {
-                            FileUtils.downloadData(FileUtils.getReceivedPath(), chatM.getFileUrl(),
-                                    fileref.getName());
-                            Tools.loadPicasso(context, fileImage, chatM.getFileUrl());
-                            progressBar.setVisibility(View.GONE);
-                        }
-                    } else {
-                        progressBar.setVisibility(View.VISIBLE);
-                    }
-                }*/
-
                 if (chatM.getFileUrl() != null) {
                     progressBar.setVisibility(View.GONE);
                     Tools.loadPicasso(context, fileImage, chatM.getFileUrl());
@@ -142,6 +101,48 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                 if (Support.getIsChatWindowActive()) {
                     UpdateParamsM.updateReadStatus(chatM.getChatRoom(), chatM.getTimeStamp());
                 }
+            }
+        }
+    }
+
+    private void setImage(ChatM chatM) {
+        if (chatM.getSenderUid().equals(Support.id)) {
+            if (chatM.getFileUrl() != null) {
+                progressBar.setVisibility(View.VISIBLE);
+                StorageReference fileref = Support.getStorageInstance()
+                        .getReferenceFromUrl(chatM.getFileUrl());
+                File file = FileUtils.isFilePresent(FileUtils.getSentPath(),
+                        fileref.getName());
+                if (file != null) {
+                    Tools.loadPicasso(context, fileImage, file.getAbsolutePath());
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    FileUtils.downloadData(FileUtils.getSentPath(), chatM.getFileUrl(),
+                            fileref.getName());
+                    Tools.loadPicasso(context, fileImage, chatM.getFileUrl());
+                    progressBar.setVisibility(View.GONE);
+                }
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (chatM.getFileUrl() != null) {
+                progressBar.setVisibility(View.VISIBLE);
+                StorageReference fileref = Support.getStorageInstance()
+                        .getReferenceFromUrl(chatM.getFileUrl());
+                File file = FileUtils.isFilePresent(FileUtils.getReceivedPath(),
+                        fileref.getName());
+                if (file != null) {
+                    Tools.loadPicasso(context, fileImage, file.getAbsolutePath());
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    FileUtils.downloadData(FileUtils.getReceivedPath(), chatM.getFileUrl(),
+                            fileref.getName());
+                    Tools.loadPicasso(context, fileImage, chatM.getFileUrl());
+                    progressBar.setVisibility(View.GONE);
+                }
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
             }
         }
     }

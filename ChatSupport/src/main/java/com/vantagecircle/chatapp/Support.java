@@ -87,11 +87,11 @@ public class Support extends MultiDexApplication {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            makeInnnerDir();
+            makeInnerDir();
         }
     }
 
-    public static void makeInnnerDir() {
+    public static void makeInnerDir() {
         String s_folder[] = mInstance.getResources().getStringArray(R.array.folders_name);
         for (String aS_folder : s_folder) {
             File appFile = new File(Environment.getExternalStorageDirectory() + File.separator +
