@@ -158,13 +158,14 @@ public abstract class BaseActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(String t) {
                     if (t.equals(Constant.NO_ROOM)) {
+                        Log.d(TAG, "Current Room created");
                         currentRoom = ConfigUtils.createRoom(groupM);
                     } else {
+                        Log.d(TAG, "Current Room updated");
                         currentRoom = t;
                         if (chatMAdapter == null) {
-                            chatMAdapter = new ChatMAdapter(ChatM.class, 0,
-                                    ChatMViewHolder.class,
-                                    Support.getChatReference().child(t));
+                            chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
+                                    Support.getChatReference().child(currentRoom));
                             recyclerView.setAdapter(chatMAdapter);
                         }
                     }
@@ -172,7 +173,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 @Override
                 public void onFail(String e) {
-                    Log.d(TAG, "Error " + e);
+                    Log.d(TAG, "Current room Error " + e);
                 }
             });
         } else {
@@ -180,13 +181,14 @@ public abstract class BaseActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(String t) {
                     if (t.equals(Constant.NO_ROOM)) {
+                        Log.d(TAG, "Current Room created");
                         currentRoom = ConfigUtils.createRoom(userM);
                     } else {
+                        Log.d(TAG, "Current Room updated");
                         currentRoom = t;
                         if (chatMAdapter == null) {
-                            chatMAdapter = new ChatMAdapter(ChatM.class, 0,
-                                    ChatMViewHolder.class,
-                                    Support.getChatReference().child(t));
+                            chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
+                                    Support.getChatReference().child(currentRoom));
                             recyclerView.setAdapter(chatMAdapter);
                         }
                     }
@@ -194,7 +196,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 @Override
                 public void onFail(String e) {
-                    Log.d(TAG, "Error " + e);
+                    Log.d(TAG, "Current room Error " + e);
                 }
             });
         }
@@ -285,6 +287,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void pushMessage(final ChatM chatM) {
+        Log.d(TAG, "Current Room === " + currentRoom);
         //config handler and push chat data to current room
         SetDataHandler setDataHandler = new SetDataHandler();
         setDataHandler.setDatabaseReference(Support.getChatReference()
@@ -393,7 +396,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    //file choose config and funtion
+    //file choose config and function
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.attach_menu, menu);
@@ -523,8 +526,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     Toast.makeText(mContext, "There was an error in file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE,
-                                            null);
+                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, null);
                                     pushMessage(chatM);
                                     uploadDataTask(selectedImage, chatM);
                                 }
@@ -553,8 +555,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     Toast.makeText(mContext, "There was an error in file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE,
-                                            null);
+                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, null);
                                     pushMessage(chatM);
                                     uploadDataTask(selectedImage, chatM);
                                 }

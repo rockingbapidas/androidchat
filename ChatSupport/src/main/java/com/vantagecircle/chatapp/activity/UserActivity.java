@@ -109,11 +109,6 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
         Query myQuery1 =  Support.getGroupReference();
         groupMAdapter = new GroupMAdapter(GroupM.class, R.layout.row_users, GroupMViewHolder.class, myQuery1, this);
         recyclerView1.setAdapter(groupMAdapter);
-        if(groupMAdapter.getItemCount() > 0){
-            groupTitle.setVisibility(View.VISIBLE);
-        } else {
-            groupTitle.setVisibility(View.GONE);
-        }
     }
 
     @Override
