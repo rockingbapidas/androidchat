@@ -30,7 +30,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                 if(Support.getIsChatWindowActive()){
                     Log.d(TAG, "New Message arrived");
                 } else {
-                    Toast.makeText(Support.getInstance(), "New Message arrived", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "New Message arrived ==");
                 }
             }
         }

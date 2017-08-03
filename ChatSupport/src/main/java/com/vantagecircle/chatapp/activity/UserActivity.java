@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -69,6 +70,7 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
         initToolbar();
         initView();
         initRecycler();
+        setData();
     }
 
     private void initToolbar() {
@@ -90,7 +92,10 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(0);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
         recyclerView.addItemDecoration(new DividerItemDecoration(ContextCompat
                 .getDrawable(mContext, R.drawable.divider)));
 
@@ -98,16 +103,23 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
         linearLayoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView1.setLayoutManager(linearLayoutManager1);
         recyclerView1.scrollToPosition(0);
-        recyclerView1.setItemAnimator(new DefaultItemAnimator());
+        RecyclerView.ItemAnimator animator1 = recyclerView1.getItemAnimator();
+        if (animator1 instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator1).setSupportsChangeAnimations(false);
+        }
         recyclerView1.addItemDecoration(new DividerItemDecoration(ContextCompat
                 .getDrawable(mContext, R.drawable.divider)));
+    }
 
+    private void setData(){
         Query myQuery =  Support.getUserReference();
-        usersMAdapter = new UsersMAdapter(UserM.class, R.layout.row_users, UserMViewHolder.class, myQuery, this);
+        usersMAdapter = new UsersMAdapter(UserM.class, R.layout.row_users,
+                UserMViewHolder.class, myQuery, this);
         recyclerView.setAdapter(usersMAdapter);
 
         Query myQuery1 =  Support.getGroupReference();
-        groupMAdapter = new GroupMAdapter(GroupM.class, R.layout.row_users, GroupMViewHolder.class, myQuery1, this);
+        groupMAdapter = new GroupMAdapter(GroupM.class, R.layout.row_users,
+                GroupMViewHolder.class, myQuery1, this);
         recyclerView1.setAdapter(groupMAdapter);
     }
 
