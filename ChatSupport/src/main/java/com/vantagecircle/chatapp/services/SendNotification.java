@@ -2,6 +2,8 @@ package com.vantagecircle.chatapp.services;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.utils.Constant;
 import com.vantagecircle.chatapp.utils.UpdateParamsM;
 import com.vantagecircle.chatapp.model.NotificationM;
@@ -57,8 +59,42 @@ public class SendNotification {
     private NotificationM notificationM;
 
 
-    public SendNotification(NotificationM notificationM) {
-        this.notificationM = notificationM;
+    public SendNotification() {
+        notificationM = new NotificationM();
+    }
+
+    public void prepareNotification(ChatM chatM){
+        try {
+            String chatType = chatM.getChatType();
+            String messageText = chatM.getMessageText();
+            String fileUrl = chatM.getFileUrl();
+            long timeStamp = chatM.getTimeStamp();
+
+            notificationM.setTitle(chatM.getSenderName());
+            notificationM.setChatType(chatType);
+            notificationM.setMessageText(messageText);
+            notificationM.setFileUrl(fileUrl);
+            notificationM.setTimeStamp(timeStamp);
+            notificationM.setChatRoom(chatM.getChatRoom());
+            notificationM.setConversationType(chatM.getConvType());
+
+            notificationM.setSenderUsername(chatM.getSenderName());
+            notificationM.setReceiverUserName(chatM.getReceiverName());
+
+            notificationM.setSenderUid(chatM.getSenderUid());
+            notificationM.setReceiverUid(chatM.getReceiverUid());
+
+            notificationM.setSenderFcmToken(chatM.getSenderToken());
+            notificationM.setReceiverFcmToken(chatM.getReceiverToken());
+
+            if (chatM.getConvType().equals(Constant.CONV_GR)) {
+                sendToGroup();
+            } else {
+                sendToSingle();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void subscribeToken(String token, String groupName) {
@@ -90,7 +126,7 @@ public class SendNotification {
         }
     }
 
-    public void sendToSingle() {
+    private void sendToSingle() {
         try {
             Log.e(TAG, "sendToSingle ==== ");
             RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON,
@@ -123,7 +159,7 @@ public class SendNotification {
         }
     }
 
-    public void sendToGroup() {
+    private void sendToGroup() {
         try {
             Log.e(TAG, "sendToGroup ==== ");
             RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON,

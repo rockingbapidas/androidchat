@@ -38,6 +38,8 @@ public class Constant {
     public static final String IMAGE_TYPE = "image";
     public static final String TEXT_TYPE = "text";
 
+    public static final String IMAGE_CONTENT = "image/jpeg";
+
     public static final int REQUEST_STORAGE_PERMISSION = 1;
     public static final int REQUEST_CAMERA_PERMISSION = 2;
     public static final int REQUEST_CODE_CAMERA = 101;

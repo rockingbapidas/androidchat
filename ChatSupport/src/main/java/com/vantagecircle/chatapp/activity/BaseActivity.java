@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.core;
+package com.vantagecircle.chatapp.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -14,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -28,17 +27,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.OnPausedListener;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.ChatMAdapter;
+import com.vantagecircle.chatapp.core.DataModel;
+import com.vantagecircle.chatapp.core.FileHandler;
+import com.vantagecircle.chatapp.core.FileModel;
+import com.vantagecircle.chatapp.core.GetDataHandler;
+import com.vantagecircle.chatapp.core.SetDataHandler;
 import com.vantagecircle.chatapp.core.interfacep.ChildInterface;
+import com.vantagecircle.chatapp.core.interfacep.FileInterface;
 import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
 import com.vantagecircle.chatapp.holder.ChatMViewHolder;
 import com.vantagecircle.chatapp.core.interfacep.ValueInterface;
@@ -49,7 +48,6 @@ import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.services.SendNotification;
 import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constant;
-import com.vantagecircle.chatapp.utils.FileUtils;
 import com.vantagecircle.chatapp.utils.Tools;
 import com.vantagecircle.chatapp.utils.UpdateParamsM;
 
@@ -281,17 +279,21 @@ public abstract class BaseActivity extends AppCompatActivity {
 
             String receiverName;
             String receiverUid;
+            String convType;
             if (isGroup) {
                 receiverName = groupM.getName();
                 receiverUid = groupM.getId();
+                convType = Constant.CONV_GR;
             } else {
                 receiverName = userM.getFullName();
                 receiverUid = userM.getUserId();
+                convType = Constant.CONV_SN;
             }
 
             long timeStamp = System.currentTimeMillis();
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
-                    type, text, uri, timeStamp, false, false, currentRoom);
+                    type, text, uri, timeStamp, false, false, currentRoom, convType,
+                    Support.userM.getFcmToken(), isGroup ? null : userM.getFcmToken());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -314,7 +316,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                         chatMAdapter.getItemCount() - 1);
                 //send push notification to the user if chat type is text type than
                 if (chatM.getChatType().equals(Constant.TEXT_TYPE)) {
-                    sendPushNotification(chatM, currentRoom);
+                    SendNotification sendNotification = new SendNotification();
+                    sendNotification.prepareNotification(chatM);
                 }
             }
 
@@ -323,87 +326,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Log.d(TAG, "Error " + e);
             }
         });
-    }
-
-    protected void uploadDataTask(Uri fileUri, final ChatM chatM) {
-        try {
-            StorageMetadata metadata = new StorageMetadata.Builder()
-                    .setContentType("image/jpeg")
-                    .build();
-            UploadTask uploadTask = Support.getChatImageReference()
-                    .child(String.valueOf(chatM.getTimeStamp()))
-                    .putFile(fileUri, metadata);
-
-            uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    // Handle progress uploads
-                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    Log.d(TAG, "Upload is " + progress + "% done");
-                }
-            }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                    // Handle pause uploads
-                    Log.d(TAG, "Upload is paused");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    Log.d(TAG, "Upload is failed");
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // Handle successful uploads on complete
-                    String downloadUrl = taskSnapshot.getDownloadUrl().toString();
-                    long timeStamp = Long.parseLong(taskSnapshot.getStorage().getName());
-                    UpdateParamsM.updateFileUrl(currentRoom, timeStamp, downloadUrl);
-                    chatM.setFileUrl(downloadUrl);
-                    sendPushNotification(chatM, currentRoom);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void sendPushNotification(ChatM chatM, String chat_room) {
-        try {
-            String chatType = chatM.getChatType();
-            String messageText = chatM.getMessageText();
-            String fileUrl = chatM.getFileUrl();
-            long timeStamp = chatM.getTimeStamp();
-
-            NotificationM notificationM = new NotificationM();
-            notificationM.setTitle(chatM.getSenderName());
-            notificationM.setChatType(chatType);
-            notificationM.setMessageText(messageText);
-            notificationM.setFileUrl(fileUrl);
-            notificationM.setTimeStamp(timeStamp);
-            notificationM.setChatRoom(chat_room);
-
-            if (isGroup) {
-                notificationM.setConversationType(Constant.CONV_GR);
-                notificationM.setReceiverUserName(chatM.getReceiverName());
-                notificationM.setReceiverUid(chatM.getReceiverUid());
-
-                SendNotification sendNotification = new SendNotification(notificationM);
-                sendNotification.sendToGroup();
-            } else {
-                notificationM.setConversationType(Constant.CONV_SN);
-                notificationM.setSenderUsername(chatM.getSenderName());
-                notificationM.setSenderUid(chatM.getSenderUid());
-                notificationM.setSenderFcmToken(Support.userM.getFcmToken());
-                notificationM.setReceiverFcmToken(userM.getFcmToken());
-
-                SendNotification sendNotification = new SendNotification(notificationM);
-                sendNotification.sendToSingle();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -536,11 +458,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     Toast.makeText(mContext, "There was an error in file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, null);
+                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, selectedImage.toString());
                                     pushMessage(chatM);
-                                    /*FileUtils.copyFile(FileUtils.getSentPath(), selectedImage,
-                                            String.valueOf(chatM.getTimeStamp()));*/
-                                    uploadDataTask(selectedImage, chatM);
                                 }
                             } else {
                                 Toast.makeText(mContext, "File is not exist",
@@ -567,11 +486,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     Toast.makeText(mContext, "There was an error in file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, null);
+                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, selectedImage.toString());
                                     pushMessage(chatM);
-                                    /*FileUtils.copyFile(FileUtils.getSentPath(), selectedImage,
-                                            String.valueOf(chatM.getTimeStamp()));*/
-                                    uploadDataTask(selectedImage, chatM);
                                 }
                             } else {
                                 Toast.makeText(mContext, "File is not exist",

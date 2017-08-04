@@ -2,11 +2,8 @@ package com.vantagecircle.chatapp.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.BaseActivity;
 
 /**
  * Created by bapidas on 10/07/17.

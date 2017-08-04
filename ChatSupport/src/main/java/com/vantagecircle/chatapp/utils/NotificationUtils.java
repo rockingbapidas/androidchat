@@ -71,7 +71,6 @@ public class NotificationUtils {
             mBuilder.setContentText(jsonObject.getString("text"));
         } else {
             String imageUrl = jsonObject.getString("fileUri");
-            Log.d(TAG, "Image Url:" + imageUrl);
             Bitmap bitmap = null;
             try {
                 if (imageUrl != null && !imageUrl.isEmpty())
@@ -84,6 +83,8 @@ public class NotificationUtils {
 
         showNotification();
     }
+
+
 
     private static void showNotification() {
         Bitmap largeIcon = BitmapFactory.decodeResource(Support.getInstance().getResources(),

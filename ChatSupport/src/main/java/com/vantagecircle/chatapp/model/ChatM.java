@@ -18,13 +18,17 @@ public class ChatM implements Serializable {
     private boolean isSentSuccessfully;
     private boolean isReadSuccessfully;
     private String chatRoom;
+    private String convType;
+    private String senderToken;
+    private String receiverToken;
 
     public ChatM() {
     }
 
     public ChatM(String senderName, String receiverName, String senderUid, String receiverUid,
                  String chatType, String messageText, String fileUrl, long timeStamp,
-                 boolean isSentSuccessfully, boolean isReadSuccessfully, String chatRoom) {
+                 boolean isSentSuccessfully, boolean isReadSuccessfully, String chatRoom,
+                 String convType, String senderToken, String receiverToken) {
         this.senderName = senderName;
         this.receiverName = receiverName;
         this.senderUid = senderUid;
@@ -36,6 +40,9 @@ public class ChatM implements Serializable {
         this.isSentSuccessfully = isSentSuccessfully;
         this.isReadSuccessfully = isReadSuccessfully;
         this.chatRoom = chatRoom;
+        this.convType = convType;
+        this.senderToken = senderToken;
+        this.receiverToken = receiverToken;
     }
 
     public String getSenderName() {
@@ -126,6 +133,30 @@ public class ChatM implements Serializable {
         this.chatRoom = chatRoom;
     }
 
+    public String getConvType() {
+        return convType;
+    }
+
+    public void setConvType(String convType) {
+        this.convType = convType;
+    }
+
+    public String getSenderToken() {
+        return senderToken;
+    }
+
+    public void setSenderToken(String senderToken) {
+        this.senderToken = senderToken;
+    }
+
+    public String getReceiverToken() {
+        return receiverToken;
+    }
+
+    public void setReceiverToken(String receiverToken) {
+        this.receiverToken = receiverToken;
+    }
+
     @Override
     public String toString() {
         return "ChatM{" +
@@ -140,6 +171,9 @@ public class ChatM implements Serializable {
                 ", isSentSuccessfully=" + isSentSuccessfully +
                 ", isReadSuccessfully=" + isReadSuccessfully +
                 ", chatRoom='" + chatRoom + '\'' +
+                ", convType='" + convType + '\'' +
+                ", senderToken='" + senderToken + '\'' +
+                ", receiverToken='" + receiverToken + '\'' +
                 '}';
     }
 }
