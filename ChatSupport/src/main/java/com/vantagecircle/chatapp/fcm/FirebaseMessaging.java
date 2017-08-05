@@ -27,11 +27,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                     e.printStackTrace();
                 }
             } else {
-                if(Support.getIsChatWindowActive()){
-                    Log.d(TAG, "New Message arrived ==");
-                } else {
-                    Log.d(TAG, "New Message arrived ==");
-                }
+                Log.d(TAG, "New Message arrived ==");
             }
         }
     }

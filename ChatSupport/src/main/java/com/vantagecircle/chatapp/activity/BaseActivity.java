@@ -300,7 +300,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return chatM;
     }
 
-    private void pushMessage(final ChatM chatM) {
+    protected void pushMessage(final ChatM chatM) {
         //clear edit text and scroll recycler view to bottom
         et_message.setText("");
 

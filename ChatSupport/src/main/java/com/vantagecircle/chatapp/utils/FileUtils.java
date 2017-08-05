@@ -29,6 +29,20 @@ public class FileUtils {
         return getDirectoryPath().getPath() + File.separator + Constant.DIR_RECEIVED;
     }
 
+    public static String isFilePresent(String path, String name) throws Exception  {
+        try {
+            File fileR = new File(path + File.separator + name);
+            if (fileR.exists()) {
+                return Uri.fromFile(fileR).toString();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static Boolean checkDirectory(String send) throws Exception {
         boolean status;
         File appFile = getDirectoryPath();
@@ -56,20 +70,6 @@ public class FileUtils {
         OutputStream out = new FileOutputStream(destination);
         CopyStream(in, out);
         return Uri.fromFile(destination);
-    }
-
-    public static String isFilePresent(String path, String name) throws Exception  {
-        try {
-            File fileR = new File(path + File.separator + name);
-            if (fileR.exists()) {
-                return Uri.fromFile(fileR).toString();
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private static void CopyStream(InputStream in, OutputStream out) throws Exception {

@@ -53,7 +53,7 @@ import com.vantagecircle.chatapp.widget.customview.DividerItemDecoration;
 
 import java.util.Date;
 
-public class UserActivity extends AppCompatActivity implements ClickUser, ClickGroup {
+public class UserActivity extends AppCompatActivity {
     private static final String TAG = UserActivity.class.getSimpleName();
     private android.app.Activity activity;
     private Context mContext;
@@ -145,12 +145,30 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
     private void setData(){
         Query myQuery =  Support.getUserReference();
         usersMAdapter = new UsersMAdapter(UserM.class, R.layout.row_users,
-                UserMViewHolder.class, myQuery, this);
+                UserMViewHolder.class, myQuery, new ClickUser() {
+            @Override
+            public void onUserClick(int position) {
+                Intent intent = new Intent(activity, ChatActivity.class);
+                intent.putExtra("isFormBar", false);
+                intent.putExtra("isGroup", false);
+                intent.putExtra("data", new Gson().toJson(usersMAdapter.getItem(position)));
+                startActivity(intent);
+            }
+        });
         recyclerView.setAdapter(usersMAdapter);
 
         Query myQuery1 =  Support.getGroupReference();
         groupMAdapter = new GroupMAdapter(GroupM.class, R.layout.row_users,
-                GroupMViewHolder.class, myQuery1, this);
+                GroupMViewHolder.class, myQuery1, new ClickGroup() {
+            @Override
+            public void onGroupClick(int position) {
+                Intent intent = new Intent(activity, ChatActivity.class);
+                intent.putExtra("isFormBar", false);
+                intent.putExtra("isGroup", true);
+                intent.putExtra("data", new Gson().toJson(groupMAdapter.getItem(position)));
+                startActivity(intent);
+            }
+        });
         recyclerView1.setAdapter(groupMAdapter);
     }
 
@@ -257,24 +275,6 @@ public class UserActivity extends AppCompatActivity implements ClickUser, ClickG
             UserM userM = usersMAdapter.getItem(i);
             new SendNotification().subscribeToken(userM.getFcmToken(), room);
         }
-    }
-
-    @Override
-    public void onUserClick(int position) {
-        Intent intent = new Intent(activity, ChatActivity.class);
-        intent.putExtra("isFormBar", false);
-        intent.putExtra("isGroup", false);
-        intent.putExtra("data", new Gson().toJson(usersMAdapter.getItem(position)));
-        startActivity(intent);
-    }
-
-    @Override
-    public void onGroupClick(int position) {
-        Intent intent = new Intent(activity, ChatActivity.class);
-        intent.putExtra("isFormBar", false);
-        intent.putExtra("isGroup", true);
-        intent.putExtra("data", new Gson().toJson(groupMAdapter.getItem(position)));
-        startActivity(intent);
     }
 
     @Override

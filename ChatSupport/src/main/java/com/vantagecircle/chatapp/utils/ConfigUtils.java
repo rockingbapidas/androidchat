@@ -38,7 +38,6 @@ public class ConfigUtils {
                     resultInterface.onSuccess(room_type_2);
                 } else {
                     //Log.e(TAG, "No Chat room available yet");
-                    //resultInterface.onSuccess(room_type_1);
                     resultInterface.onSuccess(Constant.NO_ROOM);
                 }
             }
@@ -62,7 +61,6 @@ public class ConfigUtils {
                     resultInterface.onSuccess(room_type_1);
                 } else {
                     //Log.e(TAG, "No Group room available yet");
-                    //resultInterface.onSuccess(room_type_1);
                     resultInterface.onSuccess(Constant.NO_ROOM);
                 }
             }

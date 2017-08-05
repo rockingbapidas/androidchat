@@ -84,8 +84,6 @@ public class NotificationUtils {
         showNotification();
     }
 
-
-
     private static void showNotification() {
         Bitmap largeIcon = BitmapFactory.decodeResource(Support.getInstance().getResources(),
                 R.drawable.ic_chat_black_24dp);
