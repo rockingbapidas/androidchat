@@ -82,7 +82,7 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
             public void onChildNew(DataModel dataModel) {
                 ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
                 assert chatM != null;
-                if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
+                if(chatM.getChatType().equals(Constant.TEXT_CONTENT)){
                     lastImage.setVisibility(View.GONE);
                     last_message.setVisibility(View.VISIBLE);
                     last_message.setText(chatM.getMessageText());
@@ -96,7 +96,7 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
             public void onChildModified(DataModel dataModel) {
                 ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
                 assert chatM != null;
-                if(chatM.getChatType().equals(Constant.TEXT_TYPE)){
+                if(chatM.getChatType().equals(Constant.TEXT_CONTENT)){
                     lastImage.setVisibility(View.GONE);
                     last_message.setVisibility(View.VISIBLE);
                     last_message.setText(chatM.getMessageText());

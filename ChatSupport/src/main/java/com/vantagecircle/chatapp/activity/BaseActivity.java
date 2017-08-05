@@ -124,7 +124,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (et_message.getText().toString().length() > 0) {
-                    pushMessage(prepareChatModel(et_message.getText().toString(), Constant.TEXT_TYPE, null));
+                    pushMessage(prepareChatModel(et_message.getText().toString(),
+                            Constant.TEXT_CONTENT, null));
                 } else {
                     Toast.makeText(mContext, "Type some message", Toast.LENGTH_SHORT).show();
                 }
@@ -276,7 +277,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         try {
             String senderName = Support.userM.getFullName();
             String senderUid = Support.id;
-
             String receiverName;
             String receiverUid;
             String convType;
@@ -289,8 +289,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 receiverUid = userM.getUserId();
                 convType = Constant.CONV_SN;
             }
-
             long timeStamp = System.currentTimeMillis();
+
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
                     type, text, uri, timeStamp, false, false, currentRoom, convType,
                     Support.userM.getFcmToken(), isGroup ? null : userM.getFcmToken());
@@ -314,10 +314,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             public void onSuccess(String t) {
                 recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount() == 0 ? 0 :
                         chatMAdapter.getItemCount() - 1);
-                //send push notification to the user if chat type is text type than
-                if (chatM.getChatType().equals(Constant.TEXT_TYPE)) {
+                //send push notification to the user if chat type is text type
+                if (chatM.getChatType().equals(Constant.TEXT_CONTENT)) {
                     SendNotification sendNotification = new SendNotification();
                     sendNotification.prepareNotification(chatM);
+                } else {
+                    Log.d(TAG, "Notification will be sent after file upload");
                 }
             }
 
@@ -454,11 +456,13 @@ public abstract class BaseActivity extends AppCompatActivity {
                             if (decodeFile != null && decodeFile.exists()) {
                                 Uri selectedImage = Uri.fromFile(decodeFile);
                                 String mimeType = getContentResolver().getType(selectedImage);
+                                Log.d(TAG, "File Mime Type === " + mimeType);
                                 if (mimeType == null) {
                                     Toast.makeText(mContext, "There was an error in file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, selectedImage.toString());
+                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_CONTENT,
+                                            selectedImage.toString());
                                     pushMessage(chatM);
                                 }
                             } else {
@@ -482,11 +486,13 @@ public abstract class BaseActivity extends AppCompatActivity {
                             if (data != null && data.getData() != null) {
                                 Uri selectedImage = data.getData();
                                 String mimeType = getContentResolver().getType(selectedImage);
+                                Log.d(TAG, "File Mime Type === " + mimeType);
                                 if (mimeType == null) {
                                     Toast.makeText(mContext, "There was an error in file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_TYPE, selectedImage.toString());
+                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_CONTENT,
+                                            selectedImage.toString());
                                     pushMessage(chatM);
                                 }
                             } else {

@@ -35,7 +35,7 @@ public class ChatMAdapter extends FirebaseRecyclerAdapter<ChatM, ChatMViewHolder
 
         if (super.getItemViewType(position) == 0) {
             switch (model.getChatType()) {
-                case Constant.IMAGE_TYPE:
+                case Constant.IMAGE_CONTENT:
                     return R.layout.row_chat_image;
                 default:
                     return R.layout.row_chat_text;

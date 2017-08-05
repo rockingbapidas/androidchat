@@ -60,14 +60,19 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setDataToViews(ChatM chatM, boolean isChatContinue) {
+
         switch (chatM.getChatType()) {
-            case Constant.IMAGE_TYPE:
+            case Constant.IMAGE_CONTENT:
                 if (chatM.getFileUrl() != null) {
-                    if(chatM.getFileUrl().startsWith("https:") || chatM.getFileUrl().startsWith("gs:")){
+                    if (chatM.getFileUrl().startsWith("https:") || chatM.getFileUrl().startsWith("gs:")) {
                         downloadFile(chatM);
                     } else {
-                        Tools.loadPicasso(Support.getInstance(), fileImage, chatM.getFileUrl());
-                        uploadFile(chatM);
+                        if (chatM.getSenderUid().equals(Support.id)) {
+                            Tools.loadPicasso(Support.getInstance(), fileImage, chatM.getFileUrl());
+                            uploadFile(chatM);
+                        } else {
+                            progressBar.setVisibility(View.VISIBLE);
+                        }
                     }
                 } else {
                     fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
@@ -122,31 +127,33 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         final StorageReference storageReference = Support.getStorageInstance()
                 .getReferenceFromUrl(chatM.getFileUrl());
         final String filepath;
-        if (chatM.getSenderUid().equals(Support.id)){
+        final String fileName = storageReference.getName() + ".jpg";
+        if (chatM.getSenderUid().equals(Support.id)) {
             filepath = FileUtils.getSentPath();
         } else {
             filepath = FileUtils.getReceivedPath();
         }
+
         try {
-            String file = FileUtils.isFilePresent(filepath, storageReference.getName() + ".jpg");
-            if(file != null){
+            String file = FileUtils.isFilePresent(filepath, fileName);
+            if (file != null) {
                 Log.d(TAG, "File Exist");
                 Tools.loadPicasso(Support.getInstance(), fileImage, file);
                 progressBar.setVisibility(View.GONE);
             } else {
                 Log.d(TAG, "File Not Exist");
                 progressBar.setVisibility(View.VISIBLE);
-                File destination = new File(filepath, storageReference.getName() + ".jpg");
+                File destination = new File(filepath, fileName);
                 fileHandler.setStorageRef(storageReference);
                 fileHandler.downloadFile(destination, new FileInterface() {
                     @Override
                     public void onProgress(FileModel fileModel) {
-
+                        Log.d(TAG, "Download is on progress  === ");
                     }
 
                     @Override
                     public void onPause(FileModel fileModel) {
-
+                        Log.d(TAG, "Download is paused  === ");
                     }
 
                     @Override
@@ -158,8 +165,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                     @Override
                     public void onComplete(FileModel fileModel) {
                         try {
-                            String file = FileUtils.isFilePresent(filepath,
-                                    storageReference.getName() + ".jpg");
+                            String file = FileUtils.isFilePresent(filepath, fileName);
                             if (file != null) {
                                 Tools.loadPicasso(Support.getInstance(), fileImage, file);
                             } else {
@@ -177,12 +183,13 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    private void uploadFile(final ChatM chatM){
+    private void uploadFile(final ChatM chatM) {
         FileHandler fileHandler = new FileHandler();
         fileHandler.setStorageRef(Support.getChatImageReference()
                 .child(String.valueOf(chatM.getTimeStamp())));
         progressBar.setVisibility(View.VISIBLE);
-        fileHandler.uploadFile(Uri.parse(chatM.getFileUrl()), Constant.IMAGE_CONTENT, new FileInterface() {
+
+        fileHandler.uploadFile(Uri.parse(chatM.getFileUrl()), chatM.getChatType(), new FileInterface() {
             @Override
             public void onProgress(FileModel fileModel) {
                 Log.d(TAG, "Upload is on progress  === ");
@@ -203,8 +210,12 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             public void onComplete(FileModel fileModel) {
                 String downloadUrl = fileModel.getUploadTaskSnap().getDownloadUrl().toString();
                 long timeStamp = Long.parseLong(fileModel.getUploadTaskSnap().getStorage().getName());
+
+                //update file url to the server
                 UpdateParamsM.updateFileUrl(chatM.getChatRoom(), timeStamp, downloadUrl);
                 chatM.setFileUrl(downloadUrl);
+
+                //push notification after file update is complete
                 SendNotification sendNotification = new SendNotification();
                 sendNotification.prepareNotification(chatM);
                 progressBar.setVisibility(View.GONE);

@@ -10,15 +10,14 @@ import java.io.File;
 
 public class Constant {
     public static final String APPNAME = "ChatApp";
-    public static final String SDCARD_PATH = Environment.getExternalStorageDirectory() + File.separator + APPNAME;
-    public static final String DIR_SENT = "Sent";
-    public static final String DIR_RECEIVED = "Received";
-
+    static final String SDCARD_PATH = Environment.getExternalStorageDirectory() + File.separator + APPNAME;
+    static final String DIR_SENT = "Sent";
+    static final String DIR_RECEIVED = "Received";
     public static final String APP_PREFS = "preferences";
+
     public static final String DATABASE_USER_REF = "users";
     public static final String DATABASE_CHAT_REF = "chat_msg";
     public static final String DATABASE_GROUP_REF = "groups";
-
     public static final String STORAGE_CHAT_IMAGE_REF = "chat_img/";
 
     public static final String _ADMIN = "admin";
@@ -30,15 +29,12 @@ public class Constant {
     public static final String FIREBASE_TOKEN = "fcmToken";
     static final String ONLINE_STATUS = "online";
     static final String LAST_SEEN = "lastSeenTime";
-
     static final String SENT_STATUS = "sentSuccessfully";
     static final String READ_STATUS = "readSuccessfully";
     static final String FILE_URL = "fileUrl";
 
-    public static final String IMAGE_TYPE = "image";
-    public static final String TEXT_TYPE = "text";
-
     public static final String IMAGE_CONTENT = "image/jpeg";
+    public static final String TEXT_CONTENT = "text";
 
     public static final int REQUEST_STORAGE_PERMISSION = 1;
     public static final int REQUEST_CAMERA_PERMISSION = 2;
