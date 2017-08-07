@@ -1,4 +1,5 @@
 //apply plugin: 'com.android.application'
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
@@ -11,13 +12,15 @@ bintray {
         name = 'com.vantagecircle.chatapp'
 
         version {
-            name = '1.0.1'
-            desc = 'My test upload'
+            name = '1.0.2'
+            desc = 'This is chat app library. And this is seccond upload'
             released  = new Date()
-            vcsTag = '1.0.1'
+            vcsTag = '1.0.2'
         }
 
         licenses = ['Apache-2.0']
+        vcsUrl = 'https://bapivantage@bitbucket.org/bapivantage/androidchat.git'
+        websiteUrl = 'https://bapivantage@bitbucket.org/bapivantage/androidchat'
     }
     configurations = ['archives']
 }
