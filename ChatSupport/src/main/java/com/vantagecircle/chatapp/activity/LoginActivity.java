@@ -16,16 +16,16 @@ import android.widget.Toast;
 
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.DataModel;
+import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
-import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
-import com.vantagecircle.chatapp.core.interfacep.ValueInterface;
-import com.vantagecircle.chatapp.utils.Constant;
-import com.vantagecircle.chatapp.core.AuthClass;
-import com.vantagecircle.chatapp.utils.UpdateParamsM;
+import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ValueInterface;
+import com.vantagecircle.chatapp.utils.Constants;
+import com.vantagecircle.chatapp.core.AuthHandler;
+import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 import com.vantagecircle.chatapp.model.UserM;
-import com.vantagecircle.chatapp.interfacePref.SharedPrefM;
-import com.vantagecircle.chatapp.utils.Tools;
+import com.vantagecircle.chatapp.pref.SharedPrefM;
+import com.vantagecircle.chatapp.utils.ToolsUtils;
 
 /**
  * Created by bapidas on 10/07/17.
@@ -71,8 +71,8 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(mContext, "Password cannot be blank",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    if (Tools.isNetworkAvailable(mContext)) {
-                        Tools.hideKeyboard(activity);
+                    if (ToolsUtils.isNetworkAvailable(mContext)) {
+                        ToolsUtils.hideKeyboard(activity);
                         progressDialog = new ProgressDialog(activity);
                         progressDialog.setMessage("Authenticating user");
                         progressDialog.show();
@@ -98,13 +98,13 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameEdit.getText().toString();
         String password = passwordEdit.getText().toString();
 
-        AuthClass authClass = new AuthClass();
-        authClass.setFirebaseAuth(Support.getAuthInstance());
-        authClass.performLogin(username, password, new ResultInterface() {
+        AuthHandler authHandler = new AuthHandler();
+        authHandler.setFirebaseAuth(Support.getAuthInstance());
+        authHandler.performLogin(username, password, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
                 progressDialog.setMessage("Authentication success");
-                UpdateParamsM.updateTokenToServer(new SharedPrefM(mContext).getString(Constant.FIREBASE_TOKEN));
+                UpdateKeyUtils.updateTokenToServer(new SharedPrefM(mContext).getString(Constants.FIREBASE_TOKEN));
                 getData();
             }
 
@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    if (userM.getUserType().equals(Constant._ADMIN)) {
+                    if (userM.getUserType().equals(Constants._ADMIN)) {
                         Support.getAuthInstance().signOut();
                         Toast.makeText(mContext, "User invalid use another account",
                                 Toast.LENGTH_SHORT).show();

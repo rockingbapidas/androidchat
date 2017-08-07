@@ -5,8 +5,8 @@ import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.core.SetDataHandler;
-import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
-import com.vantagecircle.chatapp.interfacePref.SharedPrefM;
+import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
+import com.vantagecircle.chatapp.pref.SharedPrefM;
 
 import java.util.HashMap;
 
@@ -14,8 +14,8 @@ import java.util.HashMap;
  * Created by bapidas on 10/07/17.
  */
 
-public class UpdateParamsM {
-    private static final String TAG = UpdateParamsM.class.getSimpleName();
+public class UpdateKeyUtils {
+    private static final String TAG = UpdateKeyUtils.class.getSimpleName();
 
     public static void updateTokenToServer(String token) {
         try {
@@ -25,11 +25,11 @@ public class UpdateParamsM {
             } else {
                 fcmToken = FirebaseInstanceId.getInstance().getToken();
             }
-            new SharedPrefM(Support.getInstance()).saveString(Constant.FIREBASE_TOKEN, fcmToken);
+            new SharedPrefM(Support.getInstance()).saveString(Constants.FIREBASE_TOKEN, fcmToken);
 
             if (Support.getUserInstance() != null) {
                 HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put(Constant.FIREBASE_TOKEN, fcmToken);
+                hashMap.put(Constants.FIREBASE_TOKEN, fcmToken);
 
                 SetDataHandler setDataHandler = new SetDataHandler();
                 setDataHandler.setDatabaseReference(Support.getUserReference()
@@ -55,7 +55,7 @@ public class UpdateParamsM {
 
     public static void updateLastSeen(long timeStamp) {
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put(Constant.LAST_SEEN, timeStamp);
+        hashMap.put(Constants.LAST_SEEN, timeStamp);
 
         if (Support.getUserInstance() != null) {
             SetDataHandler setDataHandler = new SetDataHandler();
@@ -79,7 +79,7 @@ public class UpdateParamsM {
 
     public static void updateOnlineStatus(boolean status) {
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put(Constant.ONLINE_STATUS, status);
+        hashMap.put(Constants.ONLINE_STATUS, status);
 
         if (Support.getUserInstance() != null) {
             SetDataHandler setDataHandler = new SetDataHandler();
@@ -104,7 +104,7 @@ public class UpdateParamsM {
 
     public static void updateSentStatus(String room, long timeStamp) {
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put(Constant.SENT_STATUS, true);
+        hashMap.put(Constants.SENT_STATUS, true);
 
         SetDataHandler setDataHandler = new SetDataHandler();
         setDataHandler.setDatabaseReference(Support.getChatReference()
@@ -124,7 +124,7 @@ public class UpdateParamsM {
 
     public static void updateReadStatus(String room, long timeStamp) {
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put(Constant.READ_STATUS, true);
+        hashMap.put(Constants.READ_STATUS, true);
 
         SetDataHandler setDataHandler = new SetDataHandler();
         setDataHandler.setDatabaseReference(Support.getChatReference()
@@ -144,7 +144,7 @@ public class UpdateParamsM {
 
     public static void updateFileUrl(String room, long timeStamp, String url) {
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put(Constant.FILE_URL, url);
+        hashMap.put(Constants.FILE_URL, url);
 
         SetDataHandler setDataHandler = new SetDataHandler();
         setDataHandler.setDatabaseReference(Support.getChatReference()

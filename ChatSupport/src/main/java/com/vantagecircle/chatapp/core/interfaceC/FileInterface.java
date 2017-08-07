@@ -1,6 +1,6 @@
-package com.vantagecircle.chatapp.core.interfacep;
+package com.vantagecircle.chatapp.core.interfaceC;
 
-import com.vantagecircle.chatapp.core.FileModel;
+import com.vantagecircle.chatapp.core.model.FileModel;
 
 /**
  * Created by bapidas on 04/08/17.

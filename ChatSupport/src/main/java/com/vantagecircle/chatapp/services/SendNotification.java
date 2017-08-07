@@ -2,11 +2,9 @@ package com.vantagecircle.chatapp.services;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.vantagecircle.chatapp.model.ChatM;
-import com.vantagecircle.chatapp.utils.Constant;
-import com.vantagecircle.chatapp.utils.UpdateParamsM;
-import com.vantagecircle.chatapp.model.NotificationM;
+import com.vantagecircle.chatapp.utils.Constants;
+import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,7 +85,7 @@ public class SendNotification {
             notificationM.setSenderFcmToken(chatM.getSenderToken());
             notificationM.setReceiverFcmToken(chatM.getReceiverToken());
 
-            if (chatM.getConvType().equals(Constant.CONV_GR)) {
+            if (chatM.getConvType().equals(Constants.CONV_GR)) {
                 sendToGroup();
             } else {
                 sendToSingle();
@@ -149,7 +147,7 @@ public class SendNotification {
                     Log.e(TAG, "onResponse body: " + response.body().string());
                     Log.e(TAG, "onResponse code: " + response.code());
                     if (response.code() == 200) {
-                        UpdateParamsM.updateSentStatus(notificationM.getChatRoom(),
+                        UpdateKeyUtils.updateSentStatus(notificationM.getChatRoom(),
                                 notificationM.getTimeStamp());
                     }
                 }
@@ -183,7 +181,7 @@ public class SendNotification {
                     Log.e(TAG, "onResponse body: " + response.body().string());
                     Log.e(TAG, "onResponse code: " + response.code());
                     if (response.code() == 200) {
-                        UpdateParamsM.updateSentStatus(notificationM.getChatRoom(),
+                        UpdateKeyUtils.updateSentStatus(notificationM.getChatRoom(),
                                 notificationM.getTimeStamp());
                     }
                 }
@@ -195,7 +193,7 @@ public class SendNotification {
 
     private JSONObject getDataObject() throws JSONException {
         JSONObject parentBody = new JSONObject();
-        if (notificationM.getConversationType().equals(Constant.CONV_SN)) {
+        if (notificationM.getConversationType().equals(Constants.CONV_SN)) {
             parentBody.put(KEY_TO, notificationM.getReceiverFcmToken());
         } else {
             parentBody.put(KEY_TO, notificationM.getChatRoom());
@@ -208,7 +206,7 @@ public class SendNotification {
         childData.put(KEY_URI, notificationM.getFileUrl());
         childData.put(KEY_CON_TYPE, notificationM.getConversationType());
 
-        if (notificationM.getConversationType().equals(Constant.CONV_SN)) {
+        if (notificationM.getConversationType().equals(Constants.CONV_SN)) {
             childData.put(KEY_USERNAME, notificationM.getSenderUsername());
             childData.put(KEY_UID, notificationM.getSenderUid());
             childData.put(KEY_FCM_TOKEN, notificationM.getSenderFcmToken());

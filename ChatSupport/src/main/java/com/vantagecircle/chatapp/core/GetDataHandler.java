@@ -6,8 +6,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.vantagecircle.chatapp.core.interfacep.ChildInterface;
-import com.vantagecircle.chatapp.core.interfacep.ValueInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ChildInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ValueInterface;
+import com.vantagecircle.chatapp.core.model.DataModel;
 
 /**
  * Created by bapidas on 26/07/17.

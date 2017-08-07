@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.core;
+package com.vantagecircle.chatapp.core.model;
 
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.StorageMetadata;

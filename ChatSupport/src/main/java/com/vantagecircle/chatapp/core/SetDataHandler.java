@@ -6,7 +6,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
-import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
 
 import java.util.HashMap;
 

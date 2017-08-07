@@ -6,7 +6,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.holder.GroupMViewHolder;
-import com.vantagecircle.chatapp.interfacePref.ClickGroup;
+import com.vantagecircle.chatapp.adapter.interfaceA.ClickGroup;
 import com.vantagecircle.chatapp.model.GroupM;
 
 /**

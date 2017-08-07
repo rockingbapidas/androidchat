@@ -1,9 +1,9 @@
-package com.vantagecircle.chatapp.interfacePref;
+package com.vantagecircle.chatapp.pref;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.vantagecircle.chatapp.utils.Constant;
+import com.vantagecircle.chatapp.utils.Constants;
 
 /**
  * Created by bapidas on 11/07/17.
@@ -19,7 +19,7 @@ public class SharedPrefM {
     }
 
     public void saveString(String key, String value) {
-        mSharedPreferences = mContext.getSharedPreferences(Constant.APP_PREFS,
+        mSharedPreferences = mContext.getSharedPreferences(Constants.APP_PREFS,
                 Context.MODE_PRIVATE);
         mEditor = mSharedPreferences.edit();
         mEditor.putString(key, value);
@@ -27,13 +27,13 @@ public class SharedPrefM {
     }
 
     public String getString(String key) {
-        mSharedPreferences = mContext.getSharedPreferences(Constant.APP_PREFS,
+        mSharedPreferences = mContext.getSharedPreferences(Constants.APP_PREFS,
                 Context.MODE_PRIVATE);
         return mSharedPreferences.getString(key, null);
     }
 
     public void clear(){
-        mSharedPreferences = mContext.getSharedPreferences(Constant.APP_PREFS,
+        mSharedPreferences = mContext.getSharedPreferences(Constants.APP_PREFS,
                 Context.MODE_PRIVATE);
         mEditor = mSharedPreferences.edit();
         mEditor.clear();

@@ -5,7 +5,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.holder.ChatMViewHolder;
 import com.vantagecircle.chatapp.model.ChatM;
-import com.vantagecircle.chatapp.utils.Constant;
+import com.vantagecircle.chatapp.utils.Constants;
 
 /**
  * Created by bapidas on 20/07/17.
@@ -35,7 +35,7 @@ public class ChatMAdapter extends FirebaseRecyclerAdapter<ChatM, ChatMViewHolder
 
         if (super.getItemViewType(position) == 0) {
             switch (model.getChatType()) {
-                case Constant.IMAGE_CONTENT:
+                case Constants.IMAGE_CONTENT:
                     return R.layout.row_chat_image;
                 default:
                     return R.layout.row_chat_text;

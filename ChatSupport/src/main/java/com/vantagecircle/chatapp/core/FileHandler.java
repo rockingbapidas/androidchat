@@ -11,8 +11,8 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.interfacep.FileInterface;
+import com.vantagecircle.chatapp.core.interfaceC.FileInterface;
+import com.vantagecircle.chatapp.core.model.FileModel;
 
 import java.io.File;
 

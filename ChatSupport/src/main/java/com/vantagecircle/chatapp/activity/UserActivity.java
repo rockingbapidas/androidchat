@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -14,7 +12,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -28,7 +25,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.Query;
@@ -36,16 +32,16 @@ import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.GroupMAdapter;
-import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
 import com.vantagecircle.chatapp.holder.GroupMViewHolder;
 import com.vantagecircle.chatapp.holder.UserMViewHolder;
 import com.vantagecircle.chatapp.adapter.UsersMAdapter;
 import com.vantagecircle.chatapp.core.SetDataHandler;
-import com.vantagecircle.chatapp.utils.Constant;
-import com.vantagecircle.chatapp.utils.Tools;
-import com.vantagecircle.chatapp.utils.UpdateParamsM;
-import com.vantagecircle.chatapp.interfacePref.ClickGroup;
-import com.vantagecircle.chatapp.interfacePref.ClickUser;
+import com.vantagecircle.chatapp.utils.Constants;
+import com.vantagecircle.chatapp.utils.ToolsUtils;
+import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
+import com.vantagecircle.chatapp.adapter.interfaceA.ClickGroup;
+import com.vantagecircle.chatapp.adapter.interfaceA.ClickUser;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.services.SendNotification;
@@ -84,8 +80,8 @@ public class UserActivity extends AppCompatActivity {
 
     private void initPermission() {
         String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (!Tools.isHasPermissions(this, PERMISSIONS)) {
-            ActivityCompat.requestPermissions(this, PERMISSIONS, Constant.REQUEST_STORAGE_PERMISSION);
+        if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
         }
     }
 
@@ -293,8 +289,8 @@ public class UserActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d(TAG, "onStart");
         super.onStart();
-        UpdateParamsM.updateOnlineStatus(true);
-        UpdateParamsM.updateLastSeen(new Date().getTime());
+        UpdateKeyUtils.updateOnlineStatus(true);
+        UpdateKeyUtils.updateLastSeen(new Date().getTime());
     }
 
     @Override
@@ -307,7 +303,7 @@ public class UserActivity extends AppCompatActivity {
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
-        UpdateParamsM.updateOnlineStatus(false);
-        UpdateParamsM.updateLastSeen(new Date().getTime());
+        UpdateKeyUtils.updateOnlineStatus(false);
+        UpdateKeyUtils.updateLastSeen(new Date().getTime());
     }
 }

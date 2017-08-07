@@ -13,7 +13,6 @@ import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
@@ -42,7 +41,7 @@ public class NotificationUtils {
         GroupM groupM;
         Intent intent = new Intent(Support.getInstance(), ChatActivity.class);
         intent.putExtra("isFromBar", true);
-        if(jsonObject.getString("conType").equals(Constant.CONV_SN)){
+        if(jsonObject.getString("conType").equals(Constants.CONV_SN)){
             userM = new UserM();
             userM.setFullName(jsonObject.getString("userName"));
             userM.setUserId(jsonObject.getString("userID"));
@@ -67,7 +66,7 @@ public class NotificationUtils {
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setContentTitle(jsonObject.getString("title"));
 
-        if(jsonObject.getString("type").equals(Constant.TEXT_CONTENT)){
+        if(jsonObject.getString("type").equals(Constants.TEXT_CONTENT)){
             mBuilder.setContentText(jsonObject.getString("text"));
         } else {
             String imageUrl = jsonObject.getString("fileUri");

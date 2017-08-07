@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.core.interfacep;
+package com.vantagecircle.chatapp.core.interfaceC;
 
 /**
  * Created by bapidas on 01/08/17.

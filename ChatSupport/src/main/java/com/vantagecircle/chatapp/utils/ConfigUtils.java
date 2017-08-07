@@ -1,17 +1,12 @@
 package com.vantagecircle.chatapp.utils;
 
-import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.activity.LoginActivity;
-import com.vantagecircle.chatapp.activity.SplashActivity;
-import com.vantagecircle.chatapp.activity.UserActivity;
-import com.vantagecircle.chatapp.core.DataModel;
+import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
-import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
-import com.vantagecircle.chatapp.core.interfacep.ValueInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ValueInterface;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
 
@@ -38,7 +33,7 @@ public class ConfigUtils {
                     resultInterface.onSuccess(room_type_2);
                 } else {
                     //Log.e(TAG, "No Chat room available yet");
-                    resultInterface.onSuccess(Constant.NO_ROOM);
+                    resultInterface.onSuccess(Constants.NO_ROOM);
                 }
             }
 
@@ -61,7 +56,7 @@ public class ConfigUtils {
                     resultInterface.onSuccess(room_type_1);
                 } else {
                     //Log.e(TAG, "No Group room available yet");
-                    resultInterface.onSuccess(Constant.NO_ROOM);
+                    resultInterface.onSuccess(Constants.NO_ROOM);
                 }
             }
 
@@ -83,7 +78,8 @@ public class ConfigUtils {
     public static void initializeApp(){
         if (Support.getUserInstance() != null) {
             GetDataHandler getDataHandler = new GetDataHandler();
-            getDataHandler.setDataReference(Support.getUserReference().child(Support.getUserInstance().getUid()));
+            getDataHandler.setDataReference(Support.getUserReference()
+                    .child(Support.getUserInstance().getUid()));
             getDataHandler.setSingleValueEventListener(new ValueInterface() {
                 @Override
                 public void onDataSuccess(DataModel dataModel) {

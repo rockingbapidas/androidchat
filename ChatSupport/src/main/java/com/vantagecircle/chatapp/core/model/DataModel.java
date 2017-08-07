@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.core;
+package com.vantagecircle.chatapp.core.model;
 
 import com.google.android.gms.internal.xf;
 import com.google.firebase.database.DataSnapshot;

@@ -18,15 +18,15 @@ public class FileUtils {
     private final String TAG = FileUtils.class.getSimpleName();
 
     private static File getDirectoryPath() {
-        return new File(Constant.SDCARD_PATH);
+        return new File(Constants.SDCARD_PATH);
     }
 
     public static String getSentPath() {
-        return getDirectoryPath().getPath() + File.separator + Constant.DIR_SENT;
+        return getDirectoryPath().getPath() + File.separator + Constants.DIR_SENT;
     }
 
     public static String getReceivedPath() {
-        return getDirectoryPath().getPath() + File.separator + Constant.DIR_RECEIVED;
+        return getDirectoryPath().getPath() + File.separator + Constants.DIR_RECEIVED;
     }
 
     public static String isFilePresent(String path, String name) throws Exception  {

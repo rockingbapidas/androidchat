@@ -1,13 +1,12 @@
 package com.vantagecircle.chatapp.fcm;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.utils.NotificationUtils;
-import com.vantagecircle.chatapp.utils.Tools;
+import com.vantagecircle.chatapp.utils.ToolsUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +19,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             JSONObject jsonObject = new JSONObject(remoteMessage.getData());
             Log.d(TAG, "onMessageReceived: " + jsonObject);
-            if(Tools.isAppInBackground(Support.getInstance())){
+            if(ToolsUtils.isAppInBackground(Support.getInstance())){
                 try {
                     NotificationUtils.setNotification(jsonObject);
                 } catch (JSONException e) {

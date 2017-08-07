@@ -1,8 +1,6 @@
-package com.vantagecircle.chatapp.core.interfacep;
+package com.vantagecircle.chatapp.core.interfaceC;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.vantagecircle.chatapp.core.DataModel;
+import com.vantagecircle.chatapp.core.model.DataModel;
 
 /**
  * Created by bapidas on 01/08/17.

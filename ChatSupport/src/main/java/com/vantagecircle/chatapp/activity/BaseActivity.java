@@ -31,25 +31,21 @@ import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.adapter.ChatMAdapter;
-import com.vantagecircle.chatapp.core.DataModel;
-import com.vantagecircle.chatapp.core.FileHandler;
-import com.vantagecircle.chatapp.core.FileModel;
+import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
 import com.vantagecircle.chatapp.core.SetDataHandler;
-import com.vantagecircle.chatapp.core.interfacep.ChildInterface;
-import com.vantagecircle.chatapp.core.interfacep.FileInterface;
-import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ChildInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
 import com.vantagecircle.chatapp.holder.ChatMViewHolder;
-import com.vantagecircle.chatapp.core.interfacep.ValueInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ValueInterface;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.GroupM;
-import com.vantagecircle.chatapp.model.NotificationM;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.services.SendNotification;
 import com.vantagecircle.chatapp.utils.ConfigUtils;
-import com.vantagecircle.chatapp.utils.Constant;
-import com.vantagecircle.chatapp.utils.Tools;
-import com.vantagecircle.chatapp.utils.UpdateParamsM;
+import com.vantagecircle.chatapp.utils.Constants;
+import com.vantagecircle.chatapp.utils.ToolsUtils;
+import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -125,7 +121,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (et_message.getText().toString().length() > 0) {
                     pushMessage(prepareChatModel(et_message.getText().toString(),
-                            Constant.TEXT_CONTENT, null));
+                            Constants.TEXT_CONTENT, null));
                 } else {
                     Toast.makeText(mContext, "Type some message", Toast.LENGTH_SHORT).show();
                 }
@@ -140,8 +136,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         isFromNotification = getIntent().getBooleanExtra("isFromBar", false);
         if (isFromNotification) {
             ConfigUtils.initializeApp();
-            UpdateParamsM.updateOnlineStatus(true);
-            UpdateParamsM.updateLastSeen(new Date().getTime());
+            UpdateKeyUtils.updateOnlineStatus(true);
+            UpdateKeyUtils.updateLastSeen(new Date().getTime());
         }
 
         //check intent is group chat or not
@@ -167,7 +163,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             ConfigUtils.checkRooms(groupM, new ResultInterface() {
                 @Override
                 public void onSuccess(String t) {
-                    if (t.equals(Constant.NO_ROOM)) {
+                    if (t.equals(Constants.NO_ROOM)) {
                         Log.d(TAG, "Current Room created");
                         currentRoom = ConfigUtils.createRoom(groupM);
                     } else {
@@ -190,7 +186,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             ConfigUtils.checkRooms(userM, new ResultInterface() {
                 @Override
                 public void onSuccess(String t) {
-                    if (t.equals(Constant.NO_ROOM)) {
+                    if (t.equals(Constants.NO_ROOM)) {
                         Log.d(TAG, "Current Room created");
                         currentRoom = ConfigUtils.createRoom(userM);
                     } else {
@@ -283,11 +279,11 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (isGroup) {
                 receiverName = groupM.getName();
                 receiverUid = groupM.getId();
-                convType = Constant.CONV_GR;
+                convType = Constants.CONV_GR;
             } else {
                 receiverName = userM.getFullName();
                 receiverUid = userM.getUserId();
-                convType = Constant.CONV_SN;
+                convType = Constants.CONV_SN;
             }
             long timeStamp = System.currentTimeMillis();
 
@@ -315,7 +311,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount() == 0 ? 0 :
                         chatMAdapter.getItemCount() - 1);
                 //send push notification to the user if chat type is text type
-                if (chatM.getChatType().equals(Constant.TEXT_CONTENT)) {
+                if (chatM.getChatType().equals(Constants.TEXT_CONTENT)) {
                     SendNotification sendNotification = new SendNotification();
                     sendNotification.prepareNotification(chatM);
                 } else {
@@ -370,19 +366,19 @@ public abstract class BaseActivity extends AppCompatActivity {
                 fileName = null;
                 decodeFile = null;
                 String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                if (!Tools.isHasPermissions(this, PERMISSIONS)) {
-                    ActivityCompat.requestPermissions(this, PERMISSIONS, Constant.REQUEST_STORAGE_PERMISSION);
+                if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
+                    ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
                 } else {
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     intent.setType("*/*");
-                    startActivityForResult(intent, Constant.REQUEST_CODE_GALLERY);
+                    startActivityForResult(intent, Constants.REQUEST_CODE_GALLERY);
                 }
             } else {
                 fileName = null;
                 decodeFile = null;
                 String[] PERMISSIONS = {Manifest.permission.CAMERA};
-                if (!Tools.isHasPermissions(this, PERMISSIONS)) {
-                    ActivityCompat.requestPermissions(this, PERMISSIONS, Constant.REQUEST_CAMERA_PERMISSION);
+                if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
+                    ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_CAMERA_PERMISSION);
                 } else {
                     Calendar c = Calendar.getInstance();
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -391,7 +387,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     decodeFile = new File(path, fileName);
                     Uri tempUri = Uri.fromFile(decodeFile);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
-                    startActivityForResult(intent, Constant.REQUEST_CODE_CAMERA);
+                    startActivityForResult(intent, Constants.REQUEST_CODE_CAMERA);
                 }
             }
         } catch (Exception e) {
@@ -403,12 +399,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case Constant.REQUEST_STORAGE_PERMISSION:
+            case Constants.REQUEST_STORAGE_PERMISSION:
                 try {
                     if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.setType("*/*");
-                        startActivityForResult(intent, Constant.REQUEST_CODE_GALLERY);
+                        startActivityForResult(intent, Constants.REQUEST_CODE_GALLERY);
                     } else {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
                             Toast.makeText(mContext, "Gallery cannot be opened without this permission",
@@ -419,7 +415,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 break;
-            case Constant.REQUEST_CAMERA_PERMISSION:
+            case Constants.REQUEST_CAMERA_PERMISSION:
                 try {
                     if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         Calendar c = Calendar.getInstance();
@@ -429,7 +425,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         decodeFile = new File(path, fileName);
                         Uri tempUri = Uri.fromFile(decodeFile);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
-                        startActivityForResult(intent, Constant.REQUEST_CODE_CAMERA);
+                        startActivityForResult(intent, Constants.REQUEST_CODE_CAMERA);
                     } else {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
                             Toast.makeText(mContext, "Camera cannot be opened without this permission",
@@ -449,7 +445,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case Constant.REQUEST_CODE_CAMERA:
+            case Constants.REQUEST_CODE_CAMERA:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         try {
@@ -461,7 +457,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     Toast.makeText(mContext, "There was an error in file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_CONTENT,
+                                    ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
                                             selectedImage.toString());
                                     pushMessage(chatM);
                                 }
@@ -479,7 +475,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         break;
                 }
                 break;
-            case Constant.REQUEST_CODE_GALLERY:
+            case Constants.REQUEST_CODE_GALLERY:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         try {
@@ -491,7 +487,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     Toast.makeText(mContext, "There was an error in file",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ChatM chatM = prepareChatModel(null, Constant.IMAGE_CONTENT,
+                                    ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
                                             selectedImage.toString());
                                     pushMessage(chatM);
                                 }
@@ -545,8 +541,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
         if (isFromNotification) {
-            UpdateParamsM.updateOnlineStatus(false);
-            UpdateParamsM.updateLastSeen(new Date().getTime());
+            UpdateKeyUtils.updateOnlineStatus(false);
+            UpdateKeyUtils.updateLastSeen(new Date().getTime());
         }
     }
 }

@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.vantagecircle.chatapp.utils.UpdateParamsM;
+import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 
 public class FirebaseInstanceID extends FirebaseInstanceIdService {
     private static final String TAG = FirebaseInstanceID.class.getSimpleName();
@@ -13,6 +13,6 @@ public class FirebaseInstanceID extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "onTokenRefresh: " + refreshedToken);
-        UpdateParamsM.updateTokenToServer(refreshedToken);
+        UpdateKeyUtils.updateTokenToServer(refreshedToken);
     }
 }

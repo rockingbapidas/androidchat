@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.interfacePref;
+package com.vantagecircle.chatapp.adapter.interfaceA;
 
 /**
  * Created by bapidas on 27/07/17.

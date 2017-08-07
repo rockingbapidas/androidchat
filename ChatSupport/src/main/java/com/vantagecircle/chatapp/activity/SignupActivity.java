@@ -17,13 +17,13 @@ import android.widget.Toast;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.AuthClass;
+import com.vantagecircle.chatapp.core.AuthHandler;
 import com.vantagecircle.chatapp.core.SetDataHandler;
-import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
-import com.vantagecircle.chatapp.utils.Constant;
+import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
+import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.model.UserM;
-import com.vantagecircle.chatapp.interfacePref.SharedPrefM;
-import com.vantagecircle.chatapp.utils.Tools;
+import com.vantagecircle.chatapp.pref.SharedPrefM;
+import com.vantagecircle.chatapp.utils.ToolsUtils;
 
 /**
  * Created by bapidas on 10/07/17.
@@ -74,8 +74,8 @@ public class SignupActivity extends AppCompatActivity {
                     Toast.makeText(mContext, "Full name cannot be blank",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    if (Tools.isNetworkAvailable(mContext)) {
-                        Tools.hideKeyboard(activity);
+                    if (ToolsUtils.isNetworkAvailable(mContext)) {
+                        ToolsUtils.hideKeyboard(activity);
                         progressDialog = new ProgressDialog(activity);
                         progressDialog.setMessage("Validating fields and data");
                         progressDialog.show();
@@ -94,9 +94,9 @@ public class SignupActivity extends AppCompatActivity {
         password = passwordEdit.getText().toString();
         fullName = fullNameEdit.getText().toString();
 
-        AuthClass authClass = new AuthClass();
-        authClass.setFirebaseAuth(Support.getAuthInstance());
-        authClass.performSignup(username, password, new ResultInterface() {
+        AuthHandler authHandler = new AuthHandler();
+        authHandler.setFirebaseAuth(Support.getAuthInstance());
+        authHandler.performSignup(username, password, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
                 progressDialog.setMessage("Creating account");
@@ -119,17 +119,17 @@ public class SignupActivity extends AppCompatActivity {
         userM.setUsername(username);
         userM.setFullName(fullName);
         String fcmToken;
-        if (new SharedPrefM(mContext).getString(Constant.FIREBASE_TOKEN) != null) {
-            fcmToken = new SharedPrefM(mContext).getString(Constant.FIREBASE_TOKEN);
+        if (new SharedPrefM(mContext).getString(Constants.FIREBASE_TOKEN) != null) {
+            fcmToken = new SharedPrefM(mContext).getString(Constants.FIREBASE_TOKEN);
         } else {
             fcmToken = FirebaseInstanceId.getInstance().getToken();
-            new SharedPrefM(Support.getInstance()).saveString(Constant.FIREBASE_TOKEN, fcmToken);
+            new SharedPrefM(Support.getInstance()).saveString(Constants.FIREBASE_TOKEN, fcmToken);
         }
         userM.setFcmToken(fcmToken);
         userM.setLastSeenTime(System.currentTimeMillis());
         userM.setNotificationCount(0);
         userM.setOnline(true);
-        userM.setUserType(Constant._USER);
+        userM.setUserType(Constants._USER);
 
         SetDataHandler setDataHandler = new SetDataHandler();
         setDataHandler.setDatabaseReference(Support.getUserReference().child(userM.getUserId()));

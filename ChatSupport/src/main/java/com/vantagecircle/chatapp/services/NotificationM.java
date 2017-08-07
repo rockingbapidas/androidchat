@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.model;
+package com.vantagecircle.chatapp.services;
 
 import java.util.ArrayList;
 

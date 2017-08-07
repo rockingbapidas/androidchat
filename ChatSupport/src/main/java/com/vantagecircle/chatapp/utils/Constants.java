@@ -8,7 +8,7 @@ import java.io.File;
  * Created by bapidas on 10/07/17.
  */
 
-public class Constant {
+public class Constants {
     public static final String APPNAME = "ChatApp";
     static final String SDCARD_PATH = Environment.getExternalStorageDirectory() + File.separator + APPNAME;
     static final String DIR_SENT = "Sent";

@@ -8,13 +8,13 @@ import android.widget.TextView;
 
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.DataModel;
+import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
-import com.vantagecircle.chatapp.core.interfacep.ChildInterface;
-import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ChildInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
 import com.vantagecircle.chatapp.utils.ConfigUtils;
-import com.vantagecircle.chatapp.utils.Constant;
-import com.vantagecircle.chatapp.interfacePref.ClickGroup;
+import com.vantagecircle.chatapp.utils.Constants;
+import com.vantagecircle.chatapp.adapter.interfaceA.ClickGroup;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.GroupM;
 
@@ -57,7 +57,7 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
         ConfigUtils.checkRooms(groupM, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
-                if(t.equals(Constant.NO_ROOM)){
+                if(t.equals(Constants.NO_ROOM)){
                     last_message.setVisibility(View.GONE);
                     lastImage.setVisibility(View.GONE);
                 } else {
@@ -83,7 +83,7 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
             public void onChildNew(DataModel dataModel) {
                 ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
                 assert chatM != null;
-                if(chatM.getChatType().equals(Constant.TEXT_CONTENT)){
+                if(chatM.getChatType().equals(Constants.TEXT_CONTENT)){
                     lastImage.setVisibility(View.GONE);
                     last_message.setVisibility(View.VISIBLE);
                     last_message.setText(chatM.getMessageText());
@@ -97,7 +97,7 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
             public void onChildModified(DataModel dataModel) {
                 ChatM chatM = dataModel.getDataSnapshot().getValue(ChatM.class);
                 assert chatM != null;
-                if(chatM.getChatType().equals(Constant.TEXT_CONTENT)){
+                if(chatM.getChatType().equals(Constants.TEXT_CONTENT)){
                     lastImage.setVisibility(View.GONE);
                     last_message.setVisibility(View.VISIBLE);
                     last_message.setText(chatM.getMessageText());

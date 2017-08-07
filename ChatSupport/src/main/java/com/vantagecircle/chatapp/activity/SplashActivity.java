@@ -9,9 +9,9 @@ import android.widget.Toast;
 
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.core.DataModel;
+import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
-import com.vantagecircle.chatapp.core.interfacep.ValueInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ValueInterface;
 import com.vantagecircle.chatapp.model.UserM;
 
 /**
@@ -25,6 +25,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
         if (Support.getUserInstance() != null) {
             GetDataHandler getDataHandler = new GetDataHandler();
             getDataHandler.setDataReference(Support.getUserReference().child(Support.getUserInstance().getUid()));
@@ -41,7 +42,7 @@ public class SplashActivity extends AppCompatActivity {
                     } else {
                         //logout from firebase and try again
                         Support.getAuthInstance().signOut();
-                        Toast.makeText(getApplicationContext(), "User data fetch error try again",
+                        Toast.makeText(getApplicationContext(), "User data not found please login",
                                 Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                         startActivity(intent);

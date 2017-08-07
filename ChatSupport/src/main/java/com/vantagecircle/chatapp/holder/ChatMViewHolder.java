@@ -17,15 +17,15 @@ import com.google.firebase.storage.StorageReference;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.core.FileHandler;
-import com.vantagecircle.chatapp.core.FileModel;
-import com.vantagecircle.chatapp.core.interfacep.FileInterface;
+import com.vantagecircle.chatapp.core.model.FileModel;
+import com.vantagecircle.chatapp.core.interfaceC.FileInterface;
 import com.vantagecircle.chatapp.services.SendNotification;
-import com.vantagecircle.chatapp.utils.Constant;
+import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.utils.DateUtils;
 import com.vantagecircle.chatapp.utils.FileUtils;
-import com.vantagecircle.chatapp.utils.Tools;
-import com.vantagecircle.chatapp.utils.UpdateParamsM;
+import com.vantagecircle.chatapp.utils.ToolsUtils;
+import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 
 import java.io.File;
 
@@ -62,13 +62,13 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
     public void setDataToViews(ChatM chatM, boolean isChatContinue) {
 
         switch (chatM.getChatType()) {
-            case Constant.IMAGE_CONTENT:
+            case Constants.IMAGE_CONTENT:
                 if (chatM.getFileUrl() != null) {
                     if (chatM.getFileUrl().startsWith("https:") || chatM.getFileUrl().startsWith("gs:")) {
                         downloadFile(chatM);
                     } else {
                         if (chatM.getSenderUid().equals(Support.id)) {
-                            Tools.loadPicasso(Support.getInstance(), fileImage, chatM.getFileUrl());
+                            ToolsUtils.loadPicasso(Support.getInstance(), fileImage, chatM.getFileUrl());
                             uploadFile(chatM);
                         } else {
                             progressBar.setVisibility(View.VISIBLE);
@@ -116,7 +116,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             lyt_thread.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
             if (!chatM.isReadSuccessfully()) {
                 if (Support.getIsChatWindowActive()) {
-                    UpdateParamsM.updateReadStatus(chatM.getChatRoom(), chatM.getTimeStamp());
+                    UpdateKeyUtils.updateReadStatus(chatM.getChatRoom(), chatM.getTimeStamp());
                 }
             }
         }
@@ -138,7 +138,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             String file = FileUtils.isFilePresent(filepath, fileName);
             if (file != null) {
                 Log.d(TAG, "File Exist");
-                Tools.loadPicasso(Support.getInstance(), fileImage, file);
+                ToolsUtils.loadPicasso(Support.getInstance(), fileImage, file);
                 progressBar.setVisibility(View.GONE);
             } else {
                 Log.d(TAG, "File Not Exist");
@@ -148,7 +148,9 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                 fileHandler.downloadFile(destination, new FileInterface() {
                     @Override
                     public void onProgress(FileModel fileModel) {
-                        Log.d(TAG, "Download is on progress  === ");
+                        double progress = (100.0 * fileModel.getFileDownloadSnap().getBytesTransferred())
+                                / fileModel.getUploadTaskSnap().getTotalByteCount();
+                        Log.d(TAG, "Download is on progress  === " + progress + "%");
                     }
 
                     @Override
@@ -167,7 +169,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                         try {
                             String file = FileUtils.isFilePresent(filepath, fileName);
                             if (file != null) {
-                                Tools.loadPicasso(Support.getInstance(), fileImage, file);
+                                ToolsUtils.loadPicasso(Support.getInstance(), fileImage, file);
                             } else {
                                 fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
                             }
@@ -192,7 +194,9 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         fileHandler.uploadFile(Uri.parse(chatM.getFileUrl()), chatM.getChatType(), new FileInterface() {
             @Override
             public void onProgress(FileModel fileModel) {
-                Log.d(TAG, "Upload is on progress  === ");
+                double progress = (100.0 * fileModel.getUploadTaskSnap().getBytesTransferred())
+                        / fileModel.getUploadTaskSnap().getTotalByteCount();
+                Log.d(TAG, "Upload is on progress  === " + progress + "%");
             }
 
             @Override
@@ -212,7 +216,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                 long timeStamp = Long.parseLong(fileModel.getUploadTaskSnap().getStorage().getName());
 
                 //update file url to the server
-                UpdateParamsM.updateFileUrl(chatM.getChatRoom(), timeStamp, downloadUrl);
+                UpdateKeyUtils.updateFileUrl(chatM.getChatRoom(), timeStamp, downloadUrl);
                 chatM.setFileUrl(downloadUrl);
 
                 //push notification after file update is complete

@@ -3,7 +3,6 @@ package com.vantagecircle.chatapp.holder;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.LargeTest;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -16,14 +15,12 @@ import android.widget.TextView;
 
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.Support;
-import com.vantagecircle.chatapp.activity.ChatActivity;
 import com.vantagecircle.chatapp.model.ChatM;
-import com.vantagecircle.chatapp.utils.Constant;
+import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.utils.DateUtils;
-import com.vantagecircle.chatapp.utils.Tools;
+import com.vantagecircle.chatapp.utils.ToolsUtils;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -118,10 +115,10 @@ public class ChatMViewHolderTest {
     @Test
     public void setDataToViews() throws Exception {
         switch (chatM.getChatType()) {
-            case Constant.IMAGE_TYPE:
+            case Constants.IMAGE_TYPE:
                 if (chatM.getFileUrl() != null) {
                     progressBar.setVisibility(View.GONE);
-                    Tools.loadPicasso(appContext, fileImage, chatM.getFileUrl());
+                    ToolsUtils.loadPicasso(appContext, fileImage, chatM.getFileUrl());
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                     fileImage.setImageResource(R.drawable.ic_insert_photo_black_24dp);

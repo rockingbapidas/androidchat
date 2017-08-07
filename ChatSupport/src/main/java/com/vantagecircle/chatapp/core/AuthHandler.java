@@ -7,13 +7,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.vantagecircle.chatapp.core.interfacep.ResultInterface;
+import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
 
 /**
  * Created by bapidas on 26/07/17.
  */
 
-public class AuthClass {
+public class AuthHandler {
     private FirebaseAuth firebaseAuth;
 
     public void setFirebaseAuth(FirebaseAuth firebaseAuth) {

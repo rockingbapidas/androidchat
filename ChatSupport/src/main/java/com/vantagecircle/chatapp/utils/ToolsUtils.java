@@ -24,8 +24,8 @@ import java.util.List;
  * Created by bapidas on 10/07/17.
  */
 
-public class Tools {
-    public static final String TAG = Tools.class.getSimpleName();
+public class ToolsUtils {
+    public static final String TAG = ToolsUtils.class.getSimpleName();
 
     public static boolean isNetworkAvailable(Context mContext) {
         try {

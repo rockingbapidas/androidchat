@@ -9,7 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.vantagecircle.chatapp.utils.Constant;
+import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.model.UserM;
 
 import java.io.File;
@@ -51,15 +51,15 @@ public class Support extends MultiDexApplication {
     }
 
     public static synchronized DatabaseReference getUserReference() {
-        return getDatabaseInstance().getReference(Constant.DATABASE_USER_REF);
+        return getDatabaseInstance().getReference(Constants.DATABASE_USER_REF);
     }
 
     public static synchronized DatabaseReference getChatReference() {
-        return getDatabaseInstance().getReference(Constant.DATABASE_CHAT_REF);
+        return getDatabaseInstance().getReference(Constants.DATABASE_CHAT_REF);
     }
 
     public static synchronized DatabaseReference getGroupReference() {
-        return getDatabaseInstance().getReference(Constant.DATABASE_GROUP_REF);
+        return getDatabaseInstance().getReference(Constants.DATABASE_GROUP_REF);
     }
 
     public static synchronized FirebaseStorage getStorageInstance(){
@@ -67,7 +67,7 @@ public class Support extends MultiDexApplication {
     }
 
     public static synchronized StorageReference getChatImageReference(){
-        return getStorageInstance().getReference(Constant.STORAGE_CHAT_IMAGE_REF);
+        return getStorageInstance().getReference(Constants.STORAGE_CHAT_IMAGE_REF);
     }
 
     public static synchronized void setIsChatWindowActive(boolean active) {
@@ -79,7 +79,7 @@ public class Support extends MultiDexApplication {
     }
 
     public static void makeDir() {
-        File appFile = new File(Environment.getExternalStorageDirectory() + File.separator + Constant.APPNAME);
+        File appFile = new File(Environment.getExternalStorageDirectory() + File.separator + Constants.APPNAME);
         try {
             if (!appFile.isDirectory()) {
                 appFile.mkdir();
@@ -95,7 +95,7 @@ public class Support extends MultiDexApplication {
         String s_folder[] = mInstance.getResources().getStringArray(R.array.folders_name);
         for (String aS_folder : s_folder) {
             File appFile = new File(Environment.getExternalStorageDirectory() + File.separator +
-                    Constant.APPNAME + File.separator + aS_folder);
+                    Constants.APPNAME + File.separator + aS_folder);
             try {
                 if (!appFile.isDirectory()) {
                     appFile.mkdir();
