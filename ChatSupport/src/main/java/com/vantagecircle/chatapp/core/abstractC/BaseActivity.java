@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.activity;
+package com.vantagecircle.chatapp.core.abstractC;
 
 import android.Manifest;
 import android.app.Activity;
@@ -86,7 +86,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     //cast and bind view from layout
-    protected abstract int loadView();
+    protected int loadView(){
+        return R.layout.activity_chat;
+    }
 
     protected void initToolBar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);

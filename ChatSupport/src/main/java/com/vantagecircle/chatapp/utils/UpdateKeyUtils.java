@@ -17,6 +17,7 @@ import java.util.HashMap;
 public class UpdateKeyUtils {
     private static final String TAG = UpdateKeyUtils.class.getSimpleName();
 
+    //Update user status keys
     public static void updateTokenToServer(String token) {
         try {
             String fcmToken;
@@ -102,6 +103,8 @@ public class UpdateKeyUtils {
 
     }
 
+
+    //Update Chat status keys
     public static void updateSentStatus(String room, long timeStamp) {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(Constants.SENT_STATUS, true);

@@ -3,18 +3,13 @@ package com.vantagecircle.chatapp.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.vantagecircle.chatapp.R;
+import com.vantagecircle.chatapp.core.abstractC.NewBaseActivity;
 
 /**
  * Created by bapidas on 10/07/17.
  */
-public class ChatActivity extends BaseActivity {
+public class ChatActivity extends NewBaseActivity {
     private static final String TAG = ChatActivity.class.getSimpleName();
-
-    @Override
-    protected int loadView() {
-        return R.layout.activity_chat;
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

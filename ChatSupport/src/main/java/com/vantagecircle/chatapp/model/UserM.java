@@ -3,6 +3,7 @@ package com.vantagecircle.chatapp.model;
 import com.vantagecircle.chatapp.utils.DateUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by bapidas on 11/07/17.
@@ -17,6 +18,7 @@ public class UserM implements Serializable{
     private boolean isOnline;
     private long lastSeenTime;
     private String userType;
+    private ArrayList<RoomM> roomMArrayList;
 
     public String getUserId() {
         return userId;
@@ -82,18 +84,12 @@ public class UserM implements Serializable{
         this.userType = userType;
     }
 
-    @Override
-    public String toString() {
-        return "UserM{" +
-                "userId='" + userId + '\'' +
-                ", username='" + username + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", fcmToken='" + fcmToken + '\'' +
-                ", notificationCount=" + notificationCount +
-                ", isOnline=" + isOnline +
-                ", lastSeenTime=" + lastSeenTime +
-                ", userType='" + userType + '\'' +
-                '}';
+    public ArrayList<RoomM> getRoomMArrayList() {
+        return roomMArrayList;
+    }
+
+    public void setRoomMArrayList(ArrayList<RoomM> roomMArrayList) {
+        this.roomMArrayList = roomMArrayList;
     }
 
     public String isOnlineString() {

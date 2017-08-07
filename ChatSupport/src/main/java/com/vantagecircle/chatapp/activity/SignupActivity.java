@@ -20,10 +20,13 @@ import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.core.AuthHandler;
 import com.vantagecircle.chatapp.core.SetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
+import com.vantagecircle.chatapp.model.RoomM;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.pref.SharedPrefM;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
+
+import java.util.ArrayList;
 
 /**
  * Created by bapidas on 10/07/17.
@@ -130,6 +133,7 @@ public class SignupActivity extends AppCompatActivity {
         userM.setNotificationCount(0);
         userM.setOnline(true);
         userM.setUserType(Constants._USER);
+        userM.setRoomMArrayList(getStaticRooms());
 
         SetDataHandler setDataHandler = new SetDataHandler();
         setDataHandler.setDatabaseReference(Support.getUserReference().child(userM.getUserId()));
@@ -158,6 +162,15 @@ public class SignupActivity extends AppCompatActivity {
                 Toast.makeText(mContext, e, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private ArrayList<RoomM> getStaticRooms(){
+        ArrayList<RoomM> arrayList = new ArrayList<>();
+        RoomM roomM = new RoomM();
+        roomM.setRoomId("CAOL5K");
+        roomM.setRoomName("CAOL5K_QWERTY");
+        arrayList.add(roomM);
+        return arrayList;
     }
 
     @Override

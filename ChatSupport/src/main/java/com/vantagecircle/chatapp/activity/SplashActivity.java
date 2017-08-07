@@ -36,14 +36,21 @@ public class SplashActivity extends AppCompatActivity {
                     if (userM != null ) {
                         Support.id = Support.getUserInstance().getUid();
                         Support.userM = userM;
-                        Intent intent = new Intent(SplashActivity.this, UserActivity.class);
+
+                        /*Intent intent = new Intent(SplashActivity.this, UserActivity.class);
                         startActivity(intent);
-                        finish();
+                        finish();*/
+
+                        Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
+                        intent.putExtra("isContest", true);
+                        intent.putExtra("contest_id", "CAOL5K");
+                        startActivity(intent);
                     } else {
                         //logout from firebase and try again
                         Support.getAuthInstance().signOut();
                         Toast.makeText(getApplicationContext(), "User data not found please login",
                                 Toast.LENGTH_SHORT).show();
+
                         Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                         startActivity(intent);
                         finish();
@@ -55,6 +62,7 @@ public class SplashActivity extends AppCompatActivity {
                     Support.getAuthInstance().signOut();
                     Toast.makeText(getApplicationContext(), dataModel.getDatabaseError().getMessage(),
                             Toast.LENGTH_SHORT).show();
+
                     Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
