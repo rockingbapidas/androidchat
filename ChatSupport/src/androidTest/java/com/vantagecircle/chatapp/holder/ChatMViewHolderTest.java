@@ -115,7 +115,7 @@ public class ChatMViewHolderTest {
     @Test
     public void setDataToViews() throws Exception {
         switch (chatM.getChatType()) {
-            case Constants.IMAGE_TYPE:
+            case Constants.IMAGE_CONTENT:
                 if (chatM.getFileUrl() != null) {
                     progressBar.setVisibility(View.GONE);
                     ToolsUtils.loadPicasso(appContext, fileImage, chatM.getFileUrl());

@@ -45,6 +45,7 @@ public class SplashActivity extends AppCompatActivity {
                         intent.putExtra("isContest", true);
                         intent.putExtra("contest_id", "CAOL5K");
                         startActivity(intent);
+                        finish();
                     } else {
                         //logout from firebase and try again
                         Support.getAuthInstance().signOut();

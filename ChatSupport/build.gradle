@@ -1,6 +1,6 @@
-//apply plugin: 'com.android.application'
+apply plugin: 'com.android.application'
 
-apply plugin: 'com.android.library'
+/*apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
@@ -23,15 +23,16 @@ bintray {
         websiteUrl = 'https://bapivantage@bitbucket.org/bapivantage/androidchat'
     }
     configurations = ['archives']
-}
+}*/
 
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
-        //applicationId "com.vantagecircle.chatapp"
-        group = 'com.vantagecircle.chatapp'
-        version = '1.0.2'
+        applicationId "com.vantagecircle.chatapp"
+
+        /*group = 'com.vantagecircle.chatapp'
+        version = '1.0.2'*/
 
         minSdkVersion 16
         targetSdkVersion 25
