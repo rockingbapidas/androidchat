@@ -12,7 +12,10 @@ import com.vantagecircle.chatapp.Support;
 import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ValueInterface;
+import com.vantagecircle.chatapp.model.RoomM;
 import com.vantagecircle.chatapp.model.UserM;
+
+import java.util.ArrayList;
 
 /**
  * Created by bapidas on 10/07/17.
@@ -25,7 +28,38 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        //initTest();
+        initApp();
+    }
 
+    private void initTest(){
+        UserM userM = new UserM();
+        userM.setUserId("dll6E6arOmXcWNSeKEk5WH7IcnW2");
+        userM.setUsername("bapi@gmail.com");
+        userM.setFullName("Bapi Das");
+        userM.setFcmToken("fl0dEIo-qV0:APA91bETyHJMRRQzz4nxyExsRlQ1I-JTyfPvzEJw1-tlMcAkBkq4ZW4Ub1DFL3QlyvXMgSTjD41Bs9eqrbErvwSBu3JOjzTNjmxzeO6DNqdckKdXdsbFYIkQDPyGT6d-qmhD0ihwFPl0");
+        userM.setLastSeenTime(System.currentTimeMillis());
+        userM.setNotificationCount(0);
+        userM.setOnline(true);
+        userM.setUserType("user");
+        ArrayList<RoomM> arrayList = new ArrayList<>();
+        RoomM roomM = new RoomM();
+        roomM.setRoomId("CAOL5K");
+        roomM.setRoomName("CAOL5K_QWERTY");
+        arrayList.add(roomM);
+        userM.setRoomMArrayList(arrayList);
+
+        Support.userM = userM;
+        Support.id = userM.getUserId();
+
+        Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
+        intent.putExtra("isContest", true);
+        intent.putExtra("contest_id", "CAOL5K");
+        startActivity(intent);
+        finish();
+    }
+
+    private void initApp(){
         if (Support.getUserInstance() != null) {
             GetDataHandler getDataHandler = new GetDataHandler();
             getDataHandler.setDataReference(Support.getUserReference().child(Support.getUserInstance().getUid()));
@@ -40,12 +74,6 @@ public class SplashActivity extends AppCompatActivity {
                         Intent intent = new Intent(SplashActivity.this, UserActivity.class);
                         startActivity(intent);
                         finish();
-
-                        /*Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
-                        intent.putExtra("isContest", true);
-                        intent.putExtra("contest_id", "CAOL5K");
-                        startActivity(intent);
-                        finish();*/
                     } else {
                         //logout from firebase and try again
                         Support.getAuthInstance().signOut();

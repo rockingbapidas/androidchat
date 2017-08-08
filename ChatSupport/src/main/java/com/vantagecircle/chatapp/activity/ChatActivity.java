@@ -4,11 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.vantagecircle.chatapp.core.abstractC.BaseActivity;
+import com.vantagecircle.chatapp.core.abstractC.ParentActivity;
 
 /**
  * Created by bapidas on 10/07/17.
  */
-public class ChatActivity extends BaseActivity {
+public class ChatActivity extends ParentActivity {
     private static final String TAG = ChatActivity.class.getSimpleName();
 
     @Override

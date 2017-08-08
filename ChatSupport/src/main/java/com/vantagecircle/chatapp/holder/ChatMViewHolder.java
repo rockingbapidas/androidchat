@@ -149,7 +149,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                     @Override
                     public void onProgress(FileModel fileModel) {
                         double progress = (100.0 * fileModel.getFileDownloadSnap().getBytesTransferred())
-                                / fileModel.getUploadTaskSnap().getTotalByteCount();
+                                / fileModel.getFileDownloadSnap().getTotalByteCount();
                         Log.d(TAG, "Download is on progress  === " + progress + "%");
                     }
 
@@ -217,9 +217,9 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
 
                 //update file url to the server
                 UpdateKeyUtils.updateFileUrl(chatM.getChatRoom(), timeStamp, downloadUrl);
-                chatM.setFileUrl(downloadUrl);
 
                 //push notification after file update is complete
+                chatM.setFileUrl(downloadUrl);
                 SendNotification sendNotification = new SendNotification();
                 sendNotification.prepareNotification(chatM);
                 progressBar.setVisibility(View.GONE);
