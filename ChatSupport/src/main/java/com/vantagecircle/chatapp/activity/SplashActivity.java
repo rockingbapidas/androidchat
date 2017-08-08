@@ -37,15 +37,15 @@ public class SplashActivity extends AppCompatActivity {
                         Support.id = Support.getUserInstance().getUid();
                         Support.userM = userM;
 
-                        /*Intent intent = new Intent(SplashActivity.this, UserActivity.class);
+                        Intent intent = new Intent(SplashActivity.this, UserActivity.class);
                         startActivity(intent);
-                        finish();*/
+                        finish();
 
-                        Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
+                        /*Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
                         intent.putExtra("isContest", true);
                         intent.putExtra("contest_id", "CAOL5K");
                         startActivity(intent);
-                        finish();
+                        finish();*/
                     } else {
                         //logout from firebase and try again
                         Support.getAuthInstance().signOut();

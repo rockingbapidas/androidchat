@@ -46,7 +46,7 @@ import java.util.Calendar;
  * Created by bapidas on 07/08/17.
  */
 
-public abstract class NewBaseActivity extends AppCompatActivity {
+public abstract class ParentActivity extends AppCompatActivity {
     private static final String TAG = BaseActivity.class.getSimpleName();
     private ActionBar mActionBar;
     private Toolbar mToolbar;
