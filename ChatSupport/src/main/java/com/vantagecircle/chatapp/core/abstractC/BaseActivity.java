@@ -78,7 +78,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(loadView());
         mContext = getApplicationContext();
-        initPermission();
         initToolBar();
         initView();
         initRecycler();
@@ -89,13 +88,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     //cast and bind view from layout
     protected int loadView(){
         return R.layout.activity_chat;
-    }
-
-    protected void initPermission() {
-        String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
-            ActivityCompat.requestPermissions(this, PERMISSIONS, 123);
-        }
     }
 
     protected void initToolBar() {
@@ -145,7 +137,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         //initialize app data and set user online if user came from notification bar
         isFromNotification = getIntent().getBooleanExtra("isFromBar", false);
         if (isFromNotification) {
-            ConfigUtils.initializeApp();
+            ConfigUtils.initializeApp(mContext);
             UpdateKeyUtils.updateOnlineStatus(true);
             UpdateKeyUtils.updateLastSeen(new Date().getTime());
         }
@@ -444,13 +436,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
-                break;
-            case 123:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "Permission granted");
-                } else {
-                    Log.d(TAG, "Permission not granted");
                 }
                 break;
             default:

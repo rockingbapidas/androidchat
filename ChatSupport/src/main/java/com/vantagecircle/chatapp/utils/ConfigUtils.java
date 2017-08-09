@@ -1,5 +1,6 @@
 package com.vantagecircle.chatapp.utils;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.vantagecircle.chatapp.services.SupportService;
@@ -75,7 +76,7 @@ public class ConfigUtils {
         return userM.getUserId() + "_" + SupportService.getUserInstance().getUid();
     }
 
-    public static void initializeApp(){
+    public static void initializeApp(final Context context){
         if (SupportService.getUserInstance() != null) {
             GetDataHandler getDataHandler = new GetDataHandler();
             getDataHandler.setDataReference(SupportService.getUserReference()
@@ -85,8 +86,7 @@ public class ConfigUtils {
                 public void onDataSuccess(DataModel dataModel) {
                     UserM userM = dataModel.getDataSnapshot().getValue(UserM.class);
                     if (userM != null ) {
-                        SupportService.id = SupportService.getUserInstance().getUid();
-                        SupportService.userM = userM;
+                        SupportService.init(context, userM);
                     }
                 }
 

@@ -1,8 +1,12 @@
 package com.vantagecircle.chatapp.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -14,6 +18,8 @@ import com.vantagecircle.chatapp.core.GetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ValueInterface;
 import com.vantagecircle.chatapp.model.RoomM;
 import com.vantagecircle.chatapp.model.UserM;
+import com.vantagecircle.chatapp.utils.Constants;
+import com.vantagecircle.chatapp.utils.ToolsUtils;
 
 import java.util.ArrayList;
 
@@ -28,9 +34,31 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        initPermission();
+    }
 
-        initTest();
-        //initApp();
+    private void initPermission() {
+        String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Permission granted");
+                    initTest();
+                } else {
+                    Log.d(TAG, "Permission not granted");
+                    initApp();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private void initTest(){
@@ -50,7 +78,7 @@ public class SplashActivity extends AppCompatActivity {
         arrayList.add(roomM);
         userM.setRoomMArrayList(arrayList);
 
-        SupportService.init(userM);
+        SupportService.init(getApplicationContext(), userM);
         Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
         intent.putExtra("isContest", true);
         intent.putExtra("contest_id", "CAOL5K");
