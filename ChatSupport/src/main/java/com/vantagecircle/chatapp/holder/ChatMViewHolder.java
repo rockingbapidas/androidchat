@@ -64,11 +64,13 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         switch (chatM.getChatType()) {
             case Constants.IMAGE_CONTENT:
                 if (chatM.getFileUrl() != null) {
-                    if (chatM.getFileUrl().startsWith("https:") || chatM.getFileUrl().startsWith("gs:")) {
+                    if (chatM.getFileUrl().startsWith("https:") ||
+                            chatM.getFileUrl().startsWith("gs:")) {
                         downloadFile(chatM);
                     } else {
                         if (chatM.getSenderUid().equals(SupportService.id)) {
-                            ToolsUtils.loadPicasso(SupportService.getInstance(), fileImage, chatM.getFileUrl());
+                            ToolsUtils.loadPicasso(SupportService.getInstance(),
+                                    fileImage, chatM.getFileUrl());
                             if (FileUtils.isUriContentExist(context, chatM.getFileUrl())) {
                                 uploadFile(chatM);
                             }
@@ -139,11 +141,9 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         try {
             String file = FileUtils.isFilePresent(filepath, fileName);
             if (file != null) {
-                Log.d(TAG, "File Exist");
                 ToolsUtils.loadPicasso(SupportService.getInstance(), fileImage, file);
                 progressBar.setVisibility(View.GONE);
             } else {
-                Log.d(TAG, "File Not Exist");
                 progressBar.setVisibility(View.VISIBLE);
                 File destination = new File(filepath, fileName);
                 fileHandler.setStorageRef(storageReference);
