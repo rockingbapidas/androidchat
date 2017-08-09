@@ -82,6 +82,16 @@ public class ToolsUtils {
         return isInBackground;
     }
 
+    public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void hideKeyboard(Activity ctx) {
         View view = ctx.getCurrentFocus();
         if (view != null) {

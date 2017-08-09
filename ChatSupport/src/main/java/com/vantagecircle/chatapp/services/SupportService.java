@@ -17,6 +17,7 @@ import com.google.firebase.storage.StorageReference;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.model.UserM;
+import com.vantagecircle.chatapp.utils.ToolsUtils;
 
 import java.io.File;
 
@@ -32,15 +33,25 @@ public class SupportService extends Service {
     public static String id = null;
     public static UserM userM = null;
 
+    public static void init(UserM userM){
+        if(ToolsUtils.isMyServiceRunning(mInstance, SupportService.class)){
+            Log.d(TAG, "Service is already running");
+            mInstance.stopService(new Intent(mInstance, SupportService.class));
+            Intent pushIntent = new Intent(mInstance, SupportService.class);
+            mInstance.startService(pushIntent);
+        } else {
+            Log.d(TAG, "Service is not running");
+            Intent pushIntent = new Intent(mInstance, SupportService.class);
+            mInstance.startService(pushIntent);
+        }
+        SupportService.userM = userM;
+        SupportService.id = userM.getUserId();
+    }
+
     @Override
     public void onCreate() {
         Log.e(TAG, "onCreate");
         super.onCreate();
-        mInstance = this;
-        makeDir();
-        getDatabaseInstance().setPersistenceEnabled(true);
-        getUserReference().keepSynced(true);
-        getChatReference().keepSynced(true);
     }
 
     @Override
@@ -52,7 +63,14 @@ public class SupportService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
-        mInstance = this;
+        if (mInstance == null) {
+            mInstance = this;
+        }
+        if (getDatabaseInstance() == null) {
+            getDatabaseInstance().setPersistenceEnabled(true);
+            getUserReference().keepSynced(true);
+            getChatReference().keepSynced(true);
+        }
         makeDir();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -128,11 +146,11 @@ public class SupportService extends Service {
         return getDatabaseInstance().getReference(Constants.DATABASE_GROUP_REF);
     }
 
-    public static synchronized FirebaseStorage getStorageInstance(){
+    public static synchronized FirebaseStorage getStorageInstance() {
         return FirebaseStorage.getInstance();
     }
 
-    public static synchronized StorageReference getChatImageReference(){
+    public static synchronized StorageReference getChatImageReference() {
         return getStorageInstance().getReference(Constants.STORAGE_CHAT_IMAGE_REF);
     }
 
