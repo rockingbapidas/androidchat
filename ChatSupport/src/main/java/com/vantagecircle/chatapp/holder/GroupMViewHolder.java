@@ -7,7 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ChildInterface;
@@ -74,7 +74,7 @@ public class GroupMViewHolder extends RecyclerView.ViewHolder implements View.On
 
     private void bindLastMessage(String room){
         GetDataHandler getDataHandler1 = new GetDataHandler();
-        getDataHandler1.setQueryReference(Support.getChatReference()
+        getDataHandler1.setQueryReference(SupportService.getChatReference()
                 .child(room)
                 .orderByKey()
                 .limitToLast(1));

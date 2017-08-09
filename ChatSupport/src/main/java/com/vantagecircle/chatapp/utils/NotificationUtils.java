@@ -17,7 +17,7 @@ import android.support.v4.app.TaskStackBuilder;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.activity.ChatActivity;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
@@ -36,10 +36,10 @@ public class NotificationUtils {
     private static NotificationCompat.Builder mBuilder;
 
     public static void setNotification(JSONObject jsonObject) throws JSONException {
-        mBuilder = new NotificationCompat.Builder(Support.getInstance());
+        mBuilder = new NotificationCompat.Builder(SupportService.getInstance());
         UserM userM;
         GroupM groupM;
-        Intent intent = new Intent(Support.getInstance(), ChatActivity.class);
+        Intent intent = new Intent(SupportService.getInstance(), ChatActivity.class);
         intent.putExtra("isFromBar", true);
         if(jsonObject.getString("conType").equals(Constants.CONV_SN)){
             userM = new UserM();
@@ -57,11 +57,11 @@ public class NotificationUtils {
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(Support.getInstance());
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(SupportService.getInstance());
         stackBuilder.addParentStack(ChatActivity.class);
         stackBuilder.addNextIntent(intent);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(Support.getInstance(), (int)
+        PendingIntent contentIntent = PendingIntent.getActivity(SupportService.getInstance(), (int)
                 System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setContentTitle(jsonObject.getString("title"));
@@ -73,7 +73,7 @@ public class NotificationUtils {
             Bitmap bitmap = null;
             try {
                 if (imageUrl != null && !imageUrl.isEmpty())
-                    bitmap = Picasso.with(Support.getInstance()).load(imageUrl).get();
+                    bitmap = Picasso.with(SupportService.getInstance()).load(imageUrl).get();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -84,7 +84,7 @@ public class NotificationUtils {
     }
 
     private static void showNotification() {
-        Bitmap largeIcon = BitmapFactory.decodeResource(Support.getInstance().getResources(),
+        Bitmap largeIcon = BitmapFactory.decodeResource(SupportService.getInstance().getResources(),
                 R.drawable.ic_chat_black_24dp);
         long[] vibrate = new long[]{1000, 1000, 1000, 1000, 1000};
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -106,10 +106,10 @@ public class NotificationUtils {
         mBuilder.setVibrate(vibrate);
         Notification notify = mBuilder.build();
         NotificationManagerCompat notificationManager = NotificationManagerCompat
-                .from(Support.getInstance());
+                .from(SupportService.getInstance());
         int MESSAGE_NOTIFICATION_ID = 1;
         notificationManager.notify(MESSAGE_NOTIFICATION_ID, notify);
-        PowerManager pm = (PowerManager) Support.getInstance().getSystemService(Context.POWER_SERVICE);
+        PowerManager pm = (PowerManager) SupportService.getInstance().getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK |
                 PowerManager.ACQUIRE_CAUSES_WAKEUP, TAG);
         wl.acquire(15000);

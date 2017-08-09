@@ -29,7 +29,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.adapter.ChatMAdapter;
 import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
@@ -41,7 +41,7 @@ import com.vantagecircle.chatapp.core.interfaceC.ValueInterface;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
-import com.vantagecircle.chatapp.services.SendNotification;
+import com.vantagecircle.chatapp.httpcall.SendNotification;
 import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
@@ -173,7 +173,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         currentRoom = t;
                         if (chatMAdapter == null) {
                             chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
-                                    Support.getChatReference().child(currentRoom));
+                                    SupportService.getChatReference().child(currentRoom));
                             recyclerView.setAdapter(chatMAdapter);
                         }
                     }
@@ -196,7 +196,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         currentRoom = t;
                         if (chatMAdapter == null) {
                             chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
-                                    Support.getChatReference().child(currentRoom));
+                                    SupportService.getChatReference().child(currentRoom));
                             recyclerView.setAdapter(chatMAdapter);
                         }
                     }
@@ -212,7 +212,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void getOnlineStatus() {
         GetDataHandler getDataHandler = new GetDataHandler();
-        getDataHandler.setDataReference(Support.getUserReference().child(userM.getUserId()));
+        getDataHandler.setDataReference(SupportService.getUserReference().child(userM.getUserId()));
         getDataHandler.setValueEventListener(new ValueInterface() {
             @Override
             public void onDataSuccess(DataModel dataModel) {
@@ -234,7 +234,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void getTokens() {
         tokens = new ArrayList<>();
         GetDataHandler getDataHandler = new GetDataHandler();
-        getDataHandler.setDataReference(Support.getGroupReference()
+        getDataHandler.setDataReference(SupportService.getGroupReference()
                 .child(groupM.getId())
                 .child("users"));
         getDataHandler.setChildValueListener(new ChildInterface() {
@@ -273,8 +273,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         Log.d(TAG, "Current Room === " + currentRoom);
         ChatM chatM = null;
         try {
-            String senderName = Support.userM.getFullName();
-            String senderUid = Support.id;
+            String senderName = SupportService.userM.getFullName();
+            String senderUid = SupportService.id;
             String receiverName;
             String receiverUid;
             String convType;
@@ -291,7 +291,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
                     type, text, uri, timeStamp, false, false, currentRoom, convType,
-                    Support.userM.getFcmToken(), isGroup ? null : userM.getFcmToken());
+                    SupportService.userM.getFcmToken(), isGroup ? null : userM.getFcmToken());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -304,7 +304,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         //config handler and push chat data to current room
         SetDataHandler setDataHandler = new SetDataHandler();
-        setDataHandler.setDatabaseReference(Support.getChatReference()
+        setDataHandler.setDatabaseReference(SupportService.getChatReference()
                 .child(currentRoom)
                 .child(String.valueOf(chatM.getTimeStamp())));
         setDataHandler.insertData(chatM, new ResultInterface() {
@@ -528,14 +528,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d(TAG, "onStart");
         super.onStart();
-        Support.setIsChatWindowActive(true);
+        SupportService.setIsChatWindowActive(true);
     }
 
     @Override
     protected void onStop() {
         Log.d(TAG, "onStop");
         super.onStop();
-        Support.setIsChatWindowActive(false);
+        SupportService.setIsChatWindowActive(false);
     }
 
     @Override

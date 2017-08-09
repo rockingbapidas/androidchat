@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = passwordEdit.getText().toString();
 
         AuthHandler authHandler = new AuthHandler();
-        authHandler.setFirebaseAuth(Support.getAuthInstance());
+        authHandler.setFirebaseAuth(SupportService.getAuthInstance());
         authHandler.performLogin(username, password, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
@@ -120,19 +120,19 @@ public class LoginActivity extends AppCompatActivity {
 
     private void getData(){
         GetDataHandler getDataHandler = new GetDataHandler();
-        getDataHandler.setDataReference(Support.getUserReference().child(Support.getUserInstance().getUid()));
+        getDataHandler.setDataReference(SupportService.getUserReference().child(SupportService.getUserInstance().getUid()));
         getDataHandler.setSingleValueEventListener(new ValueInterface() {
             @Override
             public void onDataSuccess(DataModel dataModel) {
                 UserM userM = dataModel.getDataSnapshot().getValue(UserM.class);
                 if (userM != null) {
-                    Support.id = Support.getUserInstance().getUid();
-                    Support.userM = userM;
+                    SupportService.id = SupportService.getUserInstance().getUid();
+                    SupportService.userM = userM;
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
                     if (userM.getUserType().equals(Constants._ADMIN)) {
-                        Support.getAuthInstance().signOut();
+                        SupportService.getAuthInstance().signOut();
                         Toast.makeText(mContext, "User invalid use another account",
                                 Toast.LENGTH_SHORT).show();
                     } else {
@@ -141,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     }
                 } else {
-                    Support.getAuthInstance().signOut();
+                    SupportService.getAuthInstance().signOut();
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onDataCancelled(DataModel databaseError) {
-                Support.getAuthInstance().signOut();
+                SupportService.getAuthInstance().signOut();
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }

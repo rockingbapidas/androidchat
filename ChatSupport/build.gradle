@@ -12,10 +12,10 @@ bintray {
         name = 'com.vantagecircle.chatapp'
 
         version {
-            name = '1.0.3'
-            desc = 'Some error and bugs fixed in this version'
+            name = '1.0.4'
+            desc = 'Some error and bugs fixeds and file upload and download bug fixed'
             released  = new Date()
-            vcsTag = '1.0.3'
+            vcsTag = '1.0.4'
         }
 
         licenses = ['Apache-2.0']
@@ -32,7 +32,7 @@ android {
         applicationId "com.vantagecircle.chatapp"
 
         /*group = 'com.vantagecircle.chatapp'
-        version = '1.0.3'*/
+        version = '1.0.4'*/
 
         minSdkVersion 16
         targetSdkVersion 25
@@ -55,15 +55,20 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    //noinspection GradleCompatible
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.android.support:cardview-v7:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.balysv:material-ripple:1.0.2'
-    compile 'com.rengwuxian.materialedittext:library:2.1.4'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:multidex:1.0.1'
+
+    compile 'com.balysv:material-ripple:1.0.2'
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
     compile 'com.firebaseui:firebase-ui:0.4.3'
     compile 'com.google.firebase:firebase-core:11.0.4'
     compile 'com.google.firebase:firebase-messaging:11.0.4'
@@ -72,8 +77,7 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:11.0.4'
     compile 'com.google.android.gms:play-services-auth:11.0.4'
     compile 'com.google.code.gson:gson:2.7'
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
 }

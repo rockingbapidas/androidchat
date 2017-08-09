@@ -15,11 +15,11 @@ import android.widget.TextView;
 
 import com.google.firebase.storage.StorageReference;
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.FileHandler;
 import com.vantagecircle.chatapp.core.model.FileModel;
 import com.vantagecircle.chatapp.core.interfaceC.FileInterface;
-import com.vantagecircle.chatapp.services.SendNotification;
+import com.vantagecircle.chatapp.httpcall.SendNotification;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.utils.DateUtils;
@@ -67,8 +67,8 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                     if (chatM.getFileUrl().startsWith("https:") || chatM.getFileUrl().startsWith("gs:")) {
                         downloadFile(chatM);
                     } else {
-                        if (chatM.getSenderUid().equals(Support.id)) {
-                            ToolsUtils.loadPicasso(Support.getInstance(), fileImage, chatM.getFileUrl());
+                        if (chatM.getSenderUid().equals(SupportService.id)) {
+                            ToolsUtils.loadPicasso(SupportService.getInstance(), fileImage, chatM.getFileUrl());
                             uploadFile(chatM);
                         } else {
                             progressBar.setVisibility(View.VISIBLE);
@@ -93,7 +93,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         }
 
         //change row alignment on basis of user
-        if (chatM.getSenderUid().equals(Support.id)) {
+        if (chatM.getSenderUid().equals(SupportService.id)) {
             userName.setTextColor(ContextCompat.getColor(context, R.color.colorOrange));
             lyt_parent.setPadding(100, 10, 15, 10);
             lyt_parent.setGravity(Gravity.END);
@@ -115,7 +115,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             lyt_parent.setGravity(Gravity.START);
             lyt_thread.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
             if (!chatM.isReadSuccessfully()) {
-                if (Support.getIsChatWindowActive()) {
+                if (SupportService.getIsChatWindowActive()) {
                     UpdateKeyUtils.updateReadStatus(chatM.getChatRoom(), chatM.getTimeStamp());
                 }
             }
@@ -124,11 +124,11 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
 
     private void downloadFile(ChatM chatM) {
         FileHandler fileHandler = new FileHandler();
-        final StorageReference storageReference = Support.getStorageInstance()
+        final StorageReference storageReference = SupportService.getStorageInstance()
                 .getReferenceFromUrl(chatM.getFileUrl());
         final String filepath;
         final String fileName = storageReference.getName() + ".jpg";
-        if (chatM.getSenderUid().equals(Support.id)) {
+        if (chatM.getSenderUid().equals(SupportService.id)) {
             filepath = FileUtils.getSentPath();
         } else {
             filepath = FileUtils.getReceivedPath();
@@ -138,7 +138,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             String file = FileUtils.isFilePresent(filepath, fileName);
             if (file != null) {
                 Log.d(TAG, "File Exist");
-                ToolsUtils.loadPicasso(Support.getInstance(), fileImage, file);
+                ToolsUtils.loadPicasso(SupportService.getInstance(), fileImage, file);
                 progressBar.setVisibility(View.GONE);
             } else {
                 Log.d(TAG, "File Not Exist");
@@ -169,7 +169,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                         try {
                             String file = FileUtils.isFilePresent(filepath, fileName);
                             if (file != null) {
-                                ToolsUtils.loadPicasso(Support.getInstance(), fileImage, file);
+                                ToolsUtils.loadPicasso(SupportService.getInstance(), fileImage, file);
                             } else {
                                 fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
                             }
@@ -187,7 +187,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
 
     private void uploadFile(final ChatM chatM) {
         FileHandler fileHandler = new FileHandler();
-        fileHandler.setStorageRef(Support.getChatImageReference()
+        fileHandler.setStorageRef(SupportService.getChatImageReference()
                 .child(String.valueOf(chatM.getTimeStamp())));
         progressBar.setVisibility(View.VISIBLE);
 

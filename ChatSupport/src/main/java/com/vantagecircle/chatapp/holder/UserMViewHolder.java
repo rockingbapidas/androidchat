@@ -7,7 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ChildInterface;
@@ -38,7 +38,7 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
     }
 
     public void setViewHolder(UserM userM, ClickUser clickUser) {
-        if (!Support.id.equals(userM.getUserId())) {
+        if (!SupportService.id.equals(userM.getUserId())) {
             sub_holder.setVisibility(View.VISIBLE);
             itemView.setVisibility(View.VISIBLE);
             this.clickUser = clickUser;
@@ -73,7 +73,7 @@ public class UserMViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
     private void bindLastMessage(String room){
         GetDataHandler getDataHandler1 = new GetDataHandler();
-        getDataHandler1.setQueryReference(Support.getChatReference()
+        getDataHandler1.setQueryReference(SupportService.getChatReference()
                 .child(room)
                 .orderByKey()
                 .limitToLast(1));

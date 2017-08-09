@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.services;
+package com.vantagecircle.chatapp.httpcall;
 
 import android.util.Log;
 

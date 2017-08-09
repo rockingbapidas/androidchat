@@ -2,7 +2,7 @@ package com.vantagecircle.chatapp.utils;
 
 import android.net.Uri;
 
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,7 +55,7 @@ public class FileUtils {
                 status = true;
             }
         } else {
-            Support.makeDir();
+            SupportService.makeDir();
             status = true;
         }
         return status;

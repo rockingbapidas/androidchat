@@ -28,7 +28,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.adapter.ChatMAdapter;
 import com.vantagecircle.chatapp.core.SetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
@@ -125,8 +125,8 @@ public abstract class ParentActivity extends AppCompatActivity {
         isContest = getIntent().getBooleanExtra("isContest", false);
         if (isContest) {
             String contest_id = getIntent().getStringExtra("contest_id");
-            for (int i = 0; i < Support.userM.getRoomMArrayList().size(); i++) {
-                RoomM roomM = Support.userM.getRoomMArrayList().get(i);
+            for (int i = 0; i < SupportService.userM.getRoomMArrayList().size(); i++) {
+                RoomM roomM = SupportService.userM.getRoomMArrayList().get(i);
                 if (roomM.getRoomId().equals(contest_id)) {
                     currentRoom = roomM.getRoomName();
                     this.roomM = roomM;
@@ -141,7 +141,7 @@ public abstract class ParentActivity extends AppCompatActivity {
     protected void getChatHistory() {
         if (chatMAdapter == null) {
             chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
-                    Support.getChatReference().child(currentRoom));
+                    SupportService.getChatReference().child(currentRoom));
             recyclerView.setAdapter(chatMAdapter);
         }
     }
@@ -151,8 +151,8 @@ public abstract class ParentActivity extends AppCompatActivity {
         Log.d(TAG, "Current Room === " + currentRoom);
         ChatM chatM = null;
         try {
-            String senderName = Support.userM.getFullName();
-            String senderUid = Support.id;
+            String senderName = SupportService.userM.getFullName();
+            String senderUid = SupportService.id;
             String receiverName = roomM.getRoomName();
             String receiverUid = roomM.getRoomId();
             String convType = Constants.CONV_GR;
@@ -160,7 +160,7 @@ public abstract class ParentActivity extends AppCompatActivity {
 
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
                     type, text, uri, timeStamp, false, false, currentRoom, convType,
-                    Support.userM.getFcmToken(), null);
+                    SupportService.userM.getFcmToken(), null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -173,7 +173,7 @@ public abstract class ParentActivity extends AppCompatActivity {
 
         //config handler and push chat data to current room
         SetDataHandler setDataHandler = new SetDataHandler();
-        setDataHandler.setDatabaseReference(Support.getChatReference()
+        setDataHandler.setDatabaseReference(SupportService.getChatReference()
                 .child(currentRoom)
                 .child(String.valueOf(chatM.getTimeStamp())));
         setDataHandler.insertData(chatM, new ResultInterface() {
@@ -392,14 +392,14 @@ public abstract class ParentActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d(TAG, "onStart");
         super.onStart();
-        Support.setIsChatWindowActive(true);
+        SupportService.setIsChatWindowActive(true);
     }
 
     @Override
     protected void onStop() {
         Log.d(TAG, "onStop");
         super.onStop();
-        Support.setIsChatWindowActive(false);
+        SupportService.setIsChatWindowActive(false);
     }
 
     @Override

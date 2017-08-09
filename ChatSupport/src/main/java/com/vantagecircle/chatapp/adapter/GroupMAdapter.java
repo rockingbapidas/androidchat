@@ -4,7 +4,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.holder.GroupMViewHolder;
 import com.vantagecircle.chatapp.adapter.interfaceA.ClickGroup;
 import com.vantagecircle.chatapp.model.GroupM;
@@ -30,7 +30,7 @@ public class GroupMAdapter extends FirebaseRecyclerAdapter<GroupM, GroupMViewHol
 
     @Override
     protected GroupM parseSnapshot(DataSnapshot snapshot) {
-        if(snapshot.child("users").hasChild(Support.id)){
+        if(snapshot.child("users").hasChild(SupportService.id)){
             return super.parseSnapshot(snapshot);
         }
         return null;

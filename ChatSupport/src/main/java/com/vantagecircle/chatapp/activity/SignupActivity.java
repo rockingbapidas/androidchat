@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.AuthHandler;
 import com.vantagecircle.chatapp.core.SetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
@@ -98,7 +98,7 @@ public class SignupActivity extends AppCompatActivity {
         fullName = fullNameEdit.getText().toString();
 
         AuthHandler authHandler = new AuthHandler();
-        authHandler.setFirebaseAuth(Support.getAuthInstance());
+        authHandler.setFirebaseAuth(SupportService.getAuthInstance());
         authHandler.performSignup(username, password, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
@@ -118,7 +118,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private void setupData() {
         final UserM userM = new UserM();
-        userM.setUserId(Support.getUserInstance().getUid());
+        userM.setUserId(SupportService.getUserInstance().getUid());
         userM.setUsername(username);
         userM.setFullName(fullName);
         String fcmToken;
@@ -126,7 +126,7 @@ public class SignupActivity extends AppCompatActivity {
             fcmToken = new SharedPrefM(mContext).getString(Constants.FIREBASE_TOKEN);
         } else {
             fcmToken = FirebaseInstanceId.getInstance().getToken();
-            new SharedPrefM(Support.getInstance()).saveString(Constants.FIREBASE_TOKEN, fcmToken);
+            new SharedPrefM(SupportService.getInstance()).saveString(Constants.FIREBASE_TOKEN, fcmToken);
         }
         userM.setFcmToken(fcmToken);
         userM.setLastSeenTime(System.currentTimeMillis());
@@ -136,12 +136,12 @@ public class SignupActivity extends AppCompatActivity {
         userM.setRoomMArrayList(getStaticRooms());
 
         SetDataHandler setDataHandler = new SetDataHandler();
-        setDataHandler.setDatabaseReference(Support.getUserReference().child(userM.getUserId()));
+        setDataHandler.setDatabaseReference(SupportService.getUserReference().child(userM.getUserId()));
         setDataHandler.insertData(userM, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
-                Support.userM = userM;
-                Support.id = userM.getUserId();
+                SupportService.userM = userM;
+                SupportService.id = userM.getUserId();
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
@@ -155,7 +155,7 @@ public class SignupActivity extends AppCompatActivity {
 
             @Override
             public void onFail(String e) {
-                Support.getUserInstance().delete();
+                SupportService.getUserInstance().delete();
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }

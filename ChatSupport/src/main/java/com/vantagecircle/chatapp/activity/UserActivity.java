@@ -30,7 +30,7 @@ import android.widget.Toast;
 import com.google.firebase.database.Query;
 import com.google.gson.Gson;
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.adapter.GroupMAdapter;
 import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
 import com.vantagecircle.chatapp.holder.GroupMViewHolder;
@@ -44,7 +44,7 @@ import com.vantagecircle.chatapp.adapter.interfaceA.ClickGroup;
 import com.vantagecircle.chatapp.adapter.interfaceA.ClickUser;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
-import com.vantagecircle.chatapp.services.SendNotification;
+import com.vantagecircle.chatapp.httpcall.SendNotification;
 import com.vantagecircle.chatapp.widget.customview.DividerItemDecoration;
 
 import java.util.Date;
@@ -105,7 +105,7 @@ public class UserActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
         assert mActionBar != null;
-        mActionBar.setTitle(Support.userM.getFullName());
+        mActionBar.setTitle(SupportService.userM.getFullName());
     }
 
     private void initView() {
@@ -139,7 +139,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void setData(){
-        Query myQuery =  Support.getUserReference();
+        Query myQuery =  SupportService.getUserReference();
         usersMAdapter = new UsersMAdapter(UserM.class, R.layout.row_users,
                 UserMViewHolder.class, myQuery, new ClickUser() {
             @Override
@@ -153,7 +153,7 @@ public class UserActivity extends AppCompatActivity {
         });
         recyclerView.setAdapter(usersMAdapter);
 
-        Query myQuery1 =  Support.getGroupReference();
+        Query myQuery1 =  SupportService.getGroupReference();
         groupMAdapter = new GroupMAdapter(GroupM.class, R.layout.row_users,
                 GroupMViewHolder.class, myQuery1, new ClickGroup() {
             @Override
@@ -178,7 +178,7 @@ public class UserActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         if (i == R.id.action_logout) {
-            Support.getAuthInstance().signOut();
+            SupportService.getAuthInstance().signOut();
             Intent intent = new Intent(activity, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -205,7 +205,7 @@ public class UserActivity extends AppCompatActivity {
                     progressDialog.setMessage("Please Wait");
                     progressDialog.show();
 
-                    final String id = Support.getGroupReference().push().getKey();
+                    final String id = SupportService.getGroupReference().push().getKey();
                     final String name = editText.getText().toString();
 
                     GroupM groupM = new GroupM();
@@ -213,7 +213,7 @@ public class UserActivity extends AppCompatActivity {
                     groupM.setName(name);
 
                     SetDataHandler setDataHandler = new SetDataHandler();
-                    setDataHandler.setDatabaseReference(Support.getGroupReference().child(id));
+                    setDataHandler.setDatabaseReference(SupportService.getGroupReference().child(id));
                     setDataHandler.insertData(groupM, new ResultInterface() {
                         @Override
                         public void onSuccess(String t) {
@@ -246,7 +246,7 @@ public class UserActivity extends AppCompatActivity {
         for (int i = 0; i < usersMAdapter.getItemCount(); i++) {
             UserM userM = usersMAdapter.getItem(i);
             SetDataHandler setDataHandler = new SetDataHandler();
-            setDataHandler.setDatabaseReference(Support.getGroupReference().child(id)
+            setDataHandler.setDatabaseReference(SupportService.getGroupReference().child(id)
                     .child("users").child(userM.getUserId()).child("fcmToken"));
             setDataHandler.insertData(userM.getFcmToken(), new ResultInterface() {
                 @Override

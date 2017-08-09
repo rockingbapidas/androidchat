@@ -3,7 +3,7 @@ package com.vantagecircle.chatapp.utils;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.SetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
 import com.vantagecircle.chatapp.pref.SharedPrefM;
@@ -26,15 +26,15 @@ public class UpdateKeyUtils {
             } else {
                 fcmToken = FirebaseInstanceId.getInstance().getToken();
             }
-            new SharedPrefM(Support.getInstance()).saveString(Constants.FIREBASE_TOKEN, fcmToken);
+            new SharedPrefM(SupportService.getInstance()).saveString(Constants.FIREBASE_TOKEN, fcmToken);
 
-            if (Support.getUserInstance() != null) {
+            if (SupportService.getUserInstance() != null) {
                 HashMap<String, Object> hashMap = new HashMap<>();
                 hashMap.put(Constants.FIREBASE_TOKEN, fcmToken);
 
                 SetDataHandler setDataHandler = new SetDataHandler();
-                setDataHandler.setDatabaseReference(Support.getUserReference()
-                        .child(Support.getUserInstance().getUid()));
+                setDataHandler.setDatabaseReference(SupportService.getUserReference()
+                        .child(SupportService.getUserInstance().getUid()));
                 setDataHandler.updateData(hashMap, new ResultInterface() {
                     @Override
                     public void onSuccess(String t) {
@@ -58,10 +58,10 @@ public class UpdateKeyUtils {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(Constants.LAST_SEEN, timeStamp);
 
-        if (Support.getUserInstance() != null) {
+        if (SupportService.getUserInstance() != null) {
             SetDataHandler setDataHandler = new SetDataHandler();
-            setDataHandler.setDatabaseReference(Support.getUserReference()
-                    .child(Support.getUserInstance().getUid()));
+            setDataHandler.setDatabaseReference(SupportService.getUserReference()
+                    .child(SupportService.getUserInstance().getUid()));
             setDataHandler.updateData(hashMap, new ResultInterface() {
                 @Override
                 public void onSuccess(String t) {
@@ -82,10 +82,10 @@ public class UpdateKeyUtils {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(Constants.ONLINE_STATUS, status);
 
-        if (Support.getUserInstance() != null) {
+        if (SupportService.getUserInstance() != null) {
             SetDataHandler setDataHandler = new SetDataHandler();
-            setDataHandler.setDatabaseReference(Support.getUserReference()
-                    .child(Support.getUserInstance().getUid()));
+            setDataHandler.setDatabaseReference(SupportService.getUserReference()
+                    .child(SupportService.getUserInstance().getUid()));
             setDataHandler.updateData(hashMap, new ResultInterface() {
                 @Override
                 public void onSuccess(String t) {
@@ -110,7 +110,7 @@ public class UpdateKeyUtils {
         hashMap.put(Constants.SENT_STATUS, true);
 
         SetDataHandler setDataHandler = new SetDataHandler();
-        setDataHandler.setDatabaseReference(Support.getChatReference()
+        setDataHandler.setDatabaseReference(SupportService.getChatReference()
                 .child(room).child(String.valueOf(timeStamp)));
         setDataHandler.updateData(hashMap, new ResultInterface() {
             @Override
@@ -130,7 +130,7 @@ public class UpdateKeyUtils {
         hashMap.put(Constants.READ_STATUS, true);
 
         SetDataHandler setDataHandler = new SetDataHandler();
-        setDataHandler.setDatabaseReference(Support.getChatReference()
+        setDataHandler.setDatabaseReference(SupportService.getChatReference()
                 .child(room).child(String.valueOf(timeStamp)));
         setDataHandler.updateData(hashMap, new ResultInterface() {
             @Override
@@ -150,7 +150,7 @@ public class UpdateKeyUtils {
         hashMap.put(Constants.FILE_URL, url);
 
         SetDataHandler setDataHandler = new SetDataHandler();
-        setDataHandler.setDatabaseReference(Support.getChatReference()
+        setDataHandler.setDatabaseReference(SupportService.getChatReference()
                 .child(room).child(String.valueOf(timeStamp)));
         setDataHandler.updateData(hashMap, new ResultInterface() {
             @Override

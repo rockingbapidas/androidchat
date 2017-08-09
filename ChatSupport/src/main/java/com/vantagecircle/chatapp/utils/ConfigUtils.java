@@ -2,7 +2,7 @@ package com.vantagecircle.chatapp.utils;
 
 import android.util.Log;
 
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
@@ -19,12 +19,12 @@ public class ConfigUtils {
 
     public static void checkRooms(final UserM userM, final ResultInterface resultInterface) {
         GetDataHandler getDataHandler = new GetDataHandler();
-        getDataHandler.setDataReference(Support.getChatReference());
+        getDataHandler.setDataReference(SupportService.getChatReference());
         getDataHandler.setValueEventListener(new ValueInterface() {
             @Override
             public void onDataSuccess(DataModel dataModel) {
-                String room_type_1 = userM.getUserId() + "_" + Support.getUserInstance().getUid();
-                String room_type_2 = Support.getUserInstance().getUid() + "_" + userM.getUserId();
+                String room_type_1 = userM.getUserId() + "_" + SupportService.getUserInstance().getUid();
+                String room_type_2 = SupportService.getUserInstance().getUid() + "_" + userM.getUserId();
                 if (dataModel.getDataSnapshot().hasChild(room_type_1)) {
                     //Log.e(TAG, "Chat room available " + room_type_1);
                     resultInterface.onSuccess(room_type_1);
@@ -46,7 +46,7 @@ public class ConfigUtils {
 
     public static void checkRooms(final GroupM groupM, final ResultInterface resultInterface) {
         GetDataHandler getDataHandler = new GetDataHandler();
-        getDataHandler.setDataReference(Support.getChatReference());
+        getDataHandler.setDataReference(SupportService.getChatReference());
         getDataHandler.setValueEventListener(new ValueInterface() {
             @Override
             public void onDataSuccess(DataModel dataModel) {
@@ -72,21 +72,21 @@ public class ConfigUtils {
     }
 
     public static String createRoom(UserM userM){
-        return userM.getUserId() + "_" + Support.getUserInstance().getUid();
+        return userM.getUserId() + "_" + SupportService.getUserInstance().getUid();
     }
 
     public static void initializeApp(){
-        if (Support.getUserInstance() != null) {
+        if (SupportService.getUserInstance() != null) {
             GetDataHandler getDataHandler = new GetDataHandler();
-            getDataHandler.setDataReference(Support.getUserReference()
-                    .child(Support.getUserInstance().getUid()));
+            getDataHandler.setDataReference(SupportService.getUserReference()
+                    .child(SupportService.getUserInstance().getUid()));
             getDataHandler.setSingleValueEventListener(new ValueInterface() {
                 @Override
                 public void onDataSuccess(DataModel dataModel) {
                     UserM userM = dataModel.getDataSnapshot().getValue(UserM.class);
                     if (userM != null ) {
-                        Support.id = Support.getUserInstance().getUid();
-                        Support.userM = userM;
+                        SupportService.id = SupportService.getUserInstance().getUid();
+                        SupportService.userM = userM;
                     }
                 }
 

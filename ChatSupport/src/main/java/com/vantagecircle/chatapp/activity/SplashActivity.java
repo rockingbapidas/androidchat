@@ -8,7 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ValueInterface;
@@ -28,8 +28,9 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        //initTest();
-        initApp();
+
+        initTest();
+        //initApp();
     }
 
     private void initTest(){
@@ -49,8 +50,8 @@ public class SplashActivity extends AppCompatActivity {
         arrayList.add(roomM);
         userM.setRoomMArrayList(arrayList);
 
-        Support.userM = userM;
-        Support.id = userM.getUserId();
+        SupportService.userM = userM;
+        SupportService.id = userM.getUserId();
 
         Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
         intent.putExtra("isContest", true);
@@ -60,23 +61,23 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void initApp(){
-        if (Support.getUserInstance() != null) {
+        if (SupportService.getUserInstance() != null) {
             GetDataHandler getDataHandler = new GetDataHandler();
-            getDataHandler.setDataReference(Support.getUserReference().child(Support.getUserInstance().getUid()));
+            getDataHandler.setDataReference(SupportService.getUserReference().child(SupportService.getUserInstance().getUid()));
             getDataHandler.setSingleValueEventListener(new ValueInterface() {
                 @Override
                 public void onDataSuccess(DataModel dataModel) {
                     UserM userM = dataModel.getDataSnapshot().getValue(UserM.class);
                     if (userM != null ) {
-                        Support.id = Support.getUserInstance().getUid();
-                        Support.userM = userM;
+                        SupportService.id = SupportService.getUserInstance().getUid();
+                        SupportService.userM = userM;
 
                         Intent intent = new Intent(SplashActivity.this, UserActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
                         //logout from firebase and try again
-                        Support.getAuthInstance().signOut();
+                        SupportService.getAuthInstance().signOut();
                         Toast.makeText(getApplicationContext(), "User data not found please login",
                                 Toast.LENGTH_SHORT).show();
 
@@ -88,7 +89,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 @Override
                 public void onDataCancelled(DataModel dataModel) {
-                    Support.getAuthInstance().signOut();
+                    SupportService.getAuthInstance().signOut();
                     Toast.makeText(getApplicationContext(), dataModel.getDatabaseError().getMessage(),
                             Toast.LENGTH_SHORT).show();
 

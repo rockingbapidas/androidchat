@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.Support;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.utils.DateUtils;
@@ -142,7 +142,7 @@ public class ChatMViewHolderTest {
             statusImage.setImageResource(R.drawable.ic_msg_wait);
         }
         //change row alignment on basis of user
-        if (chatM.getSenderUid().equals(Support.id)) {
+        if (chatM.getSenderUid().equals(SupportService.id)) {
             userName.setTextColor(ContextCompat.getColor(appContext, R.color.colorOrange));
             lyt_parent.setPadding(100, 10, 15, 10);
             lyt_parent.setGravity(Gravity.END);
