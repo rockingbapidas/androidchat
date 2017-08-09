@@ -1,6 +1,7 @@
 package com.vantagecircle.chatapp.services;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Environment;
@@ -33,16 +34,16 @@ public class SupportService extends Service {
     public static String id = null;
     public static UserM userM = null;
 
-    public static void init(UserM userM){
-        if(ToolsUtils.isMyServiceRunning(mInstance, SupportService.class)){
+    public static void init(Context context, UserM userM){
+        if(ToolsUtils.isMyServiceRunning(context, SupportService.class)){
             Log.d(TAG, "Service is already running");
-            mInstance.stopService(new Intent(mInstance, SupportService.class));
-            Intent pushIntent = new Intent(mInstance, SupportService.class);
-            mInstance.startService(pushIntent);
+            context.stopService(new Intent(context, SupportService.class));
+            Intent pushIntent = new Intent(context, SupportService.class);
+            context.startService(pushIntent);
         } else {
             Log.d(TAG, "Service is not running");
-            Intent pushIntent = new Intent(mInstance, SupportService.class);
-            mInstance.startService(pushIntent);
+            Intent pushIntent = new Intent(context, SupportService.class);
+            context.startService(pushIntent);
         }
         SupportService.userM = userM;
         SupportService.id = userM.getUserId();

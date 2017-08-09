@@ -219,10 +219,11 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                 UpdateKeyUtils.updateFileUrl(chatM.getChatRoom(), timeStamp, downloadUrl);
 
                 //push notification after file update is complete
-                chatM.setFileUrl(downloadUrl);
+
+                /*chatM.setFileUrl(downloadUrl);
                 SendNotification sendNotification = new SendNotification();
                 sendNotification.prepareNotification(chatM);
-                progressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);*/
             }
         });
     }
