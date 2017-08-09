@@ -69,7 +69,9 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                     } else {
                         if (chatM.getSenderUid().equals(SupportService.id)) {
                             ToolsUtils.loadPicasso(SupportService.getInstance(), fileImage, chatM.getFileUrl());
-                            uploadFile(chatM);
+                            if (FileUtils.isUriContentExist(context, chatM.getFileUrl())) {
+                                uploadFile(chatM);
+                            }
                         } else {
                             progressBar.setVisibility(View.VISIBLE);
                         }

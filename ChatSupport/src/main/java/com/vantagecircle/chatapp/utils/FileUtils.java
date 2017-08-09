@@ -1,6 +1,10 @@
 package com.vantagecircle.chatapp.utils;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.MediaStore;
 
 import com.vantagecircle.chatapp.services.SupportService;
 
@@ -41,6 +45,24 @@ public class FileUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static boolean isUriContentExist(Context context, String uri){
+        ContentResolver cr = context.getContentResolver();
+        String[] projection = {MediaStore.MediaColumns.DATA};
+        Cursor cur = cr.query(Uri.parse(uri), projection, null, null, null);
+        if (cur != null) {
+            if (cur.moveToFirst()) {
+                String filePath = cur.getString(0);
+                cur.close();
+                return new File(filePath).exists();
+            } else {
+                cur.close();
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     public static Boolean checkDirectory(String send) throws Exception {
