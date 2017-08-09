@@ -30,6 +30,8 @@ public class ChatActivity extends ParentActivity {
         String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
+        } else {
+            initialize();
         }
     }
 

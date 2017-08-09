@@ -41,6 +41,9 @@ public class SplashActivity extends AppCompatActivity {
         String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
+        } else {
+            initTest();
+            //initApp();
         }
     }
 
@@ -51,9 +54,9 @@ public class SplashActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d(TAG, "Permission granted");
                     initTest();
+                    //initApp();
                 } else {
                     Log.d(TAG, "Permission not granted");
-                    initApp();
                 }
                 break;
             default:
