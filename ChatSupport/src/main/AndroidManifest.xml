@@ -20,7 +20,13 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".activity.SplashActivity" />
+        <activity android:name=".activity.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.SignupActivity" />
         <activity android:name=".activity.UserActivity" />
@@ -40,7 +46,7 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".services.SupportService"/>
+        <service android:name=".services.SupportService" />
 
     </application>
 
