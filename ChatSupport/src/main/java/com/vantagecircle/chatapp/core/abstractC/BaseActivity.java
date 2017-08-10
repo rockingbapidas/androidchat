@@ -68,8 +68,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ImageButton btn_send_txt;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
-    private String currentRoom, fileName;
-    private File decodeFile;
+    private String currentRoom;
     private boolean isGroup, isFromNotification;
     private ArrayList<String> tokens;
     private ChatMAdapter chatMAdapter;
