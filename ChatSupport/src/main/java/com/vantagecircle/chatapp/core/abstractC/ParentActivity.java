@@ -316,11 +316,13 @@ public abstract class ParentActivity extends AppCompatActivity {
                     File newFile = MainFileUtils.createNewFile(file, newFileName, Constants.DIR_SENT);
                     if (newFile != null) {
                         Uri selectedUri = Uri.fromFile(newFile);
+                        Log.e(TAG, "First =====" + mimeType);
+                        Log.e(TAG, "First =====" + selectedUri.getPath());
+                        Log.e(TAG, "First =====" + selectedUri.toString());
                         if (mimeType.contains("image")) {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
-
                             ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
-                                    selectedUri.getPath());
+                                    selectedUri.toString());
                             pushMessage(chatM);
                         }
                         //can add other file type
@@ -348,11 +350,13 @@ public abstract class ParentActivity extends AppCompatActivity {
                     File newFile = MainFileUtils.createNewFile(file, newFileName, Constants.DIR_SENT);
                     if (newFile != null) {
                         Uri selectedUri = Uri.fromFile(newFile);
+                        Log.e(TAG, "Seccond =====" + mimeType);
+                        Log.e(TAG, "Seccond =====" + selectedUri.getPath());
+                        Log.e(TAG, "Seccond =====" + selectedUri.toString());
                         if (mimeType.contains("image")) {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
-
                             ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
-                                    selectedUri.getPath());
+                                    selectedUri.toString());
                             pushMessage(chatM);
                         }
                         //can add other file type

@@ -66,11 +66,13 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                         downloadFile(chatM);
                     } else {
                         if (chatM.getSenderUid().equals(SupportService.id)) {
-                            if (MainFileUtils.isUriContentExist(context, chatM.getFileUrl())) {
+                            Uri uri = Uri.parse(chatM.getFileUrl());
+                            if (new File(uri.getPath()).exists()) {
                                 ToolsUtils.loadPicasso(context, fileImage, chatM.getFileUrl());
                                 uploadFile(chatM);
                             } else {
                                 fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
+                                progressBar.setVisibility(View.GONE);
                             }
                         } else {
                             progressBar.setVisibility(View.VISIBLE);
@@ -133,7 +135,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
 
         final String filepath;
         final String fileName;
-        if(chatM.getChatType().contains("image")){
+        if (chatM.getChatType().contains("image")) {
             fileName = storageReference.getName() + ".jpg";
         } else {
             fileName = "";
@@ -193,11 +195,12 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
 
     private void uploadFile(final ChatM chatM) {
         FileHandler fileHandler = new FileHandler();
+        Uri file = Uri.parse(chatM.getFileUrl());
         fileHandler.setStorageRef(SupportService.getChatImageReference()
-                .child(String.valueOf(chatM.getTimeStamp())));
+                .child(MainFileUtils.getFileName(context, file)));
         progressBar.setVisibility(View.VISIBLE);
 
-        fileHandler.uploadFile(Uri.parse(chatM.getFileUrl()), chatM.getChatType(), new FileInterface() {
+        fileHandler.uploadFile(file, chatM.getChatType(), new FileInterface() {
             @Override
             public void onProgress(FileModel fileModel) {
                 double progress = (100.0 * fileModel.getUploadTaskSnap().getBytesTransferred())

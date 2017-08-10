@@ -202,7 +202,7 @@ public class MainFileUtils {
         }
     }
 
-    private static File getFile(String filepath) {
+    public static File getFile(String filepath) {
         if (filepath != null) {
             return new File(filepath);
         }
