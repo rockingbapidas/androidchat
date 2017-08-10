@@ -11,7 +11,7 @@ import java.io.File;
 public class Constants {
     public static final String APPNAME = "ChatApp";
     static final String SDCARD_PATH = Environment.getExternalStorageDirectory() + File.separator + APPNAME;
-    static final String DIR_SENT = "Sent";
+    public static final String DIR_SENT = "Sent";
     static final String DIR_RECEIVED = "Received";
     public static final String APP_PREFS = "preferences";
 
@@ -36,8 +36,16 @@ public class Constants {
     public static final String IMAGE_CONTENT = "image/jpeg";
     public static final String TEXT_CONTENT = "text";
 
+    public static final String IMAGE = "Image";
+    public static final String VIDEO = "Video";
+    public static final String FILE = "File";
+    public static final String GALLERY = "Gallery";
+
     public static final int REQUEST_STORAGE_PERMISSION = 1;
     public static final int REQUEST_CAMERA_PERMISSION = 2;
-    public static final int REQUEST_CODE_CAMERA = 101;
-    public static final int REQUEST_CODE_GALLERY = 102;
+
+    public static final int ACTIVITY_SELECT_FILE = 10;
+    public static final int ACTIVITY_SELECT_GALLERY = 11;
+    public static final int ACTIVITY_SELECT_PHOTO = 12;
+    public static final int ACTIVITY_SELECT_VIDEO = 13;
 }

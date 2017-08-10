@@ -19,11 +19,10 @@ import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.FileHandler;
 import com.vantagecircle.chatapp.core.model.FileModel;
 import com.vantagecircle.chatapp.core.interfaceC.FileInterface;
-import com.vantagecircle.chatapp.httpcall.SendNotification;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.utils.DateUtils;
-import com.vantagecircle.chatapp.utils.FileUtils;
+import com.vantagecircle.chatapp.utils.MainFileUtils;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
 import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 
@@ -60,19 +59,18 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setDataToViews(ChatM chatM, boolean isChatContinue) {
-
         switch (chatM.getChatType()) {
             case Constants.IMAGE_CONTENT:
                 if (chatM.getFileUrl() != null) {
-                    if (chatM.getFileUrl().startsWith("https:") ||
-                            chatM.getFileUrl().startsWith("gs:")) {
+                    if (MainFileUtils.isExternalLocal(chatM.getFileUrl())) {
                         downloadFile(chatM);
                     } else {
                         if (chatM.getSenderUid().equals(SupportService.id)) {
-                            ToolsUtils.loadPicasso(SupportService.getInstance(),
-                                    fileImage, chatM.getFileUrl());
-                            if (FileUtils.isUriContentExist(context, chatM.getFileUrl())) {
+                            if (MainFileUtils.isUriContentExist(context, chatM.getFileUrl())) {
+                                ToolsUtils.loadPicasso(context, fileImage, chatM.getFileUrl());
                                 uploadFile(chatM);
+                            } else {
+                                fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
                             }
                         } else {
                             progressBar.setVisibility(View.VISIBLE);
@@ -130,23 +128,29 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         FileHandler fileHandler = new FileHandler();
         final StorageReference storageReference = SupportService.getStorageInstance()
                 .getReferenceFromUrl(chatM.getFileUrl());
+        fileHandler.setStorageRef(storageReference);
+        progressBar.setVisibility(View.VISIBLE);
+
         final String filepath;
-        final String fileName = storageReference.getName() + ".jpg";
-        if (chatM.getSenderUid().equals(SupportService.id)) {
-            filepath = FileUtils.getSentPath();
+        final String fileName;
+        if(chatM.getChatType().contains("image")){
+            fileName = storageReference.getName() + ".jpg";
         } else {
-            filepath = FileUtils.getReceivedPath();
+            fileName = "";
+        }
+        if (chatM.getSenderUid().equals(SupportService.id)) {
+            filepath = MainFileUtils.getSentPath();
+        } else {
+            filepath = MainFileUtils.getReceivedPath();
         }
 
         try {
-            String file = FileUtils.isFilePresent(filepath, fileName);
+            String file = MainFileUtils.isFilePresent(filepath, fileName);
             if (file != null) {
-                ToolsUtils.loadPicasso(SupportService.getInstance(), fileImage, file);
+                ToolsUtils.loadPicasso(context, fileImage, file);
                 progressBar.setVisibility(View.GONE);
             } else {
-                progressBar.setVisibility(View.VISIBLE);
                 File destination = new File(filepath, fileName);
-                fileHandler.setStorageRef(storageReference);
                 fileHandler.downloadFile(destination, new FileInterface() {
                     @Override
                     public void onProgress(FileModel fileModel) {
@@ -169,9 +173,9 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                     @Override
                     public void onComplete(FileModel fileModel) {
                         try {
-                            String file = FileUtils.isFilePresent(filepath, fileName);
+                            String file = MainFileUtils.isFilePresent(filepath, fileName);
                             if (file != null) {
-                                ToolsUtils.loadPicasso(SupportService.getInstance(), fileImage, file);
+                                ToolsUtils.loadPicasso(context, fileImage, file);
                             } else {
                                 fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
                             }
@@ -214,14 +218,12 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
 
             @Override
             public void onComplete(FileModel fileModel) {
+                //get file download url
                 String downloadUrl = fileModel.getUploadTaskSnap().getDownloadUrl().toString();
-                long timeStamp = Long.parseLong(fileModel.getUploadTaskSnap().getStorage().getName());
-
                 //update file url to the server
-                UpdateKeyUtils.updateFileUrl(chatM.getChatRoom(), timeStamp, downloadUrl);
+                UpdateKeyUtils.updateFileUrl(chatM.getChatRoom(), chatM.getTimeStamp(), downloadUrl);
 
                 //push notification after file update is complete
-
                 /*chatM.setFileUrl(downloadUrl);
                 SendNotification sendNotification = new SendNotification();
                 sendNotification.prepareNotification(chatM);

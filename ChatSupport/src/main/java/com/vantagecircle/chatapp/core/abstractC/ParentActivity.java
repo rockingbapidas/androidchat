@@ -7,8 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -35,12 +34,14 @@ import com.vantagecircle.chatapp.core.interfaceC.ResultInterface;
 import com.vantagecircle.chatapp.holder.ChatMViewHolder;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.model.RoomM;
+import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constants;
+import com.vantagecircle.chatapp.utils.MainFileUtils;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
 import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 
 import java.io.File;
-import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by bapidas on 07/08/17.
@@ -56,8 +57,7 @@ public abstract class ParentActivity extends AppCompatActivity {
     private ImageButton btn_send_txt;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
-    private String currentRoom, fileName;
-    private File decodeFile;
+    private String currentRoom;
     private boolean isContest;
     private ChatMAdapter chatMAdapter;
 
@@ -156,7 +156,7 @@ public abstract class ParentActivity extends AppCompatActivity {
             String receiverName = roomM.getRoomName();
             String receiverUid = roomM.getRoomId();
             String convType = Constants.CONV_GR;
-            long timeStamp = System.currentTimeMillis();
+            long timeStamp = new Date().getTime();
 
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
                     type, text, uri, timeStamp, false, false, currentRoom, convType,
@@ -179,9 +179,13 @@ public abstract class ParentActivity extends AppCompatActivity {
         setDataHandler.insertData(chatM, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
-                recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount() == 0 ? 0 :
-                        chatMAdapter.getItemCount() - 1);
-
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount() == 0 ? 0 :
+                                chatMAdapter.getItemCount() - 1);
+                    }
+                }, 1000);
                 UpdateKeyUtils.updateSentStatus(currentRoom, chatM.getTimeStamp());
             }
 
@@ -229,31 +233,18 @@ public abstract class ParentActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         try {
             if (item.getItemId() == 1) {
-                fileName = null;
-                decodeFile = null;
                 String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
                     ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
                 } else {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setType("*/*");
-                    startActivityForResult(intent, Constants.REQUEST_CODE_GALLERY);
+                    ConfigUtils.callIntent(Constants.FILE, this);
                 }
             } else {
-                fileName = null;
-                decodeFile = null;
                 String[] PERMISSIONS = {Manifest.permission.CAMERA};
                 if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
                     ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_CAMERA_PERMISSION);
                 } else {
-                    Calendar c = Calendar.getInstance();
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-                    fileName = "image_" + c.getTimeInMillis() + ".jpg";
-                    decodeFile = new File(path, fileName);
-                    Uri tempUri = Uri.fromFile(decodeFile);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
-                    startActivityForResult(intent, Constants.REQUEST_CODE_CAMERA);
+                    ConfigUtils.callIntent(Constants.IMAGE, this);
                 }
             }
         } catch (Exception e) {
@@ -267,10 +258,8 @@ public abstract class ParentActivity extends AppCompatActivity {
         switch (requestCode) {
             case Constants.REQUEST_STORAGE_PERMISSION:
                 try {
-                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        intent.setType("*/*");
-                        startActivityForResult(intent, Constants.REQUEST_CODE_GALLERY);
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        ConfigUtils.callIntent(Constants.FILE, this);
                     } else {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
                             Toast.makeText(mContext, "Gallery cannot be opened without this permission",
@@ -283,15 +272,8 @@ public abstract class ParentActivity extends AppCompatActivity {
                 break;
             case Constants.REQUEST_CAMERA_PERMISSION:
                 try {
-                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        Calendar c = Calendar.getInstance();
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-                        fileName = "image_" + c.getTimeInMillis() + ".jpg";
-                        decodeFile = new File(path, fileName);
-                        Uri tempUri = Uri.fromFile(decodeFile);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
-                        startActivityForResult(intent, Constants.REQUEST_CODE_CAMERA);
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        ConfigUtils.callIntent(Constants.IMAGE, this);
                     } else {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
                             Toast.makeText(mContext, "Camera cannot be opened without this permission",
@@ -309,68 +291,73 @@ public abstract class ParentActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case Constants.REQUEST_CODE_CAMERA:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        try {
-                            if (decodeFile != null && decodeFile.exists()) {
-                                Uri selectedImage = Uri.fromFile(decodeFile);
-                                String mimeType = getContentResolver().getType(selectedImage);
-                                Log.d(TAG, "File Mime Type === " + mimeType);
-                                if (mimeType == null) {
-                                    Toast.makeText(mContext, "There was an error in file",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
-                                            selectedImage.toString());
-                                    pushMessage(chatM);
-                                }
-                            } else {
-                                Toast.makeText(mContext, "File is not exist",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+        if (data == null) return;
+        if (resultCode == Activity.RESULT_OK) {
+            if (data.getExtras() == null || data.getData() != null) {
+                try {
+                    Uri uri = data.getData();
+                    String mimeType = getContentResolver().getType(uri);
+                    if (mimeType == null) {
+                        Toast.makeText(mContext, "File type is not supported", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String path = MainFileUtils.getPath(mContext, uri);
+                    File file = null;
+                    if (path != null) {
+                        file = new File(path);
+                    }
+                    String fileName = MainFileUtils.getFileName(mContext, uri);
+                    String newFileName = MainFileUtils.getUniqueFile(fileName);
+                    File newFile = MainFileUtils.createNewFile(file, newFileName, Constants.DIR_SENT);
+                    if (newFile != null) {
+                        Uri selectedUri = Uri.fromFile(newFile);
+                        if (mimeType.contains("image")) {
+                            MainFileUtils.compressImage(selectedUri.getPath(), mContext);
+
+                            ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
+                                    selectedUri.toString());
+                            pushMessage(chatM);
                         }
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        Toast.makeText(mContext, "User cancelled operation",
-                                Toast.LENGTH_SHORT).show();
-                        break;
+                        //can add other file type
+                    } else {
+                        Toast.makeText(mContext, "File error occurred", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                break;
-            case Constants.REQUEST_CODE_GALLERY:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        try {
-                            if (data != null && data.getData() != null) {
-                                Uri selectedImage = data.getData();
-                                String mimeType = getContentResolver().getType(selectedImage);
-                                Log.d(TAG, "File Mime Type === " + mimeType);
-                                if (mimeType == null) {
-                                    Toast.makeText(mContext, "There was an error in file",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
-                                            selectedImage.toString());
-                                    pushMessage(chatM);
-                                }
-                            } else {
-                                Toast.makeText(mContext, "File is not exist",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+            } else {
+                try {
+                    Uri uri = MainFileUtils.createNewFile(data, MainFileUtils.MIME_TYPE_IMAGE);
+                    String mimeType = getContentResolver().getType(uri);
+                    if (mimeType == null) {
+                        Toast.makeText(mContext, "File type is not supported", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String path = MainFileUtils.getPath(mContext, uri);
+                    File file = null;
+                    if (path != null) {
+                        file = new File(path);
+                    }
+                    String fileName = MainFileUtils.getFileName(mContext, uri);
+                    String newFileName = MainFileUtils.getUniqueFile(fileName);
+                    File newFile = MainFileUtils.createNewFile(file, newFileName, Constants.DIR_SENT);
+                    if (newFile != null) {
+                        Uri selectedUri = Uri.fromFile(newFile);
+                        if (mimeType.contains("image")) {
+                            MainFileUtils.compressImage(selectedUri.getPath(), mContext);
+
+                            ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
+                                    selectedUri.toString());
+                            pushMessage(chatM);
                         }
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        Toast.makeText(this, "User cancelled operation",
-                                Toast.LENGTH_SHORT).show();
-                        break;
+                        //can add other file type
+                    } else {
+                        Toast.makeText(mContext, "File error occurred", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                break;
+            }
         }
     }
 

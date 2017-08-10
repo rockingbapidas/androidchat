@@ -18,6 +18,7 @@ import com.google.firebase.storage.StorageReference;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.model.UserM;
+import com.vantagecircle.chatapp.utils.MainFileUtils;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
 
 import java.io.File;
@@ -189,5 +190,23 @@ public class SupportService extends Service {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static Boolean checkDirectory(String send) throws Exception {
+        boolean status;
+        File appFile = MainFileUtils.getDirectoryPath();
+        if (appFile.isDirectory()) {
+            File innerDir = new File(appFile.getPath() + File.separator + send);
+            if (innerDir.isDirectory())
+                status = true;
+            else {
+                innerDir.mkdir();
+                status = true;
+            }
+        } else {
+            makeDir();
+            status = true;
+        }
+        return status;
     }
 }

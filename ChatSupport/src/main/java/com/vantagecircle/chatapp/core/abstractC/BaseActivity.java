@@ -287,7 +287,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 receiverUid = userM.getUserId();
                 convType = Constants.CONV_SN;
             }
-            long timeStamp = System.currentTimeMillis();
+            long timeStamp = new Date().getTime();
 
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
                     type, text, uri, timeStamp, false, false, currentRoom, convType,

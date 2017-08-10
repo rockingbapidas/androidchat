@@ -1,6 +1,10 @@
 package com.vantagecircle.chatapp.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.vantagecircle.chatapp.services.SupportService;
@@ -27,13 +31,10 @@ public class ConfigUtils {
                 String room_type_1 = userM.getUserId() + "_" + SupportService.getUserInstance().getUid();
                 String room_type_2 = SupportService.getUserInstance().getUid() + "_" + userM.getUserId();
                 if (dataModel.getDataSnapshot().hasChild(room_type_1)) {
-                    //Log.e(TAG, "Chat room available " + room_type_1);
                     resultInterface.onSuccess(room_type_1);
                 } else if (dataModel.getDataSnapshot().hasChild(room_type_2)) {
-                    //Log.e(TAG, "Chat room available " + room_type_2);
                     resultInterface.onSuccess(room_type_2);
                 } else {
-                    //Log.e(TAG, "No Chat room available yet");
                     resultInterface.onSuccess(Constants.NO_ROOM);
                 }
             }
@@ -53,10 +54,8 @@ public class ConfigUtils {
             public void onDataSuccess(DataModel dataModel) {
                 String room_type_1 = groupM.getName() + "_" + groupM.getId();
                 if (dataModel.getDataSnapshot().hasChild(room_type_1)) {
-                    //Log.e(TAG, "Group room available " + room_type_1);
                     resultInterface.onSuccess(room_type_1);
                 } else {
-                    //Log.e(TAG, "No Group room available yet");
                     resultInterface.onSuccess(Constants.NO_ROOM);
                 }
             }
@@ -95,6 +94,40 @@ public class ConfigUtils {
                     Log.e(TAG, "initializeApp " + dataModel.getDatabaseError().getMessage());
                 }
             });
+        }
+    }
+
+    public static void callIntent(String type, Activity act) {
+        Intent intent;
+        switch (type) {
+            case Constants.FILE:
+                intent = new Intent();
+                if (Build.VERSION.SDK_INT >= 19) {
+                    intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                    intent.setType("*/*");
+                } else {
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    intent.setType("*/*");
+                }
+                act.startActivityForResult(intent, Constants.ACTIVITY_SELECT_FILE);
+                break;
+            case Constants.IMAGE:
+                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                act.startActivityForResult(intent, Constants.ACTIVITY_SELECT_PHOTO);
+                break;
+            case Constants.VIDEO:
+                intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+                act.startActivityForResult(intent, Constants.ACTIVITY_SELECT_VIDEO);
+                break;
+            case Constants.GALLERY:
+                intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("image/* video/*");
+                act.startActivityForResult(intent, Constants.ACTIVITY_SELECT_GALLERY);
+                break;
+            default:
         }
     }
 }
