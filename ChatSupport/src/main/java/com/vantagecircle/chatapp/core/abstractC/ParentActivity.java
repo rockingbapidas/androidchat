@@ -48,7 +48,7 @@ import java.util.Date;
  */
 
 public abstract class ParentActivity extends AppCompatActivity {
-    private static final String TAG = BaseActivity.class.getSimpleName();
+    private static final String TAG = ParentActivity.class.getSimpleName();
     private ActionBar mActionBar;
     private Toolbar mToolbar;
     private Context mContext;
@@ -320,7 +320,7 @@ public abstract class ParentActivity extends AppCompatActivity {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
 
                             ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
-                                    selectedUri.toString());
+                                    selectedUri.getPath());
                             pushMessage(chatM);
                         }
                         //can add other file type
@@ -352,7 +352,7 @@ public abstract class ParentActivity extends AppCompatActivity {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
 
                             ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
-                                    selectedUri.toString());
+                                    selectedUri.getPath());
                             pushMessage(chatM);
                         }
                         //can add other file type
