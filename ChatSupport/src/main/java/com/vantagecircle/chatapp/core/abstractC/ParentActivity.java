@@ -143,6 +143,18 @@ public abstract class ParentActivity extends AppCompatActivity {
             chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
                     SupportService.getChatReference().child(currentRoom));
             recyclerView.setAdapter(chatMAdapter);
+            chatMAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    super.onItemRangeInserted(positionStart, itemCount);
+                    int friendlyMessageCount = chatMAdapter.getItemCount();
+                    int lastVisiblePosition = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+                    if (lastVisiblePosition == -1 || (positionStart >= (friendlyMessageCount - 1) &&
+                                    lastVisiblePosition == (positionStart - 1))) {
+                        recyclerView.scrollToPosition(positionStart);
+                    }
+                }
+            });
         }
     }
 
@@ -179,13 +191,6 @@ public abstract class ParentActivity extends AppCompatActivity {
         setDataHandler.insertData(chatM, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        recyclerView.smoothScrollToPosition(chatMAdapter.getItemCount() == 0 ? 0 :
-                                chatMAdapter.getItemCount() - 1);
-                    }
-                }, 1000);
                 UpdateKeyUtils.updateSentStatus(currentRoom, chatM.getTimeStamp());
             }
 
