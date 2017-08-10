@@ -1,36 +1,10 @@
-apply plugin: 'com.android.library'
-
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
-
-bintray {
-    user = 'bapi-das'
-    key = '535648b38f59ad71aed3bf9be799ad249644e57b'
-    pkg {
-        repo = 'ChatApp'
-        name = 'com.vantagecircle.chatapp'
-
-        version {
-            name = '1.0.7'
-            desc = 'File upload bug resolved and some error solved and scrolling issues'
-            released  = new Date()
-            vcsTag = '1.0.7'
-        }
-
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://bapivantage@bitbucket.org/bapivantage/androidchat.git'
-        websiteUrl = 'https://bapivantage@bitbucket.org/bapivantage/androidchat'
-    }
-    configurations = ['archives']
-}
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
-        group = 'com.vantagecircle.chatapp'
-        version = '1.0.7'
-
+        applicationId "com.vantagecircle.chatapp"
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
