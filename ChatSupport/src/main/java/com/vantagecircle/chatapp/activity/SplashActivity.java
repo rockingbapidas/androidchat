@@ -23,6 +23,7 @@ import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by bapidas on 10/07/17.
@@ -71,7 +72,7 @@ public class SplashActivity extends AppCompatActivity {
         userM.setUsername("bapi@gmail.com");
         userM.setFullName("Bapi Das");
         userM.setFcmToken("fl0dEIo-qV0:APA91bETyHJMRRQzz4nxyExsRlQ1I-JTyfPvzEJw1-tlMcAkBkq4ZW4Ub1DFL3QlyvXMgSTjD41Bs9eqrbErvwSBu3JOjzTNjmxzeO6DNqdckKdXdsbFYIkQDPyGT6d-qmhD0ihwFPl0");
-        userM.setLastSeenTime(System.currentTimeMillis());
+        userM.setLastSeenTime(new Date().getTime());
         userM.setNotificationCount(0);
         userM.setOnline(true);
         userM.setUserType("user");
@@ -83,6 +84,7 @@ public class SplashActivity extends AppCompatActivity {
         userM.setRoomMArrayList(arrayList);
 
         SupportService.init(getApplicationContext(), userM);
+
         Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
         intent.putExtra("isContest", true);
         intent.putExtra("contest_id", "CAOL5K");
@@ -93,14 +95,14 @@ public class SplashActivity extends AppCompatActivity {
     private void initApp(){
         if (SupportService.getUserInstance() != null) {
             GetDataHandler getDataHandler = new GetDataHandler();
-            getDataHandler.setDataReference(SupportService.getUserReference().child(SupportService.getUserInstance().getUid()));
+            getDataHandler.setDataReference(SupportService.getUserReference()
+                    .child(SupportService.getUserInstance().getUid()));
             getDataHandler.setSingleValueEventListener(new ValueInterface() {
                 @Override
                 public void onDataSuccess(DataModel dataModel) {
                     UserM userM = dataModel.getDataSnapshot().getValue(UserM.class);
                     if (userM != null ) {
-                        SupportService.id = SupportService.getUserInstance().getUid();
-                        SupportService.userM = userM;
+                        SupportService.init(getApplicationContext(), userM);
 
                         Intent intent = new Intent(SplashActivity.this, UserActivity.class);
                         startActivity(intent);

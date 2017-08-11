@@ -60,7 +60,6 @@ import java.util.Date;
 public abstract class BaseActivity extends AppCompatActivity {
     private static final String TAG = BaseActivity.class.getSimpleName();
     private ActionBar mActionBar;
-    private Toolbar mToolbar;
     private Context mContext;
     private UserM userM;
     private GroupM groupM;
@@ -91,8 +90,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void initToolBar() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
         assert mActionBar != null;
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -468,7 +465,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                         Log.e(TAG, "First =====" + mimeType);
                         Log.e(TAG, "First =====" + selectedUri.getPath());
                         Log.e(TAG, "First =====" + selectedUri.toString());
-
                         if (mimeType.contains("image")) {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
 
@@ -501,9 +497,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                     File newFile = MainFileUtils.createNewFile(file, newFileName, Constants.DIR_SENT);
                     if (newFile != null) {
                         Uri selectedUri = Uri.fromFile(newFile);
-                        Log.e(TAG, "Seccond =====" + mimeType);
-                        Log.e(TAG, "Seccond =====" + selectedUri.getPath());
-                        Log.e(TAG, "Seccond =====" + selectedUri.toString());
+                        Log.e(TAG, "Second =====" + mimeType);
+                        Log.e(TAG, "Second =====" + selectedUri.getPath());
+                        Log.e(TAG, "Second =====" + selectedUri.toString());
                         if (mimeType.contains("image")) {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
 

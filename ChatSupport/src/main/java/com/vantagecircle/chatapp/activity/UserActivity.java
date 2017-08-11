@@ -54,7 +54,6 @@ public class UserActivity extends AppCompatActivity {
     private static final String TAG = UserActivity.class.getSimpleName();
     private android.app.Activity activity;
     private Context mContext;
-    private Toolbar mToolbar;
     private ActionBar mActionBar;
     private RecyclerView recyclerView;
     private RecyclerView recyclerView1;
@@ -102,8 +101,6 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
         assert mActionBar != null;
         mActionBar.setTitle(SupportService.userM.getFullName());

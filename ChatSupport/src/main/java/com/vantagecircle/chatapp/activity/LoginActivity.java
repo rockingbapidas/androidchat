@@ -126,8 +126,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataSuccess(DataModel dataModel) {
                 UserM userM = dataModel.getDataSnapshot().getValue(UserM.class);
                 if (userM != null) {
-                    SupportService.id = SupportService.getUserInstance().getUid();
-                    SupportService.userM = userM;
+                    SupportService.init(getApplicationContext(), userM);
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }

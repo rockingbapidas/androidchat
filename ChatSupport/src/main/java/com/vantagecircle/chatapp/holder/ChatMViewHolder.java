@@ -72,7 +72,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                                 ConfigUtils.loadPicasso(context, fileImage, chatM.getFileUrl());
                                 uploadFile(chatM);
                             } else {
-                                fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
+                                fileImage.setImageResource(R.drawable.ic_insert_photo_black_24dp);
                                 progressBar.setVisibility(View.GONE);
                             }
                         } else {
@@ -80,7 +80,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                         }
                     }
                 } else {
-                    fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
+                    fileImage.setImageResource(R.drawable.ic_insert_photo_black_24dp);
                     progressBar.setVisibility(View.GONE);
                 }
                 break;
@@ -106,7 +106,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             lyt_thread.setCardBackgroundColor(ContextCompat.getColor(context, R.color.chat_background));
             if (chatM.isSentSuccessfully()) {
                 if (chatM.isReadSuccessfully()) {
-                    statusImage.setImageResource(R.drawable.double_tick);
+                    statusImage.setImageResource(R.drawable.tick_icon);
                 } else {
                     statusImage.setImageResource(R.drawable.single_tick);
                 }
@@ -132,7 +132,6 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         final StorageReference storageReference = SupportService.getStorageInstance()
                 .getReferenceFromUrl(chatM.getFileUrl());
         fileHandler.setStorageRef(storageReference);
-        progressBar.setVisibility(View.VISIBLE);
 
         final String filepath;
         final String fileName;
@@ -154,6 +153,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                 progressBar.setVisibility(View.GONE);
             } else {
                 File destination = new File(filepath, fileName);
+                progressBar.setVisibility(View.VISIBLE);
                 fileHandler.downloadFile(destination, new FileInterface() {
                     @Override
                     public void onProgress(FileModel fileModel) {
@@ -165,11 +165,12 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                     @Override
                     public void onPause(FileModel fileModel) {
                         Log.d(TAG, "Download is paused  === ");
+                        progressBar.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onFail(FileModel fileModel) {
-                        fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
+                        fileImage.setImageResource(R.drawable.ic_insert_photo_black_24dp);
                         progressBar.setVisibility(View.GONE);
                     }
 
@@ -180,7 +181,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                             if (file != null) {
                                 ConfigUtils.loadPicasso(context, fileImage, file);
                             } else {
-                                fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
+                                fileImage.setImageResource(R.drawable.ic_insert_photo_black_24dp);
                             }
                             progressBar.setVisibility(View.GONE);
                         } catch (Exception e) {
@@ -199,8 +200,8 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         Uri file = Uri.parse(chatM.getFileUrl());
         fileHandler.setStorageRef(SupportService.getChatImageReference()
                 .child(MainFileUtils.getFileName(context, file)));
-        progressBar.setVisibility(View.VISIBLE);
 
+        progressBar.setVisibility(View.VISIBLE);
         fileHandler.uploadFile(file, chatM.getChatType(), new FileInterface() {
             @Override
             public void onProgress(FileModel fileModel) {
@@ -212,12 +213,13 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onPause(FileModel fileModel) {
                 Log.d(TAG, "Upload is paused  === ");
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFail(FileModel fileModel) {
-                progressBar.setVisibility(View.GONE);
                 Log.d(TAG, "Upload is failed  === " + fileModel.getException().getMessage());
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -230,8 +232,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                 //push notification after file update is complete
                 /*chatM.setFileUrl(downloadUrl);
                 SendNotification sendNotification = new SendNotification();
-                sendNotification.prepareNotification(chatM);
-                progressBar.setVisibility(View.GONE);*/
+                sendNotification.prepareNotification(chatM);*/
             }
         });
     }

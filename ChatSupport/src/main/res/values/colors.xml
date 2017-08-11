@@ -10,12 +10,9 @@
     <color name="colorOrange">#f0a120</color>
     <color name="text_blue">#233f86</color>
     <color name="header_color">#323232</color>
-    <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="white80">#80FFFFFF</color>
     <color name="text_primary">#333333</color>
-    <color name="text_secondary">#666666</color>
     <color name="light_color">#9f9f9f</color>
-    <color name="colorWhiteFade">#f2f2f2</color>
     <color name="chat_background">#d6eef7</color>
 </resources>
