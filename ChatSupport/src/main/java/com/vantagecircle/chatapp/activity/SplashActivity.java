@@ -18,6 +18,7 @@ import com.vantagecircle.chatapp.core.GetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ValueInterface;
 import com.vantagecircle.chatapp.model.RoomM;
 import com.vantagecircle.chatapp.model.UserM;
+import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
 
@@ -39,7 +40,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void initPermission() {
         String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
+        if (!ConfigUtils.isHasPermissions(this, PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
         } else {
             initTest();

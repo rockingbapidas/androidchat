@@ -19,6 +19,7 @@ import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.FileHandler;
 import com.vantagecircle.chatapp.core.model.FileModel;
 import com.vantagecircle.chatapp.core.interfaceC.FileInterface;
+import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.utils.DateUtils;
@@ -68,7 +69,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                         if (chatM.getSenderUid().equals(SupportService.id)) {
                             Uri uri = Uri.parse(chatM.getFileUrl());
                             if (new File(uri.getPath()).exists()) {
-                                ToolsUtils.loadPicasso(context, fileImage, chatM.getFileUrl());
+                                ConfigUtils.loadPicasso(context, fileImage, chatM.getFileUrl());
                                 uploadFile(chatM);
                             } else {
                                 fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
@@ -149,7 +150,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         try {
             String file = MainFileUtils.isFilePresent(filepath, fileName);
             if (file != null) {
-                ToolsUtils.loadPicasso(context, fileImage, file);
+                ConfigUtils.loadPicasso(context, fileImage, file);
                 progressBar.setVisibility(View.GONE);
             } else {
                 File destination = new File(filepath, fileName);
@@ -177,7 +178,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                         try {
                             String file = MainFileUtils.isFilePresent(filepath, fileName);
                             if (file != null) {
-                                ToolsUtils.loadPicasso(context, fileImage, file);
+                                ConfigUtils.loadPicasso(context, fileImage, file);
                             } else {
                                 fileImage.setImageResource(R.drawable.ic_warning_black_24dp);
                             }

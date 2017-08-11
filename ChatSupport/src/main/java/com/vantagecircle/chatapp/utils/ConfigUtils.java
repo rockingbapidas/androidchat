@@ -3,10 +3,16 @@ package com.vantagecircle.chatapp.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.model.DataModel;
 import com.vantagecircle.chatapp.core.GetDataHandler;
@@ -95,6 +101,27 @@ public class ConfigUtils {
                 }
             });
         }
+    }
+
+    public static void loadPicasso(Context context, ImageView file_img, String path) {
+        Picasso.with(context)
+                .load(path)
+                .fit()
+                .noFade()
+                .noPlaceholder()
+                .error(ContextCompat.getDrawable(context, R.drawable.ic_insert_photo_black_24dp))
+                .into(file_img);
+    }
+
+    public static boolean isHasPermissions(Context context, String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public static void callIntent(String type, Activity act) {

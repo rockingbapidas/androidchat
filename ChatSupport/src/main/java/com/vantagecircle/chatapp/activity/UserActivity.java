@@ -37,6 +37,7 @@ import com.vantagecircle.chatapp.holder.GroupMViewHolder;
 import com.vantagecircle.chatapp.holder.UserMViewHolder;
 import com.vantagecircle.chatapp.adapter.UsersMAdapter;
 import com.vantagecircle.chatapp.core.SetDataHandler;
+import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
 import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
@@ -80,7 +81,7 @@ public class UserActivity extends AppCompatActivity {
 
     private void initPermission() {
         String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
+        if (!ConfigUtils.isHasPermissions(this, PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
         }
     }
