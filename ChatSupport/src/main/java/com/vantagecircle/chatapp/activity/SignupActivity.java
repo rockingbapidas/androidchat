@@ -140,8 +140,7 @@ public class SignupActivity extends AppCompatActivity {
         setDataHandler.insertData(userM, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
-                SupportService.userM = userM;
-                SupportService.id = userM.getUserId();
+                SupportService.init(getApplicationContext(), userM);
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }

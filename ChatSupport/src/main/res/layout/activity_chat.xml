@@ -3,57 +3,49 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhiteFade">
+    android:background="@drawable/background_chat">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
-
-    <RelativeLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_chat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background_chat"
-        android:layout_below="@+id/toolbar">
+        android:layout_above="@+id/message_card1"
+        android:padding="8dp"
+        android:stackFromBottom="true" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_chat"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/message_card1"
-            android:padding="8dp"
-            android:stackFromBottom="true" />
+    <android.support.v7.widget.CardView
+        android:id="@+id/message_card1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:cardCornerRadius="@dimen/d4"
+        app:cardElevation="@dimen/d4"
+        app:cardUseCompatPadding="true">
 
         <LinearLayout
-            android:id="@+id/message_card1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/bg_chat_input">
+            android:gravity="center"
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
                 android:layout_weight="1"
                 android:minHeight="50dp"
+                android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingBottom="15dp"
                 android:paddingEnd="20dp"
                 android:paddingLeft="12dp"
                 android:paddingRight="20dp"
-                android:paddingStart="12dp"
-                android:visibility="visible">
+                android:paddingStart="12dp">
 
                 <EditText
                     android:id="@+id/et_message"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="bottom"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:background="@null"
                     android:hint="@string/type_a_message"
                     android:inputType="textMultiLine"
@@ -63,16 +55,21 @@
 
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btn_send_txt"
+            <com.balysv.materialripple.MaterialRippleLayout
+                style="@style/RippleStyle.Light"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
-                android:layout_gravity="bottom"
-                android:background="@color/transparent"
-                android:contentDescription="@string/image"
-                android:src="@drawable/send_comment"
-                android:visibility="visible" />
-        </LinearLayout>
-    </RelativeLayout>
+                android:layout_gravity="bottom">
 
+                <ImageButton
+                    android:id="@+id/btn_send_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/transparent"
+                    android:contentDescription="@string/image"
+                    android:src="@drawable/ic_send_black_24dp"
+                    android:visibility="visible" />
+            </com.balysv.materialripple.MaterialRippleLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 </RelativeLayout>

@@ -99,23 +99,4 @@ public class ToolsUtils {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
-
-    public static void loadPicasso(Context context, ImageView file_img, String path) {
-        Picasso.with(context)
-                .load(path)
-                .error(ContextCompat.getDrawable(context, R.drawable.ic_warning_black_24dp))
-                .placeholder(ContextCompat.getDrawable(context, R.drawable.ic_insert_photo_black_24dp))
-                .into(file_img);
-    }
-
-    public static boolean isHasPermissions(Context context, String... permissions) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
-            for (String permission : permissions) {
-                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 }

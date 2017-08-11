@@ -60,7 +60,6 @@ import java.util.Date;
 public abstract class BaseActivity extends AppCompatActivity {
     private static final String TAG = BaseActivity.class.getSimpleName();
     private ActionBar mActionBar;
-    private Toolbar mToolbar;
     private Context mContext;
     private UserM userM;
     private GroupM groupM;
@@ -68,8 +67,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ImageButton btn_send_txt;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
-    private String currentRoom, fileName;
-    private File decodeFile;
+    private String currentRoom;
     private boolean isGroup, isFromNotification;
     private ArrayList<String> tokens;
     private ChatMAdapter chatMAdapter;
@@ -92,8 +90,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void initToolBar() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
         assert mActionBar != null;
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -389,14 +385,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         try {
             if (item.getItemId() == 1) {
                 String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
+                if (!ConfigUtils.isHasPermissions(this, PERMISSIONS)) {
                     ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
                 } else {
                     ConfigUtils.callIntent(Constants.FILE, this);
                 }
             } else {
                 String[] PERMISSIONS = {Manifest.permission.CAMERA};
-                if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
+                if (!ConfigUtils.isHasPermissions(this, PERMISSIONS)) {
                     ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_CAMERA_PERMISSION);
                 } else {
                     ConfigUtils.callIntent(Constants.IMAGE, this);
@@ -469,7 +465,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                         Log.e(TAG, "First =====" + mimeType);
                         Log.e(TAG, "First =====" + selectedUri.getPath());
                         Log.e(TAG, "First =====" + selectedUri.toString());
-
                         if (mimeType.contains("image")) {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
 
@@ -502,9 +497,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                     File newFile = MainFileUtils.createNewFile(file, newFileName, Constants.DIR_SENT);
                     if (newFile != null) {
                         Uri selectedUri = Uri.fromFile(newFile);
-                        Log.e(TAG, "Seccond =====" + mimeType);
-                        Log.e(TAG, "Seccond =====" + selectedUri.getPath());
-                        Log.e(TAG, "Seccond =====" + selectedUri.toString());
+                        Log.e(TAG, "Second =====" + mimeType);
+                        Log.e(TAG, "Second =====" + selectedUri.getPath());
+                        Log.e(TAG, "Second =====" + selectedUri.toString());
                         if (mimeType.contains("image")) {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
 

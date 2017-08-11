@@ -50,7 +50,6 @@ import java.util.Date;
 public abstract class ParentActivity extends AppCompatActivity {
     private static final String TAG = ParentActivity.class.getSimpleName();
     private ActionBar mActionBar;
-    private Toolbar mToolbar;
     private Context mContext;
     private RoomM roomM;
     private EditText et_message;
@@ -79,8 +78,6 @@ public abstract class ParentActivity extends AppCompatActivity {
     }
 
     protected void initToolBar() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
         assert mActionBar != null;
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -239,14 +236,14 @@ public abstract class ParentActivity extends AppCompatActivity {
         try {
             if (item.getItemId() == 1) {
                 String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
+                if (!ConfigUtils.isHasPermissions(this, PERMISSIONS)) {
                     ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
                 } else {
                     ConfigUtils.callIntent(Constants.FILE, this);
                 }
             } else {
                 String[] PERMISSIONS = {Manifest.permission.CAMERA};
-                if (!ToolsUtils.isHasPermissions(this, PERMISSIONS)) {
+                if (!ConfigUtils.isHasPermissions(this, PERMISSIONS)) {
                     ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_CAMERA_PERMISSION);
                 } else {
                     ConfigUtils.callIntent(Constants.IMAGE, this);
