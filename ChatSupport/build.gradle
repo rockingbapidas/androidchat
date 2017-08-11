@@ -12,7 +12,7 @@ bintray {
 
         version {
             name = '1.0.8'
-            desc = 'File upload bug resolved and some error solved and scrolling issues'
+            desc = 'Chat Window Ui changed'
             released  = new Date()
             vcsTag = '1.0.8'
         }
