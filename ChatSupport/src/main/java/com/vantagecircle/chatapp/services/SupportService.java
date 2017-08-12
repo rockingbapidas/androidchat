@@ -54,8 +54,8 @@ public class SupportService extends Service {
     public void onCreate() {
         Log.e(TAG, "onCreate");
         super.onCreate();
-        makeDir();
         mInstance = this;
+        makeDir();
         getDatabaseInstance().setPersistenceEnabled(true);
         getUserReference().keepSynced(true);
         getChatReference().keepSynced(true);
@@ -70,11 +70,11 @@ public class SupportService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
-        if(!MainFileUtils.getDirectoryPath().isDirectory()){
-            makeDir();
-        }
         if (mInstance == null) {
             mInstance = this;
+        }
+        if(!MainFileUtils.getDirectoryPath().isDirectory()){
+            makeDir();
         }
         if (getDatabaseInstance() == null) {
             getDatabaseInstance().setPersistenceEnabled(true);

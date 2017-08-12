@@ -106,7 +106,6 @@ public class ConfigUtils {
     public static void loadPicasso(Context context, ImageView file_img, String path) {
         Picasso.with(context)
                 .load(path)
-                .fit()
                 .noFade()
                 .noPlaceholder()
                 .error(ContextCompat.getDrawable(context, R.drawable.ic_insert_photo_black_24dp))

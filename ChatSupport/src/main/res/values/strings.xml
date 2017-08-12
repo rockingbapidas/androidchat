@@ -16,6 +16,7 @@
     <string name="action_group">Create Group</string>
     <string name="group_name">Group Name</string>
     <string name="groups">Groups</string>
+    <string name="_2_min_ago">2 min ago</string>
     <string-array name="folders_name">
         <item>Sent</item>
         <item>Received</item>

@@ -170,18 +170,18 @@ public class MainFileUtils {
         return getDirectoryPath().getPath() + File.separator + Constants.DIR_RECEIVED;
     }
 
-    public static String isFilePresent(String path, String name) throws Exception {
+    public static File isFilePresent(String path, String name) throws Exception {
         try {
             File fileR = new File(path + File.separator + name);
             if (fileR.exists()) {
-                return Uri.fromFile(fileR).toString();
+                return fileR;
             } else {
                 return null;
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     private static File getFile(String filepath) {
@@ -278,7 +278,6 @@ public class MainFileUtils {
         ImageLoadingUtils utils = new ImageLoadingUtils(context);
         String filename = null;
         try {
-            String filePath = imageUri;
             Bitmap scaledBitmap = null;
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
@@ -314,7 +313,7 @@ public class MainFileUtils {
             options.inTempStorage = new byte[16 * 1024];
 
             try {
-                bmp = BitmapFactory.decodeFile(filePath, options);
+                bmp = BitmapFactory.decodeFile(imageUri, options);
             } catch (OutOfMemoryError exception) {
                 exception.printStackTrace();
 
@@ -330,13 +329,22 @@ public class MainFileUtils {
             float middleY = actualHeight / 2.0f;
             Matrix scaleMatrix = new Matrix();
             scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
-            Canvas canvas = new Canvas(scaledBitmap);
-            canvas.setMatrix(scaleMatrix);
-            canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 2, middleY - bmp.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
+            Canvas canvas = null;
+            if (scaledBitmap != null) {
+                canvas = new Canvas(scaledBitmap);
+            }
+            if (canvas != null) {
+                canvas.setMatrix(scaleMatrix);
+            }
+            if (canvas != null) {
+                canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 2,
+                        middleY - bmp.getHeight() / 2,
+                        new Paint(Paint.FILTER_BITMAP_FLAG));
+            }
 
             ExifInterface exif;
             try {
-                exif = new ExifInterface(filePath);
+                exif = new ExifInterface(imageUri);
 
                 int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
                 Matrix matrix = new Matrix();
@@ -347,15 +355,21 @@ public class MainFileUtils {
                 } else if (orientation == 8) {
                     matrix.postRotate(270);
                 }
-                scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+                if (scaledBitmap != null) {
+                    scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
+                            scaledBitmap.getWidth(),
+                            scaledBitmap.getHeight(), matrix, true);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
             FileOutputStream out = null;
-            filename = filePath;
+            filename = imageUri;
             try {
                 out = new FileOutputStream(filename);
-                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+                if (scaledBitmap != null) {
+                    scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+                }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
