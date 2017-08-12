@@ -37,7 +37,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
     private final String TAG = ChatMViewHolder.class.getSimpleName();
     private TextView userName, messageText, dateTime;
     private ImageView statusImage, fileImage;
-    private CardView lyt_thread;
+    private LinearLayout lyt_thread;
     private ProgressBar progressBar;
     private LinearLayout lyt_parent;
     private Context context;
@@ -56,7 +56,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         fileImage = (ImageView) itemView.findViewById(R.id.image_status);
         progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
         lyt_parent = (LinearLayout) itemView.findViewById(R.id.lyt_parent);
-        lyt_thread = (CardView) itemView.findViewById(R.id.lyt_thread);
+        lyt_thread = (LinearLayout) itemView.findViewById(R.id.lyt_thread);
     }
 
     public void setDataToViews(ChatM chatM, boolean isChatContinue) {
@@ -103,7 +103,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             lyt_parent.setPadding(100, 10, 15, 10);
             lyt_parent.setGravity(Gravity.END);
             statusImage.setVisibility(View.VISIBLE);
-            lyt_thread.setCardBackgroundColor(ContextCompat.getColor(context, R.color.chat_background));
+            lyt_thread.setBackgroundResource(R.drawable.bubble_in);
             if (chatM.isSentSuccessfully()) {
                 if (chatM.isReadSuccessfully()) {
                     statusImage.setImageResource(R.drawable.tick_icon);
@@ -118,7 +118,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             statusImage.setVisibility(View.GONE);
             lyt_parent.setPadding(15, 10, 100, 10);
             lyt_parent.setGravity(Gravity.START);
-            lyt_thread.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
+            lyt_thread.setBackgroundResource(R.drawable.bubble_out);
             if (!chatM.isReadSuccessfully()) {
                 if (SupportService.getIsChatWindowActive()) {
                     UpdateKeyUtils.updateReadStatus(chatM.getChatRoom(), chatM.getTimeStamp());

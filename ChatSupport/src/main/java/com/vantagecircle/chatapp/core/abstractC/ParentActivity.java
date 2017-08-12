@@ -188,12 +188,13 @@ public abstract class ParentActivity extends AppCompatActivity {
         setDataHandler.insertData(chatM, new ResultInterface() {
             @Override
             public void onSuccess(String t) {
+                //update sent status
                 UpdateKeyUtils.updateSentStatus(currentRoom, chatM.getTimeStamp());
             }
 
             @Override
             public void onFail(String e) {
-                Log.d(TAG, "Error " + e);
+                Log.d(TAG, "push message onFail " + e);
             }
         });
     }

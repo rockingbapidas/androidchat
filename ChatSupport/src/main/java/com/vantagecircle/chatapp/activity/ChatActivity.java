@@ -10,8 +10,10 @@ import android.util.Log;
 
 import com.vantagecircle.chatapp.core.abstractC.BaseActivity;
 import com.vantagecircle.chatapp.core.abstractC.ParentActivity;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constants;
+import com.vantagecircle.chatapp.utils.MainFileUtils;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
 
 /**
@@ -32,6 +34,9 @@ public class ChatActivity extends ParentActivity {
         if (!ConfigUtils.isHasPermissions(this, PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
         } else {
+            if(!MainFileUtils.getDirectoryPath().isDirectory()){
+                SupportService.makeDir();
+            }
             initialize();
         }
     }
@@ -42,6 +47,9 @@ public class ChatActivity extends ParentActivity {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d(TAG, "Permission granted");
+                    if(!MainFileUtils.getDirectoryPath().isDirectory()){
+                        SupportService.makeDir();
+                    }
                     initialize();
                 } else {
                     Log.d(TAG, "Permission not granted");

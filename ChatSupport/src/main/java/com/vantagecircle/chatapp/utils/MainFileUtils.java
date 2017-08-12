@@ -184,24 +184,6 @@ public class MainFileUtils {
         return null;
     }
 
-    public static boolean isUriContentExist(Context context, String uri) {
-        ContentResolver cr = context.getContentResolver();
-        String[] projection = {MediaStore.MediaColumns.DATA};
-        Cursor cur = cr.query(Uri.parse(uri), projection, null, null, null);
-        if (cur != null) {
-            if (cur.moveToFirst()) {
-                String filePath = cur.getString(0);
-                cur.close();
-                return new File(filePath).exists();
-            } else {
-                cur.close();
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
     private static File getFile(String filepath) {
         if (filepath != null) {
             return new File(filepath);

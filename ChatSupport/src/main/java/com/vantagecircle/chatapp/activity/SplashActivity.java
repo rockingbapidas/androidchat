@@ -20,6 +20,7 @@ import com.vantagecircle.chatapp.model.RoomM;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constants;
+import com.vantagecircle.chatapp.utils.MainFileUtils;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
 
 import java.util.ArrayList;
@@ -44,6 +45,9 @@ public class SplashActivity extends AppCompatActivity {
         if (!ConfigUtils.isHasPermissions(this, PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
         } else {
+            if(!MainFileUtils.getDirectoryPath().isDirectory()){
+                SupportService.makeDir();
+            }
             initTest();
             //initApp();
         }
@@ -55,6 +59,9 @@ public class SplashActivity extends AppCompatActivity {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d(TAG, "Permission granted");
+                    if(!MainFileUtils.getDirectoryPath().isDirectory()){
+                        SupportService.makeDir();
+                    }
                     initTest();
                     //initApp();
                 } else {

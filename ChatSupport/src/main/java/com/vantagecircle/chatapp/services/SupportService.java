@@ -35,8 +35,8 @@ public class SupportService extends Service {
     public static String id = null;
     public static UserM userM = null;
 
-    public static void init(Context context, UserM userM){
-        if(ToolsUtils.isMyServiceRunning(context, SupportService.class)){
+    public static void init(Context context, UserM userM) {
+        if (ToolsUtils.isMyServiceRunning(context, SupportService.class)) {
             Log.d(TAG, "Service is already running");
             context.stopService(new Intent(context, SupportService.class));
             Intent pushIntent = new Intent(context, SupportService.class);
@@ -54,6 +54,11 @@ public class SupportService extends Service {
     public void onCreate() {
         Log.e(TAG, "onCreate");
         super.onCreate();
+        makeDir();
+        mInstance = this;
+        getDatabaseInstance().setPersistenceEnabled(true);
+        getUserReference().keepSynced(true);
+        getChatReference().keepSynced(true);
     }
 
     @Override
@@ -65,6 +70,9 @@ public class SupportService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
+        if(!MainFileUtils.getDirectoryPath().isDirectory()){
+            makeDir();
+        }
         if (mInstance == null) {
             mInstance = this;
         }
@@ -73,7 +81,6 @@ public class SupportService extends Service {
             getUserReference().keepSynced(true);
             getChatReference().keepSynced(true);
         }
-        makeDir();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -190,23 +197,5 @@ public class SupportService extends Service {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static Boolean checkDirectory(String send) throws Exception {
-        boolean status;
-        File appFile = MainFileUtils.getDirectoryPath();
-        if (appFile.isDirectory()) {
-            File innerDir = new File(appFile.getPath() + File.separator + send);
-            if (innerDir.isDirectory())
-                status = true;
-            else {
-                innerDir.mkdir();
-                status = true;
-            }
-        } else {
-            makeDir();
-            status = true;
-        }
-        return status;
     }
 }
