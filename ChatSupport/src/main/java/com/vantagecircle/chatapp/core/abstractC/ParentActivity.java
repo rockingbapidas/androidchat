@@ -348,9 +348,9 @@ public abstract class ParentActivity extends AppCompatActivity {
                     File newFile = MainFileUtils.createNewFile(file, newFileName, Constants.DIR_SENT);
                     if (newFile != null) {
                         Uri selectedUri = Uri.fromFile(newFile);
-                        Log.e(TAG, "Seccond =====" + mimeType);
-                        Log.e(TAG, "Seccond =====" + selectedUri.getPath());
-                        Log.e(TAG, "Seccond =====" + selectedUri.toString());
+                        Log.e(TAG, "Second =====" + mimeType);
+                        Log.e(TAG, "Second =====" + selectedUri.getPath());
+                        Log.e(TAG, "Second =====" + selectedUri.toString());
                         if (mimeType.contains("image")) {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
                             ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
