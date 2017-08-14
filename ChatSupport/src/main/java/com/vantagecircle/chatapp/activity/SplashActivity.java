@@ -37,40 +37,8 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        initPermission();
-    }
-
-    private void initPermission() {
-        String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (!ConfigUtils.isHasPermissions(this, PERMISSIONS)) {
-            ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSION);
-        } else {
-            if(!MainFileUtils.getDirectoryPath().isDirectory()){
-                SupportService.makeDir();
-            }
-            initTest();
-            //initApp();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "Permission granted");
-                    if(!MainFileUtils.getDirectoryPath().isDirectory()){
-                        SupportService.makeDir();
-                    }
-                    initTest();
-                    //initApp();
-                } else {
-                    Log.d(TAG, "Permission not granted");
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
+        initTest();
+        //initApp();
     }
 
     private void initTest(){
@@ -91,7 +59,6 @@ public class SplashActivity extends AppCompatActivity {
         userM.setRoomMArrayList(arrayList);
 
         SupportService.init(getApplicationContext(), userM);
-
         Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
         intent.putExtra("isContest", true);
         intent.putExtra("contest_id", "CAOL5K");
