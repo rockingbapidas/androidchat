@@ -126,10 +126,6 @@ public class MainFileUtils {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-    public static boolean isLocal(String url) {
-        return url != null && !url.startsWith("http://") && !url.startsWith("https://");
-    }
-
     public static boolean isExternalLocal(String url) {
         assert url != null;
         return url.startsWith("http://") || url.startsWith("https://");
