@@ -10,10 +10,10 @@ bintray {
         name = 'com.vantagecircle.chatapp'
 
         version {
-            name = '1.1.0'
+            name = '1.1.1'
             desc = 'Some UI Changes and Image click and view functionality added and some issues or error solved'
             released  = new Date()
-            vcsTag = '1.1.0'
+            vcsTag = '1.1.1'
         }
 
         licenses = ['Apache-2.0']
@@ -28,7 +28,7 @@ android {
     buildToolsVersion "25.0.3"
     defaultConfig {
         group = 'com.vantagecircle.chatapp'
-        version = "1.1.0"
+        version = "1.1.1"
         minSdkVersion 16
         targetSdkVersion 25
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

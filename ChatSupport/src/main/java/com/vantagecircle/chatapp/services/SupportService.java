@@ -35,7 +35,12 @@ public class SupportService extends Service {
     public static String id = null;
     public static UserM userM = null;
 
-    public static void init(Context context, UserM userM) {
+    public static void init(Context context, UserM model) {
+        //set data to global variable
+        userM = model;
+        id = userM.getUserId();
+
+        //start global service class
         if (ToolsUtils.isMyServiceRunning(context, SupportService.class)) {
             Log.d(TAG, "Service is already running");
             context.stopService(new Intent(context, SupportService.class));
@@ -46,19 +51,12 @@ public class SupportService extends Service {
             Intent pushIntent = new Intent(context, SupportService.class);
             context.startService(pushIntent);
         }
-        SupportService.userM = userM;
-        SupportService.id = userM.getUserId();
     }
 
     @Override
     public void onCreate() {
         Log.e(TAG, "onCreate");
         super.onCreate();
-        mInstance = this;
-        makeDir();
-        getDatabaseInstance().setPersistenceEnabled(true);
-        getUserReference().keepSynced(true);
-        getChatReference().keepSynced(true);
     }
 
     @Override
