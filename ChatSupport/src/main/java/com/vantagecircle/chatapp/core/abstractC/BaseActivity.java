@@ -449,7 +449,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                     Uri uri = data.getData();
                     String mimeType = getContentResolver().getType(uri);
                     if (mimeType == null) {
-                        Toast.makeText(mContext, "File type is not supported", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "File type is not supported",
+                                Toast.LENGTH_SHORT).show();
                         return;
                     }
                     String path = MainFileUtils.getPath(mContext, uri);
@@ -459,22 +460,19 @@ public abstract class BaseActivity extends AppCompatActivity {
                     }
                     String fileName = MainFileUtils.getFileName(mContext, uri);
                     String newFileName = MainFileUtils.getUniqueFile(fileName);
-                    File newFile = MainFileUtils.createNewFile(file, newFileName, Constants.DIR_SENT);
+                    File newFile = MainFileUtils.createNewFile(file, newFileName,
+                            Constants.DIR_SENT);
                     if (newFile != null) {
                         Uri selectedUri = Uri.fromFile(newFile);
-                        Log.e(TAG, "First =====" + mimeType);
-                        Log.e(TAG, "First =====" + selectedUri.getPath());
-                        Log.e(TAG, "First =====" + selectedUri.toString());
                         if (mimeType.contains("image")) {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
-
                             ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
                                     selectedUri.toString());
                             pushMessage(chatM);
                         }
-                        //can add other file type
                     } else {
-                        Toast.makeText(mContext, "File error occurred", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "File error occurred",
+                                Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -482,9 +480,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             } else {
                 try {
                     Uri uri = MainFileUtils.createNewFile(data, MainFileUtils.MIME_TYPE_IMAGE);
-                    String mimeType = getContentResolver().getType(uri);
+                    String mimeType = MainFileUtils.getMimeType(new File(uri.getPath()));
                     if (mimeType == null) {
-                        Toast.makeText(mContext, "File type is not supported", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "File type is not supported",
+                                Toast.LENGTH_SHORT).show();
                         return;
                     }
                     String path = MainFileUtils.getPath(mContext, uri);
@@ -494,22 +493,19 @@ public abstract class BaseActivity extends AppCompatActivity {
                     }
                     String fileName = MainFileUtils.getFileName(mContext, uri);
                     String newFileName = MainFileUtils.getUniqueFile(fileName);
-                    File newFile = MainFileUtils.createNewFile(file, newFileName, Constants.DIR_SENT);
+                    File newFile = MainFileUtils.createNewFile(file, newFileName,
+                            Constants.DIR_SENT);
                     if (newFile != null) {
                         Uri selectedUri = Uri.fromFile(newFile);
-                        Log.e(TAG, "Second =====" + mimeType);
-                        Log.e(TAG, "Second =====" + selectedUri.getPath());
-                        Log.e(TAG, "Second =====" + selectedUri.toString());
                         if (mimeType.contains("image")) {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
-
                             ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
                                     selectedUri.toString());
                             pushMessage(chatM);
                         }
-                        //can add other file type
                     } else {
-                        Toast.makeText(mContext, "File error occurred", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "File error occurred",
+                                Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
