@@ -126,17 +126,9 @@ public class MainFileUtils {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-    public static boolean isLocal(String url) {
-        return url != null && !url.startsWith("http://") && !url.startsWith("https://");
-    }
-
     public static boolean isExternalLocal(String url) {
         assert url != null;
         return url.startsWith("http://") || url.startsWith("https://");
-    }
-
-    public static boolean isMediaUri(Uri uri) {
-        return "media".equalsIgnoreCase(uri.getAuthority());
     }
 
     private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
@@ -212,6 +204,14 @@ public class MainFileUtils {
             // No extension.
             return "";
         }
+    }
+
+    public static String getMimeType(File file) {
+        String extension = getExtension(file.getName());
+        if (extension.length() > 0) {
+            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.substring(1));
+        }
+        return "application/octet-stream";
     }
 
     public static Uri createNewFile(Intent data, String mimeType) throws IOException {
