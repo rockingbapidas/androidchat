@@ -25,7 +25,6 @@ public class ChatActivity extends ParentActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //initialize();
         initPermission();
     }
 
