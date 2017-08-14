@@ -137,6 +137,25 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    private void onFileClick(File file) {
+        try {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Uri contentUri = FileProvider.getUriForFile(context,
+                        context.getPackageName() + ".fileProvider", file);
+                intent.setDataAndType(contentUri, "*/*");
+            } else {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setDataAndType(Uri.fromFile(file), "*/*");
+            }
+            context.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void downloadFile(ChatM chatM) {
         FileHandler fileHandler = new FileHandler();
         final StorageReference storageReference = SupportService.getStorageInstance()
@@ -257,24 +276,5 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                 sendNotification.prepareNotification(chatM);*/
             }
         });
-    }
-
-    private void onFileClick(File file) {
-        try {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                Uri contentUri = FileProvider.getUriForFile(context,
-                        context.getPackageName() + ".fileProvider", file);
-                intent.setDataAndType(contentUri, "*/*");
-            } else {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setDataAndType(Uri.fromFile(file), "*/*");
-            }
-            context.startActivity(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
