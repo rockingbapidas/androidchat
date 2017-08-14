@@ -31,6 +31,7 @@ import com.vantagecircle.chatapp.utils.ToolsUtils;
 import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 
 import java.io.File;
+import java.net.URI;
 
 /**
  * Created by bapidas on 27/07/17.
@@ -71,24 +72,12 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                     } else {
                         if (chatM.getSenderUid().equals(SupportService.id)) {
                             final File file = new File(chatM.getFileUrl());
-                            final Uri uri = Uri.parse(chatM.getFileUrl());
                             if (file.exists()) {
                                 ConfigUtils.loadPicasso(context, fileImage, chatM.getFileUrl());
                                 fileImage.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Intent intent = new Intent();
-                                        intent.setAction(Intent.ACTION_VIEW);
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                            Uri contentUri = FileProvider.getUriForFile(context,
-                                                    context.getPackageName() + ".fileProvider", file);
-                                            intent.setDataAndType(contentUri, "*/*");
-                                        } else {
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            intent.setDataAndType(uri, "*/*");
-                                        }
-                                        context.startActivity(intent);
+                                        onFileClick(file);
                                     }
                                 });
                                 uploadFile(chatM);
@@ -170,23 +159,11 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
         try {
             final File file = MainFileUtils.isFilePresent(filepath, fileName);
             if (file != null) {
-                final Uri uri = Uri.fromFile(file);
-                ConfigUtils.loadPicasso(context, fileImage, uri.toString());
+                ConfigUtils.loadPicasso(context, fileImage, Uri.fromFile(file).toString());
                 fileImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            Uri contentUri = FileProvider.getUriForFile(context,
-                                    context.getPackageName() + ".fileProvider", file);
-                            intent.setDataAndType(contentUri, "*/*");
-                        } else {
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.setDataAndType(uri, "*/*");
-                        }
-                        context.startActivity(intent);
+                        onFileClick(file);
                     }
                 });
                 progressBar.setVisibility(View.GONE);
@@ -218,23 +195,11 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                         try {
                             final File file = MainFileUtils.isFilePresent(filepath, fileName);
                             if (file != null) {
-                                final Uri uri = Uri.fromFile(file);
-                                ConfigUtils.loadPicasso(context, fileImage, uri.toString());
+                                ConfigUtils.loadPicasso(context, fileImage, Uri.fromFile(file).toString());
                                 fileImage.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Intent intent = new Intent();
-                                        intent.setAction(Intent.ACTION_VIEW);
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                            Uri contentUri = FileProvider.getUriForFile(context,
-                                                    context.getPackageName() + ".fileProvider", file);
-                                            intent.setDataAndType(contentUri, "*/*");
-                                        } else {
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            intent.setDataAndType(uri, "*/*");
-                                        }
-                                        context.startActivity(intent);
+                                        onFileClick(file);
                                     }
                                 });
                             } else {
@@ -292,5 +257,24 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                 sendNotification.prepareNotification(chatM);*/
             }
         });
+    }
+
+    private void onFileClick(File file) {
+        try {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Uri contentUri = FileProvider.getUriForFile(context,
+                        context.getPackageName() + ".fileProvider", file);
+                intent.setDataAndType(contentUri, "*/*");
+            } else {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setDataAndType(Uri.fromFile(file), "*/*");
+            }
+            context.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
