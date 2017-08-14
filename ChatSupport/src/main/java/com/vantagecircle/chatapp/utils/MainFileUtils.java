@@ -135,10 +135,6 @@ public class MainFileUtils {
         return url.startsWith("http://") || url.startsWith("https://");
     }
 
-    public static boolean isMediaUri(Uri uri) {
-        return "media".equalsIgnoreCase(uri.getAuthority());
-    }
-
     private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
         Cursor cursor = null;
         final String column = "_data";
@@ -212,6 +208,14 @@ public class MainFileUtils {
             // No extension.
             return "";
         }
+    }
+
+    public static String getMimeType(File file) {
+        String extension = getExtension(file.getName());
+        if (extension.length() > 0) {
+            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.substring(1));
+        }
+        return "application/octet-stream";
     }
 
     public static Uri createNewFile(Intent data, String mimeType) throws IOException {

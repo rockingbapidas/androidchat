@@ -1,12 +1,8 @@
 package com.vantagecircle.chatapp.activity;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,10 +14,6 @@ import com.vantagecircle.chatapp.core.GetDataHandler;
 import com.vantagecircle.chatapp.core.interfaceC.ValueInterface;
 import com.vantagecircle.chatapp.model.RoomM;
 import com.vantagecircle.chatapp.model.UserM;
-import com.vantagecircle.chatapp.utils.ConfigUtils;
-import com.vantagecircle.chatapp.utils.Constants;
-import com.vantagecircle.chatapp.utils.MainFileUtils;
-import com.vantagecircle.chatapp.utils.ToolsUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,11 +29,11 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        initTest();
-        //initApp();
+        initLibraryMode();
+        //initApplicationMode();
     }
 
-    private void initTest(){
+    private void initLibraryMode(){
         UserM userM = new UserM();
         userM.setUserId("dll6E6arOmXcWNSeKEk5WH7IcnW2");
         userM.setUsername("bapi@gmail.com");
@@ -66,7 +58,7 @@ public class SplashActivity extends AppCompatActivity {
         finish();
     }
 
-    private void initApp(){
+    private void initApplicationMode(){
         if (SupportService.getUserInstance() != null) {
             GetDataHandler getDataHandler = new GetDataHandler();
             getDataHandler.setDataReference(SupportService.getUserReference()

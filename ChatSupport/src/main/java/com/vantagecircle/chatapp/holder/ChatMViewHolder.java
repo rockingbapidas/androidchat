@@ -71,7 +71,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                         downloadFile(chatM);
                     } else {
                         if (chatM.getSenderUid().equals(SupportService.id)) {
-                            final File file = new File(chatM.getFileUrl());
+                            final File file = new File(Uri.parse(chatM.getFileUrl()).getPath());
                             if (file.exists()) {
                                 ConfigUtils.loadPicasso(context, fileImage, chatM.getFileUrl());
                                 fileImage.setOnClickListener(new View.OnClickListener() {

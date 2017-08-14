@@ -150,7 +150,9 @@ public class ConfigUtils {
                 break;
             case Constants.GALLERY:
                 intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image/* video/*");
+                //intent.setType("image/* video/");
+                //set only for image
+                intent.setType("image/*");
                 act.startActivityForResult(intent, Constants.ACTIVITY_SELECT_GALLERY);
                 break;
             default:
