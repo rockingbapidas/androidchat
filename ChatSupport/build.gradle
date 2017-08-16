@@ -11,7 +11,7 @@ bintray {
 
         version {
             name = '1.1.5'
-            desc = 'Some UI Changes and Image click and view functionality added and some issues or error solved'
+            desc = 'File Provider issue solved and notification facility enabled and some crashes anf bugs solved'
             released  = new Date()
             vcsTag = '1.1.5'
         }
