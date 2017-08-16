@@ -71,14 +71,12 @@ public class SupportService extends Service {
         if (mInstance == null) {
             mInstance = this;
         }
-        if(!MainFileUtils.getDirectoryPath().isDirectory()){
-            makeDir();
-        }
         if (getDatabaseInstance() == null) {
             getDatabaseInstance().setPersistenceEnabled(true);
             getUserReference().keepSynced(true);
             getChatReference().keepSynced(true);
         }
+        makeDir();
         return super.onStartCommand(intent, flags, startId);
     }
 
