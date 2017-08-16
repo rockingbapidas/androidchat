@@ -44,19 +44,17 @@ public class NotificationHandler {
     }
 
     public void setNotification(JSONObject jsonObject) throws JSONException {
-        UserM userM;
-        GroupM groupM;
         Intent intent = new Intent(SupportService.getInstance(), ChatActivity.class);
         intent.putExtra("isFromBar", true);
         if(jsonObject.getString("conType").equals(Constants.CONV_SN)){
-            userM = new UserM();
+            UserM userM = new UserM();
             userM.setFullName(jsonObject.getString("userName"));
             userM.setUserId(jsonObject.getString("userID"));
             userM.setFcmToken(jsonObject.getString("userToken"));
             intent.putExtra("isGroup", false);
             intent.putExtra("data", new Gson().toJson(userM));
         } else {
-            groupM = new GroupM();
+            GroupM groupM = new GroupM();
             groupM.setName(jsonObject.getString("userName"));
             groupM.setId(jsonObject.getString("userID"));
             intent.putExtra("isGroup", true);
@@ -92,12 +90,12 @@ public class NotificationHandler {
 
     public void setNotification(RemoteMessage remoteMessage) throws JSONException {
         JSONObject jsonObject = new JSONObject(remoteMessage.getData());
+
         Intent intent = new Intent(mContext, ChatActivity.class);
         intent.putExtra("isNotification", true);
         intent.putExtra("contest_id", jsonObject.getString("contestId"));
         intent.putExtra("contest_name", jsonObject.getString("contestName"));
         intent.putExtra("contest_room", jsonObject.getString("contestRoom"));
-
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
