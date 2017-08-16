@@ -18,16 +18,15 @@ import android.widget.TextView;
 
 import com.google.firebase.storage.StorageReference;
 import com.vantagecircle.chatapp.R;
-import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.FileHandler;
-import com.vantagecircle.chatapp.core.model.FileModel;
 import com.vantagecircle.chatapp.core.interfaceC.FileInterface;
+import com.vantagecircle.chatapp.core.model.FileModel;
+import com.vantagecircle.chatapp.model.ChatM;
+import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constants;
-import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.utils.DateUtils;
 import com.vantagecircle.chatapp.utils.MainFileUtils;
-import com.vantagecircle.chatapp.utils.ToolsUtils;
 import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 
 import java.io.File;

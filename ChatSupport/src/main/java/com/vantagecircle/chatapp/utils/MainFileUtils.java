@@ -152,7 +152,7 @@ public class MainFileUtils {
         return null;
     }
 
-    public static File getDirectoryPath() {
+    private static File getDirectoryPath() {
         return new File(Constants.SDCARD_PATH);
     }
 
@@ -165,17 +165,18 @@ public class MainFileUtils {
     }
 
     public static File isFilePresent(String path, String name) throws Exception {
-        try {
+        if (getDirectoryPath().isDirectory()){
             File fileR = new File(path + File.separator + name);
             if (fileR.exists()) {
                 return fileR;
             } else {
                 return null;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        } else {
+            SupportService.makeDir();
+            isFilePresent(path, name);
         }
+        return null;
     }
 
     private static File getFile(String filepath) {

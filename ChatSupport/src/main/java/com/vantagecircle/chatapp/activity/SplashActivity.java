@@ -51,7 +51,6 @@ public class SplashActivity extends AppCompatActivity {
         userM.setRoomMArrayList(arrayList);
 
         SupportService.init(getApplicationContext(), userM);
-
         Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
         intent.putExtra("isContest", true);
         intent.putExtra("contest_id", "CAOL5K");

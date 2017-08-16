@@ -36,7 +36,6 @@ public class SupportService extends Service {
     public static UserM userM = null;
 
     public static void init(Context context, UserM model) {
-        //set data to global variable
         userM = model;
         id = userM.getUserId();
 
@@ -71,14 +70,12 @@ public class SupportService extends Service {
         if (mInstance == null) {
             mInstance = this;
         }
-        if(!MainFileUtils.getDirectoryPath().isDirectory()){
-            makeDir();
-        }
         if (getDatabaseInstance() == null) {
             getDatabaseInstance().setPersistenceEnabled(true);
             getUserReference().keepSynced(true);
             getChatReference().keepSynced(true);
         }
+        makeDir();
         return super.onStartCommand(intent, flags, startId);
     }
 
