@@ -16,18 +16,18 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if (remoteMessage.getData().size() > 0) {
-            JSONObject jsonObject = new JSONObject(remoteMessage.getData());
-            Log.d(TAG, "onMessageReceived: " + jsonObject);
-            if(ToolsUtils.isAppInBackground(SupportService.getInstance())){
-                try {
-                    new NotificationHandler(SupportService.getInstance()).setNotification(jsonObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Log.d(TAG, "New Message arrived ==");
+        Log.d(TAG, "onMessageReceived: " + remoteMessage.getData());
+        if(ToolsUtils.isAppInBackground(SupportService.getInstance())){
+            try {
+                new NotificationHandler(SupportService.getInstance())
+                        .setNotification(remoteMessage);
+               /* new NotificationHandler(SupportService.getInstance())
+                        .setNotification(new JSONObject(remoteMessage.getData()));*/
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+        } else {
+            Log.d(TAG, "New Message arrived ==");
         }
     }
 }
