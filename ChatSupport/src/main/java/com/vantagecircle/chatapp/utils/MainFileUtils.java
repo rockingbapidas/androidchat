@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.TypedValue;
 import android.webkit.MimeTypeMap;
 
 import com.vantagecircle.chatapp.services.SupportService;
@@ -275,7 +277,6 @@ public class MainFileUtils {
     }
 
     public static String compressImage(String imageUri, Context context) {
-        ImageLoadingUtils utils = new ImageLoadingUtils(context);
         String filename = null;
         try {
             Bitmap scaledBitmap = null;
@@ -305,7 +306,7 @@ public class MainFileUtils {
                 }
             }
 
-            options.inSampleSize = utils.calculateInSampleSize(options, actualWidth, actualHeight);
+            options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight);
             options.inJustDecodeBounds = false;
             options.inDither = false;
             options.inPurgeable = true;
@@ -377,5 +378,47 @@ public class MainFileUtils {
             e.printStackTrace();
         }
         return filename;
+    }
+
+    private static int convertDipToPixels(float dips){
+        Resources r = SupportService.getInstance().getResources();
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dips, r.getDisplayMetrics());
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+        final float totalPixels = width * height;
+        final float totalReqPixelsCap = reqWidth * reqHeight * 2;
+
+        while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
+            inSampleSize++;
+        }
+
+        return inSampleSize;
+    }
+
+    public static Bitmap decodeBitmapFromPath(String filePath){
+        Bitmap scaledBitmap = null;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        scaledBitmap = BitmapFactory.decodeFile(filePath,options);
+
+        options.inSampleSize = calculateInSampleSize(options, convertDipToPixels(150), convertDipToPixels(200));
+        options.inDither = false;
+        options.inPurgeable = true;
+        options.inInputShareable = true;
+        options.inJustDecodeBounds = false;
+
+        scaledBitmap = BitmapFactory.decodeFile(filePath, options);
+        return scaledBitmap;
     }
 }
