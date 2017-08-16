@@ -182,7 +182,6 @@ public abstract class ParentActivity extends AppCompatActivity {
             public void onSuccess(String t) {
                 //update sent status
                 if(chatM.getChatType().equals(Constants.TEXT_CONTENT)){
-                    UpdateKeyUtils.updateSentStatus(currentRoom, chatM.getTimeStamp());
                     SendNotification sendNotification = new SendNotification();
                     sendNotification.prepareNotification(chatM);
                 }

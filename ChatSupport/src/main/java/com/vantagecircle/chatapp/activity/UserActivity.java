@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,7 +38,6 @@ import com.vantagecircle.chatapp.adapter.UsersMAdapter;
 import com.vantagecircle.chatapp.core.SetDataHandler;
 import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constants;
-import com.vantagecircle.chatapp.utils.ToolsUtils;
 import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 import com.vantagecircle.chatapp.adapter.interfaceA.ClickGroup;
 import com.vantagecircle.chatapp.adapter.interfaceA.ClickUser;
@@ -267,7 +265,7 @@ public class UserActivity extends AppCompatActivity {
     private void subscribeGroup(String room){
         for (int i = 0; i < usersMAdapter.getItemCount(); i++) {
             UserM userM = usersMAdapter.getItem(i);
-            new SendNotification().subscribeToken(userM.getFcmToken(), room);
+            new SendNotification().subscribeTokenToTopic(userM.getFcmToken(), room);
         }
     }
 

@@ -62,6 +62,35 @@ public class SendNotification {
         notificationM = new NotificationM();
     }
 
+    public void subscribeTokenToTopic(String token, String groupName) {
+        try {
+            String url = TOPIC_SUBSCRIBE_URL1 + token + TOPIC_SUBSCRIBE_URL2 + groupName;
+            Log.e(TAG, "subscribeTokenToTopic ==== " + url);
+            RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, "");
+            Request request = new Request.Builder()
+                    .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                    .addHeader(AUTHORIZATION, AUTH_KEY)
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+            Call call = new OkHttpClient().newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e(TAG, "onFailure: " + e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    Log.e(TAG, "onResponse body: " + response.body().string());
+                    Log.e(TAG, "onResponse code: " + response.code());
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void prepareNotification(ChatM chatM) {
         try {
             String chatType = chatM.getChatType();
@@ -91,35 +120,6 @@ public class SendNotification {
             } else {
                 sendToSingle();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void subscribeToken(String token, String groupName) {
-        try {
-            String url = TOPIC_SUBSCRIBE_URL1 + token + TOPIC_SUBSCRIBE_URL2 + groupName;
-            Log.e(TAG, "subscribeToken ==== " + url);
-            RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, "");
-            Request request = new Request.Builder()
-                    .addHeader(CONTENT_TYPE, APPLICATION_JSON)
-                    .addHeader(AUTHORIZATION, AUTH_KEY)
-                    .url(url)
-                    .post(requestBody)
-                    .build();
-            Call call = new OkHttpClient().newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    Log.e(TAG, "onFailure: " + e.getMessage());
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    Log.e(TAG, "onResponse body: " + response.body().string());
-                    Log.e(TAG, "onResponse code: " + response.code());
-                }
-            });
         } catch (Exception e) {
             e.printStackTrace();
         }
