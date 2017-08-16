@@ -27,6 +27,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.vantagecircle.chatapp.R;
+import com.vantagecircle.chatapp.httpcall.SendNotification;
 import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.adapter.ChatMAdapter;
 import com.vantagecircle.chatapp.core.SetDataHandler;
@@ -149,6 +150,7 @@ public abstract class ParentActivity extends AppCompatActivity {
                     if (lastVisiblePosition == -1 || (positionStart >= (friendlyMessageCount - 1) &&
                             lastVisiblePosition == (positionStart - 1))) {
                         recyclerView.scrollToPosition(positionStart);
+                        recyclerView.smoothScrollToPosition(positionStart);
                     }
                 }
             });
@@ -189,7 +191,11 @@ public abstract class ParentActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String t) {
                 //update sent status
-                UpdateKeyUtils.updateSentStatus(currentRoom, chatM.getTimeStamp());
+                if(chatM.getChatType().equals(Constants.TEXT_CONTENT)){
+                    UpdateKeyUtils.updateSentStatus(currentRoom, chatM.getTimeStamp());
+                    SendNotification sendNotification = new SendNotification();
+                    sendNotification.prepareNotification(chatM);
+                }
             }
 
             @Override

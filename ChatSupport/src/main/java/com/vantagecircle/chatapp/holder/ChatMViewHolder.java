@@ -21,6 +21,7 @@ import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.core.FileHandler;
 import com.vantagecircle.chatapp.core.interfaceC.FileInterface;
 import com.vantagecircle.chatapp.core.model.FileModel;
+import com.vantagecircle.chatapp.httpcall.SendNotification;
 import com.vantagecircle.chatapp.model.ChatM;
 import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.utils.ConfigUtils;
@@ -143,7 +144,7 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 Uri contentUri = FileProvider.getUriForFile(context,
-                        context.getPackageName() + ".fileProvider", file);
+                        context.getPackageName() + ".utils.chatFileProvider", file);
                 intent.setDataAndType(contentUri, "*/*");
             } else {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -270,9 +271,10 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
                 UpdateKeyUtils.updateFileUrl(chatM.getChatRoom(), chatM.getTimeStamp(), downloadUrl);
 
                 //push notification after file update is complete
-                /*chatM.setFileUrl(downloadUrl);
+                UpdateKeyUtils.updateSentStatus(chatM.getChatRoom(), chatM.getTimeStamp());
+                chatM.setFileUrl(downloadUrl);
                 SendNotification sendNotification = new SendNotification();
-                sendNotification.prepareNotification(chatM);*/
+                sendNotification.prepareNotification(chatM);
             }
         });
     }

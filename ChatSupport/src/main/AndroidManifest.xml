@@ -51,7 +51,7 @@
             android:name=".utils.ChatFileProvider"
             android:grantUriPermissions="true"
             android:exported="false"
-            android:authorities="com.vantagecircle.chatapp.fileProvider">
+            android:authorities="${applicationId}.utils.chatFileProvider">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />

@@ -181,6 +181,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     if (lastVisiblePosition == -1 || (positionStart >= (friendlyMessageCount - 1) &&
                                             lastVisiblePosition == (positionStart - 1))) {
                                         recyclerView.scrollToPosition(positionStart);
+                                        recyclerView.smoothScrollToPosition(positionStart);
                                     }
                                 }
                             });
@@ -216,6 +217,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     if (lastVisiblePosition == -1 || (positionStart >= (friendlyMessageCount - 1) &&
                                             lastVisiblePosition == (positionStart - 1))) {
                                         recyclerView.scrollToPosition(positionStart);
+                                        recyclerView.smoothScrollToPosition(positionStart);
                                     }
                                 }
                             });
