@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -16,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -38,8 +36,6 @@ import com.vantagecircle.chatapp.model.RoomM;
 import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.utils.MainFileUtils;
-import com.vantagecircle.chatapp.utils.ToolsUtils;
-import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 
 import java.io.File;
 import java.util.Date;
@@ -57,7 +53,7 @@ public abstract class ParentActivity extends AppCompatActivity {
     private ImageButton btn_send_txt;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
-    private String currentRoom, currentRoomId;
+    private String contestRoom, contestId, contestName;
     private ChatMAdapter chatMAdapter;
 
     @Override
@@ -119,9 +115,10 @@ public abstract class ParentActivity extends AppCompatActivity {
 
     //initialize for chat
     protected void initialize() {
-        currentRoomId = getIntent().getStringExtra("contest_id");
-        currentRoom = getIntent().getStringExtra("contest_name");
-        mActionBar.setTitle(currentRoom);
+        contestId = getIntent().getStringExtra("contest_id");
+        contestName = getIntent().getStringExtra("contest_name");
+        contestRoom = getIntent().getStringExtra("contest_room");
+        mActionBar.setTitle(contestName);
         getChatHistory();
     }
 
@@ -129,7 +126,7 @@ public abstract class ParentActivity extends AppCompatActivity {
     protected void getChatHistory() {
         if (chatMAdapter == null) {
             chatMAdapter = new ChatMAdapter(ChatM.class, 0, ChatMViewHolder.class,
-                    SupportService.getChatReference().child(currentRoom));
+                    SupportService.getChatReference().child(contestRoom));
             recyclerView.setAdapter(chatMAdapter);
             chatMAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override
@@ -149,18 +146,18 @@ public abstract class ParentActivity extends AppCompatActivity {
 
     //push message to firebase db
     protected ChatM prepareChatModel(String text, String type, String uri) {
-        Log.d(TAG, "Current Room === " + currentRoom);
+        Log.d(TAG, "Current Room === " + contestRoom);
         ChatM chatM = null;
         try {
             String senderName = SupportService.userM.getFullName();
             String senderUid = SupportService.id;
-            String receiverName = currentRoom;
-            String receiverUid = currentRoomId;
+            String receiverName = contestRoom;
+            String receiverUid = contestId;
             String convType = Constants.CONV_GR;
             long timeStamp = new Date().getTime();
 
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
-                    type, text, uri, timeStamp, false, false, currentRoom, convType,
+                    type, text, uri, timeStamp, false, false, contestRoom, convType,
                     SupportService.userM.getFcmToken(), null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -175,7 +172,7 @@ public abstract class ParentActivity extends AppCompatActivity {
         //config handler and push chat data to current room
         SetDataHandler setDataHandler = new SetDataHandler();
         setDataHandler.setDatabaseReference(SupportService.getChatReference()
-                .child(currentRoom)
+                .child(contestRoom)
                 .child(String.valueOf(chatM.getTimeStamp())));
         setDataHandler.insertData(chatM, new ResultInterface() {
             @Override

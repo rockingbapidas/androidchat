@@ -10,10 +10,10 @@ bintray {
         name = 'com.vantagecircle.chatapp'
 
         version {
-            name = '1.1.5'
+            name = '1.1.6'
             desc = 'File Provider issue solved and notification facility enabled and some crashes anf bugs solved'
             released  = new Date()
-            vcsTag = '1.1.5'
+            vcsTag = '1.1.6'
         }
 
         licenses = ['Apache-2.0']
@@ -28,7 +28,7 @@ android {
     buildToolsVersion "25.0.3"
     defaultConfig {
         group = 'com.vantagecircle.chatapp'
-        version = "1.1.5"
+        version = "1.1.6"
         minSdkVersion 16
         targetSdkVersion 25
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

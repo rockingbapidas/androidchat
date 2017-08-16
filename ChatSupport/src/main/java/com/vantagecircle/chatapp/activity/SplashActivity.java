@@ -57,7 +57,8 @@ public class SplashActivity extends AppCompatActivity {
         SupportService.init(getApplicationContext(), userM);
         Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
         intent.putExtra("contest_id", "contest001");
-        intent.putExtra("contest_name", "contestAugustRunTo5k");
+        intent.putExtra("contest_name", "August Run To 5k");
+        intent.putExtra("contest_room", "AugustRunTo5k");
         startActivity(intent);
         finish();
     }
