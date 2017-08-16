@@ -43,6 +43,42 @@ public class NotificationHandler {
         mBuilder = new NotificationCompat.Builder(mContext);
     }
 
+    public void setNotification(RemoteMessage remoteMessage) throws JSONException {
+        JSONObject jsonObject = new JSONObject(remoteMessage.getData());
+
+        Intent intent = new Intent(mContext, ChatActivity.class);
+        intent.putExtra("isNotification", true);
+        intent.putExtra("contest_id", jsonObject.getString("contestId"));
+        intent.putExtra("contest_name", jsonObject.getString("contestName"));
+        intent.putExtra("contest_room", jsonObject.getString("contestRoom"));
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+        stackBuilder.addParentStack(ChatActivity.class);
+        stackBuilder.addNextIntent(intent);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(mContext, (int)
+                System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(contentIntent);
+        mBuilder.setContentTitle(jsonObject.getString("title"));
+
+        if(jsonObject.getString("type").equals(Constants.TEXT_CONTENT)){
+            mBuilder.setContentText(jsonObject.getString("text"));
+        } else {
+            String imageUrl = jsonObject.getString("fileUri");
+            Bitmap bitmap = null;
+            try {
+                if (imageUrl != null && !imageUrl.isEmpty())
+                    bitmap = Picasso.with(mContext).load(imageUrl).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mBuilder.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bitmap));
+        }
+
+        showNotification();
+    }
+
     public void setNotification(JSONObject jsonObject) throws JSONException {
         Intent intent = new Intent(SupportService.getInstance(), ChatActivity.class);
         intent.putExtra("isFromBar", true);
@@ -79,42 +115,6 @@ public class NotificationHandler {
             try {
                 if (imageUrl != null && !imageUrl.isEmpty())
                     bitmap = Picasso.with(SupportService.getInstance()).load(imageUrl).get();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mBuilder.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bitmap));
-        }
-
-        showNotification();
-    }
-
-    public void setNotification(RemoteMessage remoteMessage) throws JSONException {
-        JSONObject jsonObject = new JSONObject(remoteMessage.getData());
-
-        Intent intent = new Intent(mContext, ChatActivity.class);
-        intent.putExtra("isNotification", true);
-        intent.putExtra("contest_id", jsonObject.getString("contestId"));
-        intent.putExtra("contest_name", jsonObject.getString("contestName"));
-        intent.putExtra("contest_room", jsonObject.getString("contestRoom"));
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
-        stackBuilder.addParentStack(ChatActivity.class);
-        stackBuilder.addNextIntent(intent);
-
-        PendingIntent contentIntent = PendingIntent.getActivity(mContext, (int)
-                System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(contentIntent);
-        mBuilder.setContentTitle(jsonObject.getString("title"));
-
-        if(jsonObject.getString("type").equals(Constants.TEXT_CONTENT)){
-            mBuilder.setContentText(jsonObject.getString("text"));
-        } else {
-            String imageUrl = jsonObject.getString("fileUri");
-            Bitmap bitmap = null;
-            try {
-                if (imageUrl != null && !imageUrl.isEmpty())
-                    bitmap = Picasso.with(mContext).load(imageUrl).get();
             } catch (IOException e) {
                 e.printStackTrace();
             }

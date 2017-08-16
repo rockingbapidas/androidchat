@@ -46,7 +46,7 @@ public class SplashActivity extends AppCompatActivity {
                 "KCnc8MHOTcs2NMm9ZYB-czjxUvyKqM_" +
                 "Fz4aJqA1mO9Cr4pP-m30MVxm4YVCXTTH9ZWoCegYXaFAxd4GSsXJ");
 
-        /*userM.setUserId("dll6E6arOmXcWNSeKEk5WH7IcnW2");
+       /* userM.setUserId("dll6E6arOmXcWNSeKEk5WH7IcnW2");
         userM.setUsername("bapi@gmail.com");
         userM.setFullName("Bapi Das");
         userM.setFcmToken("fl0dEIo-qV0:APA91bETyHJMRRQzz4nxyExsRlQ1I-JTyfPvzEJw1-" +
