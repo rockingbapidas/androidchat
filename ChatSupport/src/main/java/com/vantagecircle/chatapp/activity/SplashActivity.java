@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.core.model.DataModel;
@@ -35,25 +37,27 @@ public class SplashActivity extends AppCompatActivity {
 
     private void initLibraryMode(){
         UserM userM = new UserM();
-        userM.setUserId("dll6E6arOmXcWNSeKEk5WH7IcnW2");
+
+        userM.setUserId("Yx6xPwD4fuSvqbIshMB39EtsP9q2");
+        userM.setUsername("pallab@gmail.com");
+        userM.setFullName("Pallab Kakoti");
+        userM.setFcmToken("fty6Q-v5oY4:APA91bHYsnjIY0no2xvOh3BqU_" +
+                "9kUbXBnAUMgtJCJ1k1aXtkwpgb1Aso_" +
+                "KCnc8MHOTcs2NMm9ZYB-czjxUvyKqM_" +
+                "Fz4aJqA1mO9Cr4pP-m30MVxm4YVCXTTH9ZWoCegYXaFAxd4GSsXJ");
+
+        /*userM.setUserId("dll6E6arOmXcWNSeKEk5WH7IcnW2");
         userM.setUsername("bapi@gmail.com");
         userM.setFullName("Bapi Das");
-        userM.setFcmToken("fl0dEIo-qV0:APA91bETyHJMRRQzz4nxyExsRlQ1I-JTyfPvzEJw1-tlMcAkBkq4ZW4Ub1DFL3QlyvXMgSTjD41Bs9eqrbErvwSBu3JOjzTNjmxzeO6DNqdckKdXdsbFYIkQDPyGT6d-qmhD0ihwFPl0");
-        userM.setLastSeenTime(new Date().getTime());
-        userM.setNotificationCount(0);
-        userM.setOnline(true);
-        userM.setUserType("user");
-        ArrayList<RoomM> arrayList = new ArrayList<>();
-        RoomM roomM = new RoomM();
-        roomM.setRoomId("CAOL5K");
-        roomM.setRoomName("CAOL5K_QWERTY");
-        arrayList.add(roomM);
-        userM.setRoomMArrayList(arrayList);
+        userM.setFcmToken("fl0dEIo-qV0:APA91bETyHJMRRQzz4nxyExsRlQ1I-JTyfPvzEJw1-" +
+                "tlMcAkBkq4ZW4Ub1DFL3QlyvXMgSTjD41Bs9eqrbErvw" +
+                "SBu3JOjzTNjmxzeO6DNqdckKdXdsbFYIkQDPyGT6d-qmhD0ihwFPl0");*/
 
+        FirebaseMessaging.getInstance().subscribeToTopic("contestAugustRunTo5k");
         SupportService.init(getApplicationContext(), userM);
         Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
-        intent.putExtra("isContest", true);
-        intent.putExtra("contest_id", "CAOL5K");
+        intent.putExtra("contest_id", "contest001");
+        intent.putExtra("contest_name", "contestAugustRunTo5k");
         startActivity(intent);
         finish();
     }

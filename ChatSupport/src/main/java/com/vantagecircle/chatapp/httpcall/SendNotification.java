@@ -37,6 +37,7 @@ public class SendNotification {
 
     private final String FCM_USER_URL = "https://fcm.googleapis.com/fcm/send";
     private final String FCM_GROUP_URL = "https://gcm-http.googleapis.com/gcm/send";
+
     private final String TOPIC_SUBSCRIBE_URL1 = "https://iid.googleapis.com/iid/v1/";
     private final String TOPIC_SUBSCRIBE_URL2 = "/rel/topics/";
 
@@ -61,7 +62,7 @@ public class SendNotification {
         notificationM = new NotificationM();
     }
 
-    public void prepareNotification(ChatM chatM){
+    public void prepareNotification(ChatM chatM) {
         try {
             String chatType = chatM.getChatType();
             String messageText = chatM.getMessageText();
@@ -163,9 +164,8 @@ public class SendNotification {
             RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON,
                     getDataObject().toString());
             Request request = new Request.Builder()
-                    .addHeader(ACCEPT, APPLICATION_JSON)
-                    .addHeader(AUTHORIZATION, AUTH_KEY)
                     .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                    .addHeader(AUTHORIZATION, AUTH_KEY)
                     .url(FCM_GROUP_URL)
                     .post(requestBody)
                     .build();
@@ -196,7 +196,7 @@ public class SendNotification {
         if (notificationM.getConversationType().equals(Constants.CONV_SN)) {
             parentBody.put(KEY_TO, notificationM.getReceiverFcmToken());
         } else {
-            parentBody.put(KEY_TO, notificationM.getChatRoom());
+            parentBody.put(KEY_TO, "/topics/" + notificationM.getChatRoom());
         }
 
         JSONObject childData = new JSONObject();

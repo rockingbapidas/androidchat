@@ -57,8 +57,7 @@ public abstract class ParentActivity extends AppCompatActivity {
     private ImageButton btn_send_txt;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
-    private String currentRoom;
-    private boolean isContest;
+    private String currentRoom, currentRoomId;
     private ChatMAdapter chatMAdapter;
 
     @Override
@@ -120,17 +119,8 @@ public abstract class ParentActivity extends AppCompatActivity {
 
     //initialize for chat
     protected void initialize() {
-        isContest = getIntent().getBooleanExtra("isContest", false);
-        if (isContest) {
-            String contest_id = getIntent().getStringExtra("contest_id");
-            for (int i = 0; i < SupportService.userM.getRoomMArrayList().size(); i++) {
-                RoomM roomM = SupportService.userM.getRoomMArrayList().get(i);
-                if (roomM.getRoomId().equals(contest_id)) {
-                    currentRoom = roomM.getRoomName();
-                    this.roomM = roomM;
-                }
-            }
-        }
+        currentRoomId = getIntent().getStringExtra("contest_id");
+        currentRoom = getIntent().getStringExtra("contest_name");
         mActionBar.setTitle(currentRoom);
         getChatHistory();
     }
@@ -164,8 +154,8 @@ public abstract class ParentActivity extends AppCompatActivity {
         try {
             String senderName = SupportService.userM.getFullName();
             String senderUid = SupportService.id;
-            String receiverName = roomM.getRoomName();
-            String receiverUid = roomM.getRoomId();
+            String receiverName = currentRoom;
+            String receiverUid = currentRoomId;
             String convType = Constants.CONV_GR;
             long timeStamp = new Date().getTime();
 
