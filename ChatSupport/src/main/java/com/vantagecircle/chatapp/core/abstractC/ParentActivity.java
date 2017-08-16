@@ -146,19 +146,19 @@ public abstract class ParentActivity extends AppCompatActivity {
 
     //push message to firebase db
     protected ChatM prepareChatModel(String text, String type, String uri) {
-        Log.d(TAG, "Current Room === " + contestRoom);
         ChatM chatM = null;
         try {
             String senderName = SupportService.userM.getFullName();
             String senderUid = SupportService.id;
-            String receiverName = contestRoom;
+            String senderFcmToken = SupportService.userM.getFcmToken();
+            String receiverName = contestName;
             String receiverUid = contestId;
             String convType = Constants.CONV_GR;
             long timeStamp = new Date().getTime();
 
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
                     type, text, uri, timeStamp, false, false, contestRoom, convType,
-                    SupportService.userM.getFcmToken(), null);
+                    senderFcmToken, null);
         } catch (Exception e) {
             e.printStackTrace();
         }

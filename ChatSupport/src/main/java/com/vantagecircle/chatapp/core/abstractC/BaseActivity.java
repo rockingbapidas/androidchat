@@ -85,7 +85,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     //cast and bind view from layout
-    protected int loadView(){
+    protected int loadView() {
         return R.layout.activity_chat;
     }
 
@@ -298,6 +298,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         try {
             String senderName = SupportService.userM.getFullName();
             String senderUid = SupportService.id;
+            String senderFcmToken = SupportService.userM.getFcmToken();
             String receiverName;
             String receiverUid;
             String convType;
@@ -314,7 +315,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
                     type, text, uri, timeStamp, false, false, currentRoom, convType,
-                    SupportService.userM.getFcmToken(), isGroup ? null : userM.getFcmToken());
+                    senderFcmToken, isGroup ? null : userM.getFcmToken());
         } catch (Exception e) {
             e.printStackTrace();
         }

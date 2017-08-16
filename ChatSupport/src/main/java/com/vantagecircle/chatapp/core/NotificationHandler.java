@@ -1,4 +1,4 @@
-package com.vantagecircle.chatapp.utils;
+package com.vantagecircle.chatapp.core;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.vantagecircle.chatapp.R;
@@ -21,6 +22,7 @@ import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.activity.ChatActivity;
 import com.vantagecircle.chatapp.model.GroupM;
 import com.vantagecircle.chatapp.model.UserM;
+import com.vantagecircle.chatapp.utils.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,12 +33,17 @@ import java.io.IOException;
  * Created by bapidas on 12/07/17.
  */
 
-public class NotificationUtils {
-    private static final String TAG = NotificationUtils.class.getSimpleName();
-    private static NotificationCompat.Builder mBuilder;
+public class NotificationHandler {
+    private final String TAG = NotificationHandler.class.getSimpleName();
+    private NotificationCompat.Builder mBuilder;
+    private Context mContext;
 
-    public static void setNotification(JSONObject jsonObject) throws JSONException {
-        mBuilder = new NotificationCompat.Builder(SupportService.getInstance());
+    public NotificationHandler(Context mContext) {
+        this.mContext = mContext;
+        mBuilder = new NotificationCompat.Builder(mContext);
+    }
+
+    public void setNotification(JSONObject jsonObject) throws JSONException {
         UserM userM;
         GroupM groupM;
         Intent intent = new Intent(SupportService.getInstance(), ChatActivity.class);
@@ -83,8 +90,44 @@ public class NotificationUtils {
         showNotification();
     }
 
-    private static void showNotification() {
-        Bitmap largeIcon = BitmapFactory.decodeResource(SupportService.getInstance().getResources(),
+    public void setNotification(RemoteMessage remoteMessage) throws JSONException {
+        JSONObject jsonObject = new JSONObject(remoteMessage.getData());
+        Intent intent = new Intent(mContext, ChatActivity.class);
+        intent.putExtra("isNotification", true);
+        intent.putExtra("contest_id", jsonObject.getString("contestId"));
+        intent.putExtra("contest_name", jsonObject.getString("contestName"));
+        intent.putExtra("contest_room", jsonObject.getString("contestRoom"));
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+        stackBuilder.addParentStack(ChatActivity.class);
+        stackBuilder.addNextIntent(intent);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(mContext, (int)
+                System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(contentIntent);
+        mBuilder.setContentTitle(jsonObject.getString("title"));
+
+        if(jsonObject.getString("type").equals(Constants.TEXT_CONTENT)){
+            mBuilder.setContentText(jsonObject.getString("text"));
+        } else {
+            String imageUrl = jsonObject.getString("fileUri");
+            Bitmap bitmap = null;
+            try {
+                if (imageUrl != null && !imageUrl.isEmpty())
+                    bitmap = Picasso.with(mContext).load(imageUrl).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mBuilder.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bitmap));
+        }
+
+        showNotification();
+    }
+
+    private void showNotification() {
+        Bitmap largeIcon = BitmapFactory.decodeResource(mContext.getResources(),
                 R.drawable.ic_chat_black_24dp);
         long[] vibrate = new long[]{1000, 1000, 1000, 1000, 1000};
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

@@ -45,14 +45,19 @@ public class SendNotification {
     private final String KEY_TO = "to";
     private final String KEY_DATA = "data";
 
-    private final String KEY_TITLE = "title";
     private final String KEY_TYPE = "type";
     private final String KEY_TEXT = "text";
     private final String KEY_URI = "fileUri";
     private final String KEY_CON_TYPE = "conType";
+
+    private final String KEY_TITLE = "title";
     private final String KEY_USERNAME = "userName";
     private final String KEY_UID = "userID";
     private final String KEY_FCM_TOKEN = "userToken";
+
+    private final String KEY_CONTEST_ID = "contestId";
+    private final String KEY_CONTEST_NAME = "contestName";
+    private final String KEY_ROOM = "contestRoom";
 
     //Notification model
     private NotificationM notificationM;
@@ -192,31 +197,36 @@ public class SendNotification {
     }
 
     private JSONObject getDataObject() throws JSONException {
+        //parent json body setup
         JSONObject parentBody = new JSONObject();
         if (notificationM.getConversationType().equals(Constants.CONV_SN)) {
             parentBody.put(KEY_TO, notificationM.getReceiverFcmToken());
         } else {
             parentBody.put(KEY_TO, "/topics/" + notificationM.getChatRoom());
         }
+        parentBody.put(KEY_DATA, getChildData());
+        Log.e(TAG, "data === " + parentBody);
+        return parentBody;
+    }
 
+    private JSONObject getChildData() throws JSONException{
+        //child json body setup
         JSONObject childData = new JSONObject();
-        childData.put(KEY_TITLE, notificationM.getTitle());
         childData.put(KEY_TYPE, notificationM.getChatType());
         childData.put(KEY_TEXT, notificationM.getMessageText());
         childData.put(KEY_URI, notificationM.getFileUrl());
         childData.put(KEY_CON_TYPE, notificationM.getConversationType());
 
-        if (notificationM.getConversationType().equals(Constants.CONV_SN)) {
-            childData.put(KEY_USERNAME, notificationM.getSenderUsername());
-            childData.put(KEY_UID, notificationM.getSenderUid());
-            childData.put(KEY_FCM_TOKEN, notificationM.getSenderFcmToken());
-        } else {
-            childData.put(KEY_USERNAME, notificationM.getReceiverUserName());
-            childData.put(KEY_UID, notificationM.getReceiverUid());
-        }
+        childData.put(KEY_TITLE, notificationM.getTitle());
+        childData.put(KEY_USERNAME, notificationM.getSenderUsername());
+        childData.put(KEY_UID, notificationM.getSenderUid());
+        childData.put(KEY_FCM_TOKEN, notificationM.getSenderFcmToken());
 
-        parentBody.put(KEY_DATA, childData);
-        Log.e(TAG, "noti data === " + parentBody);
-        return parentBody;
+        if (notificationM.getConversationType().equals(Constants.CONV_GR)) {
+            childData.put(KEY_CONTEST_ID, notificationM.getReceiverUid());
+            childData.put(KEY_CONTEST_NAME, notificationM.getReceiverUserName());
+            childData.put(KEY_ROOM, notificationM.getChatRoom());
+        }
+        return childData;
     }
 }
