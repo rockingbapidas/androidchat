@@ -184,9 +184,9 @@ public class SendNotification {
         childData.put(KEY_URI, notificationM.getFileUrl());
         childData.put(KEY_CON_TYPE, notificationM.getConversationType());
 
-        childData.put(KEY_USERNAME, notificationM.getSenderUsername());
+        //childData.put(KEY_USERNAME, notificationM.getSenderUsername());
         childData.put(KEY_UID, notificationM.getSenderUid());
-        childData.put(KEY_FCM_TOKEN, notificationM.getSenderFcmToken());
+        //childData.put(KEY_FCM_TOKEN, notificationM.getSenderFcmToken());
         childData.put(KEY_CHAT_FLAG, true);
 
         if (notificationM.getConversationType().equals(Constants.CONV_GR)) {

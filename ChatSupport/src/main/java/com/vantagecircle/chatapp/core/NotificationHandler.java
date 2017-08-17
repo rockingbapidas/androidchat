@@ -150,7 +150,7 @@ public class NotificationHandler {
                 .from(SupportService.getInstance());
         int MESSAGE_NOTIFICATION_ID = 1;
         notificationManager.notify(MESSAGE_NOTIFICATION_ID, notify);
-        PowerManager pm = (PowerManager) SupportService.getInstance().getSystemService(Context.POWER_SERVICE);
+        PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK |
                 PowerManager.ACQUIRE_CAUSES_WAKEUP, TAG);
         wl.acquire(15000);

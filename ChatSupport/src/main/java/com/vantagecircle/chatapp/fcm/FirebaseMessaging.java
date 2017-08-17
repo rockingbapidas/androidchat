@@ -17,7 +17,8 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.d(TAG, "onMessageReceived: " + remoteMessage.getData());
-        if(SupportService.isChatNotification(remoteMessage)){
+        if(remoteMessage.getData().containsKey("chatSource") &&
+                !remoteMessage.getData().get("userId").equals(SupportService.id)){
             if(ToolsUtils.isAppInBackground(SupportService.getInstance())){
                 try {
                     new NotificationHandler(SupportService.getInstance())

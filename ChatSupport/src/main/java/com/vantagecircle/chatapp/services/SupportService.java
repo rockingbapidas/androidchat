@@ -196,22 +196,4 @@ public class SupportService extends Service {
             }
         }
     }
-
-    public static boolean isChatNotification(RemoteMessage remoteMessage) {
-        try {
-            JSONObject object = new JSONObject(remoteMessage.getData());
-            if (object.has("chatSource")) {
-                if (!object.getString("userId").equals(id)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } catch (Exception e) {
-            e.getMessage();
-            return false;
-        }
-    }
 }
