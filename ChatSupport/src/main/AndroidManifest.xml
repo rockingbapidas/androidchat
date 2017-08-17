@@ -21,7 +21,12 @@
 
         <activity
             android:name=".activity.SplashActivity"
-            android:theme="@style/AppThemeNo"/>
+            android:theme="@style/AppThemeNo">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/AppThemeNo" />
@@ -31,14 +36,12 @@
         <activity android:name=".activity.UserActivity" />
         <activity android:name=".activity.ChatActivity" />
 
-        <service
-            android:name=".fcm.FirebaseMessaging">
+        <service android:name=".fcm.FirebaseMessaging">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name=".fcm.FirebaseInstanceID">
+        <service android:name=".fcm.FirebaseInstanceID">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
