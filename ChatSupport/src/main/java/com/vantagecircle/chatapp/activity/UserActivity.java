@@ -265,7 +265,7 @@ public class UserActivity extends AppCompatActivity {
     private void subscribeGroup(String room){
         for (int i = 0; i < usersMAdapter.getItemCount(); i++) {
             UserM userM = usersMAdapter.getItem(i);
-            new SendNotification().subscribeTokenToTopic(userM.getFcmToken(), room);
+            new SendNotification(mContext).subscribeTokenToTopic(userM.getFcmToken(), room);
         }
     }
 

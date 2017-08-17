@@ -80,7 +80,7 @@ public class NotificationHandler {
     }
 
     public void setNotification(JSONObject jsonObject) throws JSONException {
-        Intent intent = new Intent(SupportService.getInstance(), ChatActivity.class);
+        Intent intent = new Intent(mContext, ChatActivity.class);
         intent.putExtra("isFromBar", true);
         if(jsonObject.getString("conType").equals(Constants.CONV_SN)){
             UserM userM = new UserM();
@@ -98,11 +98,11 @@ public class NotificationHandler {
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(SupportService.getInstance());
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
         stackBuilder.addParentStack(ChatActivity.class);
         stackBuilder.addNextIntent(intent);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(SupportService.getInstance(), (int)
+        PendingIntent contentIntent = PendingIntent.getActivity(mContext, (int)
                 System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setContentTitle(jsonObject.getString("title"));
@@ -114,7 +114,7 @@ public class NotificationHandler {
             Bitmap bitmap = null;
             try {
                 if (imageUrl != null && !imageUrl.isEmpty())
-                    bitmap = Picasso.with(SupportService.getInstance()).load(imageUrl).get();
+                    bitmap = Picasso.with(mContext).load(imageUrl).get();
             } catch (IOException e) {
                 e.printStackTrace();
             }

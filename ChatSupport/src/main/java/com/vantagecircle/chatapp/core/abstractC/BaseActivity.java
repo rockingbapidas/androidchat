@@ -336,7 +336,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             public void onSuccess(String t) {
                 //send push notification to the user if chat type is text type
                 if (chatM.getChatType().equals(Constants.TEXT_CONTENT)) {
-                    SendNotification sendNotification = new SendNotification();
+                    SendNotification sendNotification = new SendNotification(mContext);
                     sendNotification.prepareNotification(chatM);
                 } else {
                     Log.d(TAG, "Notification will be sent after file upload");

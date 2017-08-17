@@ -17,10 +17,10 @@ public class NotificationM {
     private String receiverUserName;
     private String receiverUid;
     private String receiverFcmToken;
-    private ArrayList<String> tokenList;
     private String chatRoom;
     private long timeStamp;
     private String conversationType;
+    private ArrayList<String> tokenList;
 
     public String getTitle() {
         return title;
@@ -102,14 +102,6 @@ public class NotificationM {
         this.receiverFcmToken = receiverFcmToken;
     }
 
-    public ArrayList<String> getTokenList() {
-        return tokenList;
-    }
-
-    public void setTokenList(ArrayList<String> tokenList) {
-        this.tokenList = tokenList;
-    }
-
     public String getChatRoom() {
         return chatRoom;
     }
@@ -132,5 +124,13 @@ public class NotificationM {
 
     public void setConversationType(String conversationType) {
         this.conversationType = conversationType;
+    }
+
+    public ArrayList<String> getTokenList() {
+        return tokenList;
+    }
+
+    public void setTokenList(ArrayList<String> tokenList) {
+        this.tokenList = tokenList;
     }
 }

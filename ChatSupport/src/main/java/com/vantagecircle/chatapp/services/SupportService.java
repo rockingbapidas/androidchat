@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.vantagecircle.chatapp.R;
@@ -20,6 +21,8 @@ import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.utils.MainFileUtils;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
+
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -191,6 +194,20 @@ public class SupportService extends Service {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static boolean isChatNotification(RemoteMessage remoteMessage){
+        try {
+            JSONObject object = new JSONObject(remoteMessage.getData());
+            if(object.has("chatSource")){
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e){
+            e.getMessage();
+            return false;
         }
     }
 }
