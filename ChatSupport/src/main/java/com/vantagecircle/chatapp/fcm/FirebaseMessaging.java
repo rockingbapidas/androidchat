@@ -31,7 +31,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                 Log.d(TAG, "New Message arrived ====== ");
             }
         } else {
-            Log.d(TAG, "New Message arrived ======");
+            Log.d(TAG, "This message is send by this user ======");
         }
     }
 }
