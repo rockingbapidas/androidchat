@@ -25,4 +25,5 @@
         APA91bF-0Eo8AQhDPFv1q0hPCmB0vBrYaMA9_l0IYH_
         vi6gXdJv9JKM6m9BRgJjbjuBktd07HXLUsOae7sjGZAWDeJ-
         BE8d1SUVOmcMZFbo4vWzM0tvo-ON-G_JQqfhqPetc6IpxZGXB</string>
+    <string name="fcm_url">https://fcm.googleapis.com/fcm/send</string>
 </resources>

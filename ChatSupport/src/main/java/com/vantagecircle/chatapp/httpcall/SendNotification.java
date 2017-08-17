@@ -28,14 +28,14 @@ import okhttp3.Response;
 public class SendNotification {
     private final String TAG = SendNotification.class.getSimpleName();
 
-    //Http call configuration
+    //Http header configuration
     private final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
     private final String CONTENT_TYPE = "Content-Type";
     private final String ACCEPT = "Accept";
     private final String APPLICATION_JSON = "application/json";
     private final String AUTHORIZATION = "Authorization";
 
-    private final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
+    //topic subscribe url address
     private final String TOPIC_SUBSCRIBE_URL1 = "https://iid.googleapis.com/iid/v1/";
     private final String TOPIC_SUBSCRIBE_URL2 = "/rel/topics/";
 
@@ -136,7 +136,7 @@ public class SendNotification {
                     .addHeader(CONTENT_TYPE, APPLICATION_JSON)
                     .addHeader(ACCEPT, APPLICATION_JSON)
                     .addHeader(AUTHORIZATION, mContext.getResources().getString(R.string.server_key))
-                    .url(FCM_URL)
+                    .url(mContext.getResources().getString(R.string.fcm_url))
                     .post(requestBody)
                     .build();
             Call call = new OkHttpClient().newCall(request);
