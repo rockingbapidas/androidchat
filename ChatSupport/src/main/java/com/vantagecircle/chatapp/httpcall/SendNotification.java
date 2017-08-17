@@ -105,7 +105,7 @@ public class SendNotification {
             String fileUrl = chatM.getFileUrl();
             long timeStamp = chatM.getTimeStamp();
 
-            notificationM.setTitle("");
+            notificationM.setTitle(chatM.getSenderName());
             notificationM.setChatType(chatType);
             notificationM.setMessageText(messageText);
             notificationM.setFileUrl(fileUrl);
