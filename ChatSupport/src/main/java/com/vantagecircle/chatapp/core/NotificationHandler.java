@@ -80,7 +80,7 @@ public class NotificationHandler {
     }
 
     public void setNotification(JSONObject jsonObject) throws JSONException {
-        Intent intent = new Intent(SupportService.getInstance(), ChatActivity.class);
+        Intent intent = new Intent(mContext, ChatActivity.class);
         intent.putExtra("isFromBar", true);
         if(jsonObject.getString("conType").equals(Constants.CONV_SN)){
             UserM userM = new UserM();

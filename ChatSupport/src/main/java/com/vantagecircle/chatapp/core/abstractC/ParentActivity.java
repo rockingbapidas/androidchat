@@ -179,7 +179,7 @@ public abstract class ParentActivity extends AppCompatActivity {
             public void onSuccess(String t) {
                 //update sent status
                 if(chatM.getChatType().equals(Constants.TEXT_CONTENT)){
-                    SendNotification sendNotification = new SendNotification();
+                    SendNotification sendNotification = new SendNotification(mContext);
                     sendNotification.prepareNotification(chatM);
                 }
             }
