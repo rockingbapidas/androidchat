@@ -32,6 +32,7 @@ public class SendNotification {
     private final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
     private final String CONTENT_TYPE = "Content-Type";
     private final String ACCEPT = "Accept";
+    private final String MIME_TYPE = "*/*";
     private final String APPLICATION_JSON = "application/json";
     private final String AUTHORIZATION = "Authorization";
 
@@ -43,12 +44,12 @@ public class SendNotification {
     private final String KEY_TO = "to";
     private final String KEY_DATA = "data";
 
+    private final String KEY_TITLE = "title";
     private final String KEY_TYPE = "type";
     private final String KEY_TEXT = "text";
     private final String KEY_URI = "fileUri";
     private final String KEY_CON_TYPE = "conType";
 
-    private final String KEY_TITLE = "title";
     private final String KEY_USERNAME = "userName";
     private final String KEY_UID = "userID";
     private final String KEY_FCM_TOKEN = "userToken";
@@ -104,7 +105,7 @@ public class SendNotification {
             String fileUrl = chatM.getFileUrl();
             long timeStamp = chatM.getTimeStamp();
 
-            notificationM.setTitle(chatM.getSenderName());
+            notificationM.setTitle("");
             notificationM.setChatType(chatType);
             notificationM.setMessageText(messageText);
             notificationM.setFileUrl(fileUrl);
@@ -134,7 +135,7 @@ public class SendNotification {
                     getDataObject().toString());
             Request request = new Request.Builder()
                     .addHeader(CONTENT_TYPE, APPLICATION_JSON)
-                    .addHeader(ACCEPT, APPLICATION_JSON)
+                    .addHeader(ACCEPT, MIME_TYPE)
                     .addHeader(AUTHORIZATION, mContext.getResources().getString(R.string.server_key))
                     .url(mContext.getResources().getString(R.string.fcm_url))
                     .post(requestBody)
@@ -177,12 +178,12 @@ public class SendNotification {
     private JSONObject getChildData() throws JSONException{
         //child json body setup
         JSONObject childData = new JSONObject();
+        childData.put(KEY_TITLE, notificationM.getTitle());
         childData.put(KEY_TYPE, notificationM.getChatType());
         childData.put(KEY_TEXT, notificationM.getMessageText());
         childData.put(KEY_URI, notificationM.getFileUrl());
         childData.put(KEY_CON_TYPE, notificationM.getConversationType());
 
-        childData.put(KEY_TITLE, notificationM.getTitle());
         childData.put(KEY_USERNAME, notificationM.getSenderUsername());
         childData.put(KEY_UID, notificationM.getSenderUid());
         childData.put(KEY_FCM_TOKEN, notificationM.getSenderFcmToken());

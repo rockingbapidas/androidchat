@@ -53,8 +53,9 @@ public class SplashActivity extends AppCompatActivity {
                 "tlMcAkBkq4ZW4Ub1DFL3QlyvXMgSTjD41Bs9eqrbErvw" +
                 "SBu3JOjzTNjmxzeO6DNqdckKdXdsbFYIkQDPyGT6d-qmhD0ihwFPl0");*/
 
-        FirebaseMessaging.getInstance().subscribeToTopic("contestAugustRunTo5k");
         SupportService.init(getApplicationContext(), userM);
+
+        FirebaseMessaging.getInstance().subscribeToTopic("AugustRunTo5k");
         Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
         intent.putExtra("contest_id", "contest001");
         intent.putExtra("contest_name", "August Run To 5k");
