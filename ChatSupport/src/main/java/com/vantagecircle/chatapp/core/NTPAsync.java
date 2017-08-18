@@ -25,8 +25,8 @@ public class NTPAsync extends AsyncTask<String, Void, String> {
             NTPUDPClient timeClient = new NTPUDPClient();
             InetAddress inetAddress = InetAddress.getByName(TIME_SERVER);
             TimeInfo timeInfo = timeClient.getTime(inetAddress);
-            //long returnTime = timeInfo.getReturnTime();   //local device time
-            return String.valueOf(timeInfo.getMessage().getTransmitTimeStamp().getTime());
+            //long returnTime = timeInfo.getReturnTime();   //it return local device time
+            return String.valueOf(timeInfo.getMessage().getTransmitTimeStamp().getTime()); //it return server time
         } catch (IOException e) {
             e.printStackTrace();
             return e.getMessage();
