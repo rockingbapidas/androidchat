@@ -143,12 +143,12 @@ public class ChatMViewHolder extends RecyclerView.ViewHolder {
             intent.setAction(Intent.ACTION_VIEW);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                Uri contentUri = FileProvider.getUriForFile(context,
-                        context.getPackageName() + ".utils.chatFileProvider", file);
-                intent.setDataAndType(contentUri, "*/*");
+                Uri contentUri = FileProvider.getUriForFile(context, context.getPackageName() +
+                        ".utils.chatFileProvider", file);
+                intent.setDataAndType(contentUri, "image/jpeg");
             } else {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setDataAndType(Uri.fromFile(file), "*/*");
+                intent.setDataAndType(Uri.fromFile(file), "image/jpeg");
             }
             context.startActivity(intent);
         } catch (Exception e) {

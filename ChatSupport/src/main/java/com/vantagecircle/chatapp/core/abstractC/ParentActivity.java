@@ -25,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.vantagecircle.chatapp.R;
+import com.vantagecircle.chatapp.core.NTPAsync;
 import com.vantagecircle.chatapp.httpcall.SendNotification;
 import com.vantagecircle.chatapp.services.SupportService;
 import com.vantagecircle.chatapp.adapter.ChatMAdapter;
@@ -37,8 +38,10 @@ import com.vantagecircle.chatapp.utils.ConfigUtils;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.utils.MainFileUtils;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.io.File;
-import java.util.Date;
 
 /**
  * Created by bapidas on 07/08/17.
@@ -55,6 +58,8 @@ public abstract class ParentActivity extends AppCompatActivity {
     private LinearLayoutManager linearLayoutManager;
     private String contestRoom, contestId, contestName;
     private ChatMAdapter chatMAdapter;
+    private long currentTimeStamp;
+    private NTPAsync ntpAsync;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,13 +108,62 @@ public abstract class ParentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (et_message.getText().toString().length() > 0) {
-                    pushMessage(prepareChatModel(et_message.getText().toString(),
+                    Log.d(TAG, "setOnClickListener ");
+
+                   /* NTPAsync ntpAsync = new NTPAsync();
+                    ntpAsync.setCallBack(new TimeInterface() {
+                        @Override
+                        public void onTimeSuccess(long timeStamp) {
+                            currentTimeStamp = timeStamp;
+                            pushMessage(prepareChatModel(
+                                    et_message.getText().toString(),
+                                    Constants.TEXT_CONTENT, null));
+                        }
+
+                        @Override
+                        public void onTimeError(String error) {
+
+                        }
+                    });
+                    //ntpAsync.execute();
+                    ntpAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);*/
+
+                    currentTimeStamp = DateTime.now(DateTimeZone.UTC).getMillis();
+                    pushMessage(prepareChatModel(
+                            et_message.getText().toString(),
                             Constants.TEXT_CONTENT, null));
                 } else {
-                    Toast.makeText(mContext, "Type some message", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Type some message",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    protected void pushFileModel(final Uri uri) {
+        /*NTPAsync ntpAsync = new NTPAsync();
+        ntpAsync.setCallBack(new TimeInterface() {
+            @Override
+            public void onTimeSuccess(long timeStamp) {
+                Log.d(TAG, "onTimeSuccess ===== " + timeStamp);
+                currentTimeStamp = timeStamp;
+                ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
+                        uri.toString());
+                pushMessage(chatM);
+            }
+
+            @Override
+            public void onTimeError(String error) {
+                Log.d(TAG, "onTimeError ===== " + error);
+            }
+        });
+        //ntpAsync.execute();
+        ntpAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);*/
+
+        currentTimeStamp = DateTime.now(DateTimeZone.UTC).getMillis();
+        ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
+                uri.toString());
+        pushMessage(chatM);
     }
 
 
@@ -154,11 +208,9 @@ public abstract class ParentActivity extends AppCompatActivity {
             String receiverName = contestName;
             String receiverUid = contestId;
             String convType = Constants.CONV_GR;
-            long timeStamp = new Date().getTime();
-
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
-                    type, text, uri, timeStamp, false, false, contestRoom, convType,
-                    senderFcmToken, null);
+                    type, text, uri, currentTimeStamp, false, false,
+                    contestRoom, convType, senderFcmToken, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -178,7 +230,7 @@ public abstract class ParentActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String t) {
                 //update sent status
-                if(chatM.getChatType().equals(Constants.TEXT_CONTENT)){
+                if (chatM.getChatType().equals(Constants.TEXT_CONTENT)) {
                     SendNotification sendNotification = new SendNotification(mContext);
                     sendNotification.prepareNotification(chatM);
                 }
@@ -190,7 +242,6 @@ public abstract class ParentActivity extends AppCompatActivity {
             }
         });
     }
-
 
     //file choose config and function
     @Override
@@ -290,6 +341,7 @@ public abstract class ParentActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             if (data.getExtras() == null || data.getData() != null) {
                 try {
+                    Log.d(TAG, "on Select");
                     Uri uri = data.getData();
                     String mimeType = getContentResolver().getType(uri);
                     if (mimeType == null) {
@@ -310,9 +362,7 @@ public abstract class ParentActivity extends AppCompatActivity {
                         Uri selectedUri = Uri.fromFile(newFile);
                         if (mimeType.contains("image")) {
                             MainFileUtils.compressImage(selectedUri.getPath(), mContext);
-                            ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
-                                    selectedUri.toString());
-                            pushMessage(chatM);
+                            pushFileModel(selectedUri);
                         }
                     } else {
                         Toast.makeText(mContext, "File error occurred",
@@ -323,6 +373,7 @@ public abstract class ParentActivity extends AppCompatActivity {
                 }
             } else {
                 try {
+                    Log.d(TAG, "on Camera");
                     Uri uri = MainFileUtils.createNewFile(data, MainFileUtils.MIME_TYPE_IMAGE);
                     String mimeType = MainFileUtils.getMimeType(new File(uri.getPath()));
                     if (mimeType == null) {
@@ -340,12 +391,10 @@ public abstract class ParentActivity extends AppCompatActivity {
                     File newFile = MainFileUtils.createNewFile(file, newFileName,
                             Constants.DIR_SENT);
                     if (newFile != null) {
-                        Uri selectedUri = Uri.fromFile(newFile);
+                        final Uri selectedUri = Uri.fromFile(newFile);
                         if (mimeType.contains("image")) {
-                            MainFileUtils.compressImage(selectedUri.getPath(), mContext);
-                            ChatM chatM = prepareChatModel(null, Constants.IMAGE_CONTENT,
-                                    selectedUri.toString());
-                            pushMessage(chatM);
+                            //MainFileUtils.compressImage(selectedUri.getPath(), mContext);
+                            pushFileModel(selectedUri);
                         }
                     } else {
                         Toast.makeText(mContext, "File error occurred",

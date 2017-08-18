@@ -21,6 +21,6 @@
         <item>Sent</item>
         <item>Received</item>
     </string-array>
-    <string name="server_key">key=AAAAutjgRd0:APA91bF-0Eo8AQhDPFv1q0hPCmB0vBrYaMA9_l0IYH_vi6gXdJv9JKM6m9BRgJjbjuBktd07HXLUsOae7sjGZAWDeJ-BE8d1SUVOmcMZFbo4vWzM0tvo-ON-G_JQqfhqPetc6IpxZGXB</string>
+    <string name="server_key">key=AIzaSyD27pQTSwt4CJpU7fEuafqE_YTVpgU0Z68</string>
     <string name="fcm_url">https://fcm.googleapis.com/fcm/send</string>
 </resources>

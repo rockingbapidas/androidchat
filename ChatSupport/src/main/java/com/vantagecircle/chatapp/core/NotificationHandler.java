@@ -28,6 +28,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Created by bapidas on 12/07/17.
@@ -58,7 +60,7 @@ public class NotificationHandler {
         stackBuilder.addNextIntent(intent);
 
         PendingIntent contentIntent = PendingIntent.getActivity(mContext, (int)
-                System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                Calendar.getInstance().getTimeInMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setContentTitle(jsonObject.getString("title"));
 
@@ -98,12 +100,12 @@ public class NotificationHandler {
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(SupportService.getInstance());
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
         stackBuilder.addParentStack(ChatActivity.class);
         stackBuilder.addNextIntent(intent);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(SupportService.getInstance(), (int)
-                System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(mContext, (int)
+                Calendar.getInstance().getTimeInMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setContentTitle(jsonObject.getString("title"));
 
@@ -114,7 +116,7 @@ public class NotificationHandler {
             Bitmap bitmap = null;
             try {
                 if (imageUrl != null && !imageUrl.isEmpty())
-                    bitmap = Picasso.with(SupportService.getInstance()).load(imageUrl).get();
+                    bitmap = Picasso.with(mContext).load(imageUrl).get();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -133,7 +135,7 @@ public class NotificationHandler {
         mBuilder.setSmallIcon(R.drawable.ic_chat_black_24dp);
         mBuilder.setLargeIcon(largeIcon);
         mBuilder.setGroup("group_key_emails");
-        mBuilder.setWhen(System.currentTimeMillis());
+        mBuilder.setWhen(Calendar.getInstance().getTimeInMillis());
         mBuilder.setAutoCancel(true);
         mBuilder.setOnlyAlertOnce(true);
         mBuilder.setSound(sound);
@@ -146,8 +148,7 @@ public class NotificationHandler {
         mBuilder.setTicker("New Message");
         mBuilder.setVibrate(vibrate);
         Notification notify = mBuilder.build();
-        NotificationManagerCompat notificationManager = NotificationManagerCompat
-                .from(SupportService.getInstance());
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
         int MESSAGE_NOTIFICATION_ID = 1;
         notificationManager.notify(MESSAGE_NOTIFICATION_ID, notify);
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);

@@ -31,7 +31,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by bapidas on 03/08/17.
@@ -258,7 +261,8 @@ public class MainFileUtils {
 
     private static String getDynamicName(String mimeType, String uri) {
         String dynamicName;
-        Date d = new Date();
+        long timeStamp = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis();
+        Date d = new Date(timeStamp);
         String FileSeperator = "_";
         String start = mimeType.equals("image") ? "IMG" : mimeType.equals("video") ? "VID" : "APP";
         String ext = MainFileUtils.getExtension(uri);
@@ -381,11 +385,6 @@ public class MainFileUtils {
         return filename;
     }
 
-    private static int convertDipToPixels(float dips){
-        Resources r = SupportService.getInstance().getResources();
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dips, r.getDisplayMetrics());
-    }
-
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
@@ -404,6 +403,11 @@ public class MainFileUtils {
         }
 
         return inSampleSize;
+    }
+
+    private static int convertDipToPixels(float dips){
+        Resources r = SupportService.getInstance().getResources();
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dips, r.getDisplayMetrics());
     }
 
     public static Bitmap decodeBitmapFromPath(String filePath){

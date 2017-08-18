@@ -2,6 +2,7 @@ package com.vantagecircle.chatapp.adapter;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.vantagecircle.chatapp.R;
 import com.vantagecircle.chatapp.holder.ChatMViewHolder;
 import com.vantagecircle.chatapp.model.ChatM;
@@ -20,7 +21,16 @@ public class ChatMAdapter extends FirebaseRecyclerAdapter<ChatM, ChatMViewHolder
         super(modelClass, modelLayout, viewHolderClass, ref);
     }
 
+    public ChatMAdapter(Class<ChatM> modelClass, int modelLayout, Class<ChatMViewHolder> viewHolderClass,
+                        Query ref) {
+        super(modelClass, modelLayout, viewHolderClass, ref);
+    }
+
     public ChatMAdapter(DatabaseReference reference) {
+        super(ChatM.class, 0, ChatMViewHolder.class, reference);
+    }
+
+    public ChatMAdapter(Query reference) {
         super(ChatM.class, 0, ChatMViewHolder.class, reference);
     }
 

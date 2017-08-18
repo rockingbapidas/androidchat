@@ -1,8 +1,13 @@
 package com.vantagecircle.chatapp.utils;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by bapidas on 13/07/17.
@@ -12,49 +17,6 @@ public class DateUtils {
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
-
-    public static String getDayOfMonthSuffix(final String no) {
-        int n = Integer.parseInt(no);
-        if (n >= 1 && n <= 31)
-            if (n >= 11 && n <= 13) {
-                return "th";
-            }
-        switch (n % 10) {
-            case 1:
-                return "st";
-            case 2:
-                return "nd";
-            case 3:
-                return "rd";
-            default:
-                return "th";
-        }
-    }
-
-    public static String getEEEE(Date date) {
-        //Thursday  dayOfTheWeek
-        return (String) android.text.format.DateFormat.format("EEEE", date);
-    }
-
-    public static String getEEE(Date date) {
-        //Thu  dayOfTheWeek
-        return (String) android.text.format.DateFormat.format("EEE", date);
-    }
-
-    public static String getEE(Date date) {
-        //Th  dayOfTheWeek
-        return (String) android.text.format.DateFormat.format("EE", date);
-    }
-
-    public static String getMMMM(Date date) {
-        //June  stringMonth
-        return (String) android.text.format.DateFormat.format("MMMM", date);
-    }
-
-    public static String getMMM(Date date) {
-        //Jun  stringMonth
-        return (String) android.text.format.DateFormat.format("MMM", date);
-    }
 
     public static String getMM(Date date) {
         //06 intMonth
@@ -71,17 +33,12 @@ public class DateUtils {
         return (String) android.text.format.DateFormat.format("yyyy", date);
     }
 
-    public static String getYY(Date date) {
-        // 14 Year
-        return (String) android.text.format.DateFormat.format("yy", date);
-    }
-
     public static String getTimeAgo(long time) {
         long timestamp = time;
         if (time < 1000000000000L) {
             time *= 1000;
         }
-        long now = System.currentTimeMillis();
+        long now = DateTime.now(DateTimeZone.UTC).getMillis();
         if (time > now || time <= 0) {
             return null;
         }
@@ -100,14 +57,16 @@ public class DateUtils {
             return "yesterday";
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMM, yy", Locale.ENGLISH);
-            Date netDate = new Date(timestamp * 1000);
-            return sdf.format(netDate);
+            //Date netDate = new Date(timestamp);
+            DateTime dateT = new DateTime(timestamp);
+            return sdf.format(dateT);
         }
     }
 
     public static String getTime(long timestamp){
         SimpleDateFormat newformat = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
-        Date date = new Date(timestamp);
-        return newformat.format(date);
+        //Date date = new Date(timestamp);
+        DateTime dateT = new DateTime(timestamp);
+        return newformat.format(dateT);
     }
 }

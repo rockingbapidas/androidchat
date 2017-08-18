@@ -128,15 +128,8 @@ public class ConfigUtils {
         switch (type) {
             case Constants.FILE:
                 intent = new Intent();
-                if (Build.VERSION.SDK_INT >= 19) {
-                    intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                    intent.setType("*/*");
-                } else {
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    intent.setType("*/*");
-                }
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.setType("*/*");
                 act.startActivityForResult(intent, Constants.ACTIVITY_SELECT_FILE);
                 break;
             case Constants.IMAGE:
@@ -150,8 +143,7 @@ public class ConfigUtils {
                 break;
             case Constants.GALLERY:
                 intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                //intent.setType("image/* video/");
-                //set only for image
+                intent.setAction(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
                 act.startActivityForResult(intent, Constants.ACTIVITY_SELECT_GALLERY);
                 break;

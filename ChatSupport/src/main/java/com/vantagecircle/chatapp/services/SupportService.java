@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -17,14 +18,19 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.vantagecircle.chatapp.R;
+import com.vantagecircle.chatapp.core.interfaceC.TimeInterface;
 import com.vantagecircle.chatapp.utils.Constants;
 import com.vantagecircle.chatapp.model.UserM;
 import com.vantagecircle.chatapp.utils.MainFileUtils;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
 
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.TimeInfo;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
 
 /**
  * Created by bapidas on 10/07/17.

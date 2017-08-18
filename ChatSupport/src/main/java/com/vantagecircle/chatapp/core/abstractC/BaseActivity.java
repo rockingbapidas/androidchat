@@ -48,7 +48,11 @@ import com.vantagecircle.chatapp.utils.MainFileUtils;
 import com.vantagecircle.chatapp.utils.ToolsUtils;
 import com.vantagecircle.chatapp.utils.UpdateKeyUtils;
 
+import org.joda.time.DateTime;
+
 import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -311,7 +315,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 receiverUid = userM.getUserId();
                 convType = Constants.CONV_SN;
             }
-            long timeStamp = new Date().getTime();
+            DateTime dateTime = new DateTime();
+            long timeStamp = dateTime.getMillis();
 
             chatM = new ChatM(senderName, receiverName, senderUid, receiverUid,
                     type, text, uri, timeStamp, false, false, currentRoom, convType,
