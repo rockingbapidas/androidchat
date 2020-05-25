@@ -1,1 +1,1 @@
-include ':ChatSupport'
+include ':app'
