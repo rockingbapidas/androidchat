@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
@@ -16,8 +17,8 @@ import com.bapidas.chattingapp.data.core.GetDataHandler
 import com.bapidas.chattingapp.data.core.callbacks.ResultInterface
 import com.bapidas.chattingapp.data.core.callbacks.ValueInterface
 import com.bapidas.chattingapp.data.core.model.DataModel
-import com.bapidas.chattingapp.data.model.GroupM
-import com.bapidas.chattingapp.data.model.UserM
+import com.bapidas.chattingapp.data.model.Group
+import com.bapidas.chattingapp.data.model.User
 import com.squareup.picasso.Picasso
 
 /**
@@ -26,12 +27,12 @@ import com.squareup.picasso.Picasso
 object ConfigUtils {
     private val TAG = ConfigUtils::class.java.simpleName
 
-    fun checkRooms(userM: UserM, resultInterface: ResultInterface) {
+    fun checkRooms(user: User, resultInterface: ResultInterface) {
         val getDataHandler = GetDataHandler()
         getDataHandler.setValueEventListener(ChatApplication.applicationContext().chatReference, object : ValueInterface {
             override fun onDataSuccess(dataModel: DataModel) {
-                val roomType1 = userM.userId + "_" + ChatApplication.applicationContext().userInstance?.uid
-                val roomType2 = ChatApplication.applicationContext().userInstance?.uid + "_" + userM.userId
+                val roomType1 = user.userId + "_" + ChatApplication.applicationContext().userInstance?.uid
+                val roomType2 = ChatApplication.applicationContext().userInstance?.uid + "_" + user.userId
                 when {
                     dataModel.dataSnapshot?.hasChild(roomType1) == true -> {
                         resultInterface.onSuccess(roomType1)
@@ -51,12 +52,11 @@ object ConfigUtils {
         })
     }
 
-    @JvmStatic
-    fun checkRooms(groupM: GroupM, resultInterface: ResultInterface) {
+    fun checkRooms(group: Group, resultInterface: ResultInterface) {
         val getDataHandler = GetDataHandler()
         getDataHandler.setValueEventListener(ChatApplication.applicationContext().chatReference, object : ValueInterface {
             override fun onDataSuccess(dataModel: DataModel) {
-                val roomType1 = groupM.name + "_" + groupM.id
+                val roomType1 = group.name + "_" + group.id
                 if (dataModel.dataSnapshot?.hasChild(roomType1) == true) {
                     resultInterface.onSuccess(roomType1)
                 } else {
@@ -70,16 +70,14 @@ object ConfigUtils {
         })
     }
 
-    fun createRoom(groupM: GroupM): String {
-        return groupM.name + "_" + groupM.id
+    fun createRoom(group: Group): String {
+        return group.name + "_" + group.id
     }
 
-    @JvmStatic
-    fun createRoom(userM: UserM): String {
-        return userM.userId + "_" + ChatApplication.applicationContext().userInstance?.uid
+    fun createRoom(user: User): String {
+        return user.userId + "_" + ChatApplication.applicationContext().userInstance?.uid
     }
 
-    @JvmStatic
     fun initializeApp(context: Context) {
         if (ChatApplication.applicationContext().userInstance != null) {
             val getDataHandler = GetDataHandler()
@@ -87,9 +85,9 @@ object ConfigUtils {
                     .child(ChatApplication.applicationContext().userInstance?.uid.orEmpty())
             getDataHandler.setSingleValueEventListener(ref, object : ValueInterface {
                 override fun onDataSuccess(dataModel: DataModel) {
-                    val userM = dataModel.dataSnapshot?.getValue(UserM::class.java)
+                    val userM = dataModel.dataSnapshot?.getValue(User::class.java)
                     if (userM != null) {
-                        ChatApplication.applicationContext().userM = userM
+                        ChatApplication.applicationContext().user = userM
                     }
                 }
 
@@ -100,7 +98,6 @@ object ConfigUtils {
         }
     }
 
-    @JvmStatic
     fun loadPicasso(context: Context, file_img: ImageView, path: String) {
         val drawable = ContextCompat.getDrawable(context, R.drawable.ic_insert_photo_black_24dp)
         drawable?.let {
@@ -108,7 +105,10 @@ object ConfigUtils {
         }
     }
 
-    @JvmStatic
+    fun getImage(imageUrl: String): Bitmap? {
+        return Picasso.get().load(imageUrl).get()
+    }
+
     fun isHasPermissions(context: Context, vararg permissions: String): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             for (permission in permissions) {

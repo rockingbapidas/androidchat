@@ -7,7 +7,7 @@
     android:padding="8dp"
     android:background="@color/white">
 
-    <com.rengwuxian.materialedittext.MaterialEditText
+    <EditText
         android:id="@+id/groupnameEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

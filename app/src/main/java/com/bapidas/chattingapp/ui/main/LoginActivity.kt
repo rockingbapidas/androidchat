@@ -3,7 +3,6 @@ package com.bapidas.chattingapp.ui.main
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -17,8 +16,8 @@ import com.bapidas.chattingapp.data.core.GetDataHandler
 import com.bapidas.chattingapp.data.core.callbacks.ResultInterface
 import com.bapidas.chattingapp.data.core.callbacks.ValueInterface
 import com.bapidas.chattingapp.data.core.model.DataModel
-import com.bapidas.chattingapp.data.model.UserM
-import com.bapidas.chattingapp.data.pref.SharedPrefM
+import com.bapidas.chattingapp.data.model.User
+import com.bapidas.chattingapp.data.pref.SharedPrefHelper
 import com.bapidas.chattingapp.utils.Constants
 import com.bapidas.chattingapp.utils.ToolsUtils.hideKeyboard
 import com.bapidas.chattingapp.utils.ToolsUtils.isNetworkAvailable
@@ -87,7 +86,7 @@ class LoginActivity : AppCompatActivity() {
         authHandler.performLogin(username, password, object : ResultInterface {
             override fun onSuccess(t: String) {
                 progressDialog?.setMessage("Authentication success")
-                updateTokenToServer(SharedPrefM(this@LoginActivity)
+                updateTokenToServer(SharedPrefHelper(this@LoginActivity)
                         .getString(Constants.FIREBASE_TOKEN))
                 data
             }
@@ -108,9 +107,9 @@ class LoginActivity : AppCompatActivity() {
                     .child(ChatApplication.applicationContext().userInstance?.uid.orEmpty())
             getDataHandler.setSingleValueEventListener(ref, object : ValueInterface {
                 override fun onDataSuccess(dataModel: DataModel) {
-                    val userM = dataModel.dataSnapshot?.getValue(UserM::class.java)
+                    val userM = dataModel.dataSnapshot?.getValue(User::class.java)
                     if (userM != null) {
-                        ChatApplication.applicationContext().userM = userM
+                        ChatApplication.applicationContext().user = userM
                         if (progressDialog != null && progressDialog?.isShowing == true) {
                             progressDialog?.dismiss()
                         }

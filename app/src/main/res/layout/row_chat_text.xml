@@ -26,7 +26,7 @@
             android:paddingRight="5dp"
             android:paddingTop="3dp">
 
-            <com.bapidas.chattingapp.ui.widget.roboto.RobotoTextView
+            <TextView
                 android:id="@+id/sender"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -34,19 +34,16 @@
                 android:textColor="@color/colorOrange"
                 android:textSize="12sp"
                 android:layout_marginBottom="5dp"
-                app:fontFamily="roboto"
-                app:typeface="roboto_regular" />
+                app:fontFamily="roboto"/>
 
-            <com.bapidas.chattingapp.ui.widget.roboto.RobotoTextView
+            <TextView
                 android:id="@+id/text_content"
-                style="@style/profileSubHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/dummy_text"
                 android:textColor="@color/darktext"
                 android:textSize="16sp"
-                app:fontFamily="roboto"
-                app:typeface="roboto_regular" />
+                app:fontFamily="roboto"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -56,21 +53,19 @@
                 android:gravity="end|center_vertical"
                 android:orientation="horizontal">
 
-                <com.bapidas.chattingapp.ui.widget.roboto.RobotoTextView
+                <TextView
                     android:id="@+id/text_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/just_now"
                     android:textColor="@color/colorPrimary"
                     app:fontFamily="roboto"
-                    android:textSize="12sp"
-                    app:typeface="roboto_regular" />
+                    android:textSize="12sp"/>
 
                 <ImageView
                     android:id="@+id/chat_status"
                     android:layout_width="14dp"
                     android:layout_height="14dp"
-                    android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
                     android:src="@drawable/single_tick"
                     android:visibility="visible"

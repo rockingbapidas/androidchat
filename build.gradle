@@ -7,7 +7,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath 'com.android.tools.build:gradle:4.0.0'
         classpath 'com.google.gms:google-services:4.3.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
@@ -29,10 +29,16 @@ task clean(type: Delete) {
 
 ext {
     compileSdkVersion = 29
-    minSdkVersion = 19
+    minSdkVersion = 21
     targetSdkVersion = 29
 
-    googleVersion = "18.0.0"
-    gsonVersion = '2.8.6'
-    mockitoVersion = "2.7.22"
+    lifecycle_version = "2.2.0"
+    arch_version = "2.1.0"
+    nav_version = "2.2.2"
+    gson_version = '2.8.6'
+    room_version = "2.2.5"
+    dagger_version = "2.26"
+    retrofit = "2.7.1"
+    ok_http = "4.4.0"
+    mockito_version = "3.2.4"
 }
