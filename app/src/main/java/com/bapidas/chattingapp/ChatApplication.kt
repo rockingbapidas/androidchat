@@ -2,7 +2,7 @@ package com.bapidas.chattingapp
 
 import android.app.Application
 import android.os.Environment
-import com.bapidas.chattingapp.data.model.UserM
+import com.bapidas.chattingapp.data.model.User
 import com.bapidas.chattingapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -23,7 +23,7 @@ class ChatApplication : Application() {
 
     @get:Synchronized
     @set:Synchronized
-    var userM: UserM? = null
+    var user: User? = null
 
     @get:Synchronized
     val authInstance: FirebaseAuth

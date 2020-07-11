@@ -13,12 +13,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
 import com.bapidas.chattingapp.R
-import com.bapidas.chattingapp.data.model.GroupM
-import com.bapidas.chattingapp.data.model.UserM
+import com.bapidas.chattingapp.data.model.Group
+import com.bapidas.chattingapp.data.model.User
 import com.bapidas.chattingapp.ui.main.ChatActivity
+import com.bapidas.chattingapp.utils.ConfigUtils
 import com.bapidas.chattingapp.utils.Constants
 import com.google.gson.Gson
-import com.squareup.picasso.Picasso
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
@@ -39,13 +39,13 @@ class NotificationHandler(private val mContext: Context) {
             val userName = jsonObject.getString("userName")
             val fullName = jsonObject.getString("fullName")
             val fcmToken = jsonObject.getString("userToken")
-            val userM = UserM(userId, userName, fullName, fcmToken)
+            val userM = User(userId, userName, fullName, fcmToken)
             intent.putExtra("isGroup", false)
             intent.putExtra("data", Gson().toJson(userM))
         } else {
             val id = jsonObject.getString("userID")
             val name = jsonObject.getString("userName")
-            val groupM = GroupM(id, name)
+            val groupM = Group(id, name)
             intent.putExtra("isGroup", true)
             intent.putExtra("data", Gson().toJson(groupM))
         }
@@ -63,7 +63,7 @@ class NotificationHandler(private val mContext: Context) {
             val imageUrl = jsonObject.getString("fileUri")
             var bitmap: Bitmap? = null
             try {
-                if (imageUrl.isNotEmpty()) bitmap = Picasso.get().load(imageUrl).get()
+                if (imageUrl.isNotEmpty()) bitmap = ConfigUtils.getImage(imageUrl)
             } catch (e: IOException) {
                 e.printStackTrace()
             }

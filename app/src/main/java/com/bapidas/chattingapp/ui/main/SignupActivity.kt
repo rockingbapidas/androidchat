@@ -1,11 +1,8 @@
 package com.bapidas.chattingapp.ui.main
 
-import android.app.Activity
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -17,9 +14,9 @@ import com.bapidas.chattingapp.R
 import com.bapidas.chattingapp.data.core.AuthHandler
 import com.bapidas.chattingapp.data.core.SetDataHandler
 import com.bapidas.chattingapp.data.core.callbacks.ResultInterface
-import com.bapidas.chattingapp.data.model.RoomM
-import com.bapidas.chattingapp.data.model.UserM
-import com.bapidas.chattingapp.data.pref.SharedPrefM
+import com.bapidas.chattingapp.data.model.ChatRoom
+import com.bapidas.chattingapp.data.model.User
+import com.bapidas.chattingapp.data.pref.SharedPrefHelper
 import com.bapidas.chattingapp.utils.Constants
 import com.bapidas.chattingapp.utils.ToolsUtils.hideKeyboard
 import com.bapidas.chattingapp.utils.ToolsUtils.isNetworkAvailable
@@ -111,28 +108,28 @@ class SignupActivity : AppCompatActivity() {
         val username = username
         val fullName = fullName
         val fcmToken: String
-        if (SharedPrefM(this).getString(Constants.FIREBASE_TOKEN) != null) {
-            fcmToken = SharedPrefM(this).getString(Constants.FIREBASE_TOKEN).orEmpty()
+        if (SharedPrefHelper(this).getString(Constants.FIREBASE_TOKEN) != null) {
+            fcmToken = SharedPrefHelper(this).getString(Constants.FIREBASE_TOKEN).orEmpty()
         } else {
             fcmToken = FirebaseInstanceId.getInstance().token.orEmpty()
-            SharedPrefM(this).saveString(Constants.FIREBASE_TOKEN, fcmToken)
+            SharedPrefHelper(this).saveString(Constants.FIREBASE_TOKEN, fcmToken)
         }
         val lastSeenTime = System.currentTimeMillis()
         val isOnline = true
         val userType = Constants.USER
-        val roomMArrayList = staticRooms
+        val roomMArrayList = staticChatRooms
 
-        val userM = UserM(userId, username, fullName, fcmToken,
+        val userM = User(userId, username, fullName, fcmToken,
                 lastSeenTime = lastSeenTime,
                 isOnline = isOnline,
                 userType = userType,
-                roomMArrayList = roomMArrayList
+                chatRoomArrayList = roomMArrayList
         )
         val setDataHandler = SetDataHandler()
         setDataHandler.databaseReference = ChatApplication.applicationContext().userReference.child(userM.userId)
         setDataHandler.insertData(userM, object : ResultInterface {
             override fun onSuccess(t: String) {
-                ChatApplication.applicationContext().userM = userM
+                ChatApplication.applicationContext().user = userM
                 if (progressDialog != null && progressDialog?.isShowing == true) {
                     progressDialog?.dismiss()
                 }
@@ -154,12 +151,12 @@ class SignupActivity : AppCompatActivity() {
         })
     }
 
-    private val staticRooms: ArrayList<RoomM>
+    private val staticChatRooms: ArrayList<ChatRoom>
         get() {
-            val arrayList = ArrayList<RoomM>()
+            val arrayList = ArrayList<ChatRoom>()
             val roomId = "CAOL5K"
             val roomName = "CAOL5K_QWERTY"
-            arrayList.add(RoomM(roomId, roomName))
+            arrayList.add(ChatRoom(roomId, roomName))
             return arrayList
         }
 }

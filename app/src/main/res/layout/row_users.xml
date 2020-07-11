@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
@@ -40,66 +41,62 @@
                 android:gravity="center|start"
                 android:orientation="vertical">
 
-                <com.bapidas.chattingapp.ui.widget.roboto.RobotoTextView
+                <TextView
                     android:id="@+id/user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="Bapi Das"
                     android:textColor="@color/text_primary"
                     android:textSize="18sp"
                     app:fontFamily="roboto"
-                    app:typeface="roboto_regular" />
+                    tools:text="Bapi Das" />
 
-                <com.bapidas.chattingapp.ui.widget.roboto.RobotoTextView
+                <TextView
                     android:id="@+id/email_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:maxLines="1"
-                    android:text="1457894125632"
                     android:textColor="@color/colorOrange"
                     android:textSize="14sp"
                     app:fontFamily="roboto"
-                    app:typeface="roboto_regular" />
+                    tools:text="1457894125632" />
 
-                <com.bapidas.chattingapp.ui.widget.roboto.RobotoTextView
+                <TextView
                     android:id="@+id/last_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:maxLines="1"
-                    android:text="Hii dere"
                     android:textColor="@color/colorLightBlue"
                     android:textSize="14sp"
                     android:visibility="visible"
                     app:fontFamily="roboto"
-                    app:typeface="roboto_condensed_regular" />
+                    tools:text="Hii dere" />
 
                 <LinearLayout
                     android:id="@+id/lastImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_camera_alt_black_24dp" />
 
-                    <com.bapidas.chattingapp.ui.widget.roboto.RobotoTextView
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:maxLines="1"
-                        android:text="Photo"
                         android:textColor="@color/colorLightBlue"
                         android:textSize="14sp"
                         android:visibility="visible"
                         app:fontFamily="roboto"
-                        app:typeface="roboto_condensed_regular" />
+                        tools:text="Photo" />
                 </LinearLayout>
 
             </LinearLayout>

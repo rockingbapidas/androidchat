@@ -12,15 +12,11 @@ import android.view.ContextMenu.ContextMenuInfo
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bapidas.chattingapp.ChatApplication
@@ -31,12 +27,12 @@ import com.bapidas.chattingapp.data.core.callbacks.ChildInterface
 import com.bapidas.chattingapp.data.core.callbacks.ResultInterface
 import com.bapidas.chattingapp.data.core.callbacks.ValueInterface
 import com.bapidas.chattingapp.data.core.model.DataModel
-import com.bapidas.chattingapp.data.model.ChatM
-import com.bapidas.chattingapp.data.model.GroupM
-import com.bapidas.chattingapp.data.model.UserM
+import com.bapidas.chattingapp.data.model.Chat
+import com.bapidas.chattingapp.data.model.Group
+import com.bapidas.chattingapp.data.model.User
 import com.bapidas.chattingapp.notification.httpcall.SendNotification
-import com.bapidas.chattingapp.ui.adapter.ChatMAdapter
-import com.bapidas.chattingapp.ui.adapter.holder.ChatMViewHolder
+import com.bapidas.chattingapp.ui.adapter.ChatAdapter
+import com.bapidas.chattingapp.ui.adapter.holder.ChatViewHolder
 import com.bapidas.chattingapp.utils.ConfigUtils.callIntent
 import com.bapidas.chattingapp.utils.ConfigUtils.checkRooms
 import com.bapidas.chattingapp.utils.ConfigUtils.createRoom
@@ -62,21 +58,21 @@ import java.util.*
  */
 class ChatActivity : AppCompatActivity() {
     private var mActionBar: ActionBar? = null
-    private var userM: UserM? = null
-    private var groupM: GroupM? = null
+    private var user: User? = null
+    private var group: Group? = null
 
     private var currentRoom: String = ""
     private var isGroup = false
     private var isFromNotification = false
     private var tokens: ArrayList<String> = arrayListOf()
 
-    private lateinit var chatMAdapter: ChatMAdapter
+    private lateinit var chatAdapter: ChatAdapter
 
     //get all messages from firebase db and bind
     private val chatHistory: Unit
         get() {
             if (isGroup) {
-                groupM?.let {
+                group?.let {
                     checkRooms(it, object : ResultInterface {
                         override fun onSuccess(t: String) {
                             if (t == Constants.NO_ROOM) {
@@ -95,7 +91,7 @@ class ChatActivity : AppCompatActivity() {
                     })
                 }
             } else {
-                userM?.let {
+                user?.let {
                     checkRooms(it, object : ResultInterface {
                         override fun onSuccess(t: String) {
                             if (t == Constants.NO_ROOM) {
@@ -119,10 +115,10 @@ class ChatActivity : AppCompatActivity() {
     private val onlineStatus: Unit
         get() {
             val getDataHandler = GetDataHandler()
-            val ref = ChatApplication.applicationContext().userReference.child(userM?.userId.orEmpty())
+            val ref = ChatApplication.applicationContext().userReference.child(user?.userId.orEmpty())
             getDataHandler.setValueEventListener(ref, object : ValueInterface {
                 override fun onDataSuccess(dataModel: DataModel) {
-                    val model = dataModel.dataSnapshot?.getValue(UserM::class.java)
+                    val model = dataModel.dataSnapshot?.getValue(User::class.java)
                     if (model != null) {
                         val statusString = model.isOnlineString()
                         mActionBar?.subtitle = statusString
@@ -200,15 +196,15 @@ class ChatActivity : AppCompatActivity() {
         //check intent is group chat or not
         isGroup = intent.getBooleanExtra("isGroup", false)
         if (isGroup) {
-            groupM = Gson().fromJson(intent.getStringExtra("data"), GroupM::class.java)
-            if (groupM != null) {
-                mActionBar?.title = groupM?.name
+            group = Gson().fromJson(intent.getStringExtra("data"), Group::class.java)
+            if (group != null) {
+                mActionBar?.title = group?.name
                 getTokens()
             }
         } else {
-            userM = Gson().fromJson(intent.getStringExtra("data"), UserM::class.java)
-            if (userM != null) {
-                mActionBar?.title = userM?.fullName
+            user = Gson().fromJson(intent.getStringExtra("data"), User::class.java)
+            if (user != null) {
+                mActionBar?.title = user?.fullName
                 onlineStatus
             }
         }
@@ -218,14 +214,14 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun createAdapter() {
-        chatMAdapter = ChatMAdapter(ChatM::class.java, 0,
-                ChatMViewHolder::class.java,
+        chatAdapter = ChatAdapter(Chat::class.java, 0,
+                ChatViewHolder::class.java,
                 ChatApplication.applicationContext().chatReference.child(currentRoom))
-        recycler_chat.adapter = chatMAdapter
-        chatMAdapter.registerAdapterDataObserver(object : AdapterDataObserver() {
+        recycler_chat.adapter = chatAdapter
+        chatAdapter.registerAdapterDataObserver(object : AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
-                val friendlyMessageCount = chatMAdapter.itemCount
+                val friendlyMessageCount = chatAdapter.itemCount
                 val lastVisiblePosition = (recycler_chat.layoutManager as LinearLayoutManager)
                         .findLastCompletelyVisibleItemPosition()
                 if (lastVisiblePosition == -1 ||
@@ -242,7 +238,7 @@ class ChatActivity : AppCompatActivity() {
         tokens = ArrayList()
         val getDataHandler = GetDataHandler()
         val ref = ChatApplication.applicationContext().groupReference
-                .child(groupM?.id.orEmpty()).child("users")
+                .child(group?.id.orEmpty()).child("users")
         getDataHandler.setChildValueListener(ref, object : ChildInterface {
             override fun onChildNew(dataModel: DataModel) {
                 tokens.add(dataModel.dataSnapshot
@@ -269,42 +265,42 @@ class ChatActivity : AppCompatActivity() {
     }
 
     //push message to firebase db
-    private fun prepareChatModel(text: String?, type: String?, uri: String?): ChatM? {
+    private fun prepareChatModel(text: String?, type: String?, uri: String?): Chat? {
         Log.d(TAG, "Current Room === $currentRoom")
-        var chatM: ChatM? = null
+        var chat: Chat? = null
         try {
-            val senderName = ChatApplication.applicationContext().userM?.fullName
+            val senderName = ChatApplication.applicationContext().user?.fullName
             val senderUid = ChatApplication.applicationContext().id
-            val senderFcmToken = ChatApplication.applicationContext().userM?.fcmToken
+            val senderFcmToken = ChatApplication.applicationContext().user?.fcmToken
             val receiverName: String?
             val receiverUid: String?
             val conversationType: String
-            if (isGroup && groupM != null) {
-                receiverName = groupM?.name
-                receiverUid = groupM?.id
+            if (isGroup && group != null) {
+                receiverName = group?.name
+                receiverUid = group?.id
                 conversationType = Constants.CONVERSATION_GROUP
             } else {
-                receiverName = userM?.fullName
-                receiverUid = userM?.userId
+                receiverName = user?.fullName
+                receiverUid = user?.userId
                 conversationType = Constants.CONVERSATION_SINGLE
             }
             val timeStamp = Date().time
-            chatM = ChatM(senderName.orEmpty(), receiverName.orEmpty(),
+            chat = Chat(senderName.orEmpty(), receiverName.orEmpty(),
                     senderUid.orEmpty(), receiverUid.orEmpty(),
                     type.orEmpty(), text.orEmpty(),
                     uri.orEmpty(), timeStamp, isSentSuccessfully = false,
                     isReadSuccessfully = false, chatRoom = currentRoom,
                     convType = conversationType, senderToken = senderFcmToken.orEmpty(),
-                    receiverToken = (if (isGroup && groupM != null) ""
+                    receiverToken = (if (isGroup && group != null) ""
                     else
-                        userM?.fcmToken.orEmpty()))
+                        user?.fcmToken.orEmpty()))
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return chatM
+        return chat
     }
 
-    private fun pushMessage(chatM: ChatM) {
+    private fun pushMessage(chat: Chat) {
         //clear edit text and scroll recycler view to bottom
         et_message.setText("")
 
@@ -312,13 +308,13 @@ class ChatActivity : AppCompatActivity() {
         val setDataHandler = SetDataHandler()
         setDataHandler.databaseReference = ChatApplication.applicationContext().chatReference
                 .child(currentRoom)
-                .child(chatM.timeStamp.toString())
-        setDataHandler.insertData(chatM, object : ResultInterface {
+                .child(chat.timeStamp.toString())
+        setDataHandler.insertData(chat, object : ResultInterface {
             override fun onSuccess(t: String) {
                 //send push notification to the user if chat type is text type
-                if (chatM.chatType == Constants.TEXT_CONTENT) {
+                if (chat.chatType == Constants.TEXT_CONTENT) {
                     val sendNotification = SendNotification(this@ChatActivity)
-                    sendNotification.prepareNotification(chatM)
+                    sendNotification.prepareNotification(chat)
                 } else {
                     Log.d(TAG, "Notification will be sent after file upload")
                 }

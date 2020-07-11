@@ -41,7 +41,7 @@
                     android:src="@drawable/divider"
                     android:contentDescription="@string/image" />
 
-                <com.bapidas.chattingapp.ui.widget.roboto.RobotoTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
@@ -50,8 +50,7 @@
                     android:text="@string/groups"
                     android:textSize="@dimen/text16"
                     android:visibility="visible"
-                    app:fontFamily="roboto"
-                    app:typeface="roboto_regular" />
+                    app:fontFamily="roboto"/>
 
                 <ImageView
                     android:layout_width="match_parent"

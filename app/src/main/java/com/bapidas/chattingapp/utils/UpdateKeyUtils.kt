@@ -4,7 +4,7 @@ import android.util.Log
 import com.bapidas.chattingapp.ChatApplication
 import com.bapidas.chattingapp.data.core.SetDataHandler
 import com.bapidas.chattingapp.data.core.callbacks.ResultInterface
-import com.bapidas.chattingapp.data.pref.SharedPrefM
+import com.bapidas.chattingapp.data.pref.SharedPrefHelper
 import com.google.firebase.iid.FirebaseInstanceId
 import java.util.*
 
@@ -19,7 +19,7 @@ object UpdateKeyUtils {
     fun updateTokenToServer(token: String?) {
         try {
             val fcmToken: String? = token ?: FirebaseInstanceId.getInstance().token
-            SharedPrefM(ChatApplication.applicationContext()).saveString(Constants.FIREBASE_TOKEN, fcmToken)
+            SharedPrefHelper(ChatApplication.applicationContext()).saveString(Constants.FIREBASE_TOKEN, fcmToken)
             if (ChatApplication.applicationContext().userInstance != null) {
                 val hashMap = HashMap<String?, Any?>()
                 hashMap[Constants.FIREBASE_TOKEN] = fcmToken

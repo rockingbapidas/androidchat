@@ -3,7 +3,7 @@ package com.bapidas.chattingapp.notification.httpcall
 import android.content.Context
 import android.util.Log
 import com.bapidas.chattingapp.R
-import com.bapidas.chattingapp.data.model.ChatM
+import com.bapidas.chattingapp.data.model.Chat
 import com.bapidas.chattingapp.utils.Constants
 import com.bapidas.chattingapp.utils.UpdateKeyUtils.updateSentStatus
 import okhttp3.*
@@ -18,7 +18,7 @@ import java.io.IOException
  */
 class SendNotification(context: Context) {
     //Notification model
-    private val notificationM: NotificationM = NotificationM()
+    private val notification: Notification = Notification()
     private val mContext: Context = context
 
     fun subscribeTokenToTopic(token: String, groupName: String) {
@@ -46,25 +46,25 @@ class SendNotification(context: Context) {
         }
     }
 
-    fun prepareNotification(chatM: ChatM) {
+    fun prepareNotification(chat: Chat) {
         try {
-            val chatType = chatM.chatType
-            val messageText = chatM.messageText
-            val fileUrl = chatM.fileUrl
-            val timeStamp = chatM.timeStamp
-            notificationM.title = chatM.senderName
-            notificationM.chatType = chatType
-            notificationM.messageText = messageText
-            notificationM.fileUrl = fileUrl
-            notificationM.timeStamp = timeStamp
-            notificationM.chatRoom = chatM.chatRoom
-            notificationM.conversationType = chatM.convType
-            notificationM.senderUsername = chatM.senderName
-            notificationM.receiverUserName = chatM.receiverName
-            notificationM.senderUid = chatM.senderUid
-            notificationM.receiverUid = chatM.receiverUid
-            notificationM.senderFcmToken = chatM.senderToken
-            notificationM.receiverFcmToken = chatM.receiverToken
+            val chatType = chat.chatType
+            val messageText = chat.messageText
+            val fileUrl = chat.fileUrl
+            val timeStamp = chat.timeStamp
+            notification.title = chat.senderName
+            notification.chatType = chatType
+            notification.messageText = messageText
+            notification.fileUrl = fileUrl
+            notification.timeStamp = timeStamp
+            notification.chatRoom = chat.chatRoom
+            notification.conversationType = chat.convType
+            notification.senderUsername = chat.senderName
+            notification.receiverUserName = chat.receiverName
+            notification.senderUid = chat.senderUid
+            notification.receiverUid = chat.receiverUid
+            notification.senderFcmToken = chat.senderToken
+            notification.receiverFcmToken = chat.receiverToken
             sendNotificationToUser()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -92,8 +92,8 @@ class SendNotification(context: Context) {
                     Log.e(TAG, "onResponse body: " + response.body)
                     Log.e(TAG, "onResponse code: " + response.code)
                     if (response.code == 200) {
-                        notificationM.chatRoom?.let {
-                            updateSentStatus(it, notificationM.timeStamp)
+                        notification.chatRoom?.let {
+                            updateSentStatus(it, notification.timeStamp)
                         }
                     }
                 }
@@ -109,10 +109,10 @@ class SendNotification(context: Context) {
         get() {
             //parent json body setup
             val parentBody = JSONObject()
-            if (notificationM.conversationType == Constants.CONVERSATION_SINGLE) {
-                parentBody.put(KEY_TO, notificationM.receiverFcmToken)
+            if (notification.conversationType == Constants.CONVERSATION_SINGLE) {
+                parentBody.put(KEY_TO, notification.receiverFcmToken)
             } else {
-                parentBody.put(KEY_TO, "/topics/" + notificationM.chatRoom)
+                parentBody.put(KEY_TO, "/topics/" + notification.chatRoom)
             }
             parentBody.put(KEY_DATA, childData)
             Log.e(TAG, "data === $parentBody")
@@ -125,20 +125,20 @@ class SendNotification(context: Context) {
         get() {
             //child json body setup
             val childData = JSONObject()
-            childData.put(KEY_TITLE, notificationM.title)
-            childData.put(KEY_TYPE, notificationM.chatType)
-            childData.put(KEY_TEXT, notificationM.messageText)
-            childData.put(KEY_URI, notificationM.fileUrl)
-            childData.put(KEY_CON_TYPE, notificationM.conversationType)
+            childData.put(KEY_TITLE, notification.title)
+            childData.put(KEY_TYPE, notification.chatType)
+            childData.put(KEY_TEXT, notification.messageText)
+            childData.put(KEY_URI, notification.fileUrl)
+            childData.put(KEY_CON_TYPE, notification.conversationType)
 
             //childData.put(KEY_USERNAME, notificationM.getSenderUsername());
-            childData.put(KEY_UID, notificationM.senderUid)
+            childData.put(KEY_UID, notification.senderUid)
             //childData.put(KEY_FCM_TOKEN, notificationM.getSenderFcmToken());
             childData.put(KEY_CHAT_FLAG, true)
-            if (notificationM.conversationType == Constants.CONVERSATION_GROUP) {
-                childData.put(KEY_CONTEST_ID, notificationM.receiverUid)
-                childData.put(KEY_CONTEST_NAME, notificationM.receiverUserName)
-                childData.put(KEY_ROOM, notificationM.chatRoom)
+            if (notification.conversationType == Constants.CONVERSATION_GROUP) {
+                childData.put(KEY_CONTEST_ID, notification.receiverUid)
+                childData.put(KEY_CONTEST_NAME, notification.receiverUserName)
+                childData.put(KEY_ROOM, notification.chatRoom)
             }
             return childData
         }

@@ -27,15 +27,15 @@ import com.bapidas.chattingapp.ChatApplication
 import com.bapidas.chattingapp.R
 import com.bapidas.chattingapp.data.core.SetDataHandler
 import com.bapidas.chattingapp.data.core.callbacks.ResultInterface
-import com.bapidas.chattingapp.data.model.GroupM
-import com.bapidas.chattingapp.data.model.UserM
+import com.bapidas.chattingapp.data.model.Group
+import com.bapidas.chattingapp.data.model.User
 import com.bapidas.chattingapp.notification.httpcall.SendNotification
-import com.bapidas.chattingapp.ui.adapter.GroupMAdapter
-import com.bapidas.chattingapp.ui.adapter.UsersMAdapter
+import com.bapidas.chattingapp.ui.adapter.GroupAdapter
+import com.bapidas.chattingapp.ui.adapter.UsersAdapter
 import com.bapidas.chattingapp.ui.adapter.callbacks.ClickGroup
 import com.bapidas.chattingapp.ui.adapter.callbacks.ClickUser
-import com.bapidas.chattingapp.ui.adapter.holder.GroupMViewHolder
-import com.bapidas.chattingapp.ui.adapter.holder.UserMViewHolder
+import com.bapidas.chattingapp.ui.adapter.holder.GroupViewHolder
+import com.bapidas.chattingapp.ui.adapter.holder.UserViewHolder
 import com.bapidas.chattingapp.ui.adapter.decoration.DividerItemDecoration
 import com.bapidas.chattingapp.utils.ConfigUtils.isHasPermissions
 import com.bapidas.chattingapp.utils.Constants
@@ -54,8 +54,8 @@ class UserActivity : AppCompatActivity() {
     private var linearLayoutManager: LinearLayoutManager = LinearLayoutManager(this)
     private var linearLayoutManager1: LinearLayoutManager = LinearLayoutManager(this)
 
-    lateinit var usersMAdapter: UsersMAdapter
-    lateinit var groupMAdapter: GroupMAdapter
+    lateinit var usersAdapter: UsersAdapter
+    lateinit var groupAdapter: GroupAdapter
 
     private var progressDialog: ProgressDialog? = null
     private var alertDialog: AlertDialog? = null
@@ -91,7 +91,7 @@ class UserActivity : AppCompatActivity() {
 
     private fun initToolbar() {
         mActionBar = supportActionBar
-        mActionBar?.title = ChatApplication.applicationContext().userM?.fullName
+        mActionBar?.title = ChatApplication.applicationContext().user?.fullName
     }
 
     private fun initView() {
@@ -124,30 +124,30 @@ class UserActivity : AppCompatActivity() {
 
     private fun setData() {
         val myQuery: Query = ChatApplication.applicationContext().userReference
-        usersMAdapter = UsersMAdapter(UserM::class.java, R.layout.row_users,
-                UserMViewHolder::class.java, myQuery, object : ClickUser {
+        usersAdapter = UsersAdapter(User::class.java, R.layout.row_users,
+                UserViewHolder::class.java, myQuery, object : ClickUser {
             override fun onUserClick(position: Int) {
                 val intent = Intent(this@UserActivity, ChatActivity::class.java)
                 intent.putExtra("isFormBar", false)
                 intent.putExtra("isGroup", false)
-                intent.putExtra("data", Gson().toJson(usersMAdapter.getItem(position)))
+                intent.putExtra("data", Gson().toJson(usersAdapter.getItem(position)))
                 startActivity(intent)
             }
         })
-        recyclerView.adapter = usersMAdapter
+        recyclerView.adapter = usersAdapter
 
         val myQuery1: Query = ChatApplication.applicationContext().groupReference
-        groupMAdapter = GroupMAdapter(GroupM::class.java, R.layout.row_users,
-                GroupMViewHolder::class.java, myQuery1, object : ClickGroup {
+        groupAdapter = GroupAdapter(Group::class.java, R.layout.row_users,
+                GroupViewHolder::class.java, myQuery1, object : ClickGroup {
             override fun onGroupClick(position: Int) {
                 val intent = Intent(this@UserActivity, ChatActivity::class.java)
                 intent.putExtra("isFormBar", false)
                 intent.putExtra("isGroup", true)
-                intent.putExtra("data", Gson().toJson(groupMAdapter.getItem(position)))
+                intent.putExtra("data", Gson().toJson(groupAdapter.getItem(position)))
                 startActivity(intent)
             }
         })
-        recyclerView1.adapter = groupMAdapter
+        recyclerView1.adapter = groupAdapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -182,7 +182,7 @@ class UserActivity : AppCompatActivity() {
                 progressDialog?.show()
                 val id = ChatApplication.applicationContext().groupReference.push().key.orEmpty()
                 val name = editText.text.toString()
-                val groupM = GroupM(id, name)
+                val groupM = Group(id, name)
                 val setDataHandler = SetDataHandler()
                 setDataHandler.databaseReference = ChatApplication.applicationContext().groupReference.child(id)
                 setDataHandler.insertData(groupM, object : ResultInterface {
@@ -211,8 +211,8 @@ class UserActivity : AppCompatActivity() {
     }
 
     private fun addUsersToGroup(id: String) {
-        for (i in 0 until usersMAdapter.itemCount) {
-            val (userId, _, _, fcmToken) = usersMAdapter.getItem(i)
+        for (i in 0 until usersAdapter.itemCount) {
+            val (userId, _, _, fcmToken) = usersAdapter.getItem(i)
             val setDataHandler = SetDataHandler()
             setDataHandler.databaseReference = ChatApplication.applicationContext().groupReference.child(id)
                     .child("users").child(userId).child("fcmToken")
@@ -233,8 +233,8 @@ class UserActivity : AppCompatActivity() {
     }
 
     private fun subscribeGroup(room: String) {
-        for (i in 0 until usersMAdapter.itemCount) {
-            val (_, _, _, fcmToken) = usersMAdapter.getItem(i)
+        for (i in 0 until usersAdapter.itemCount) {
+            val (_, _, _, fcmToken) = usersAdapter.getItem(i)
             SendNotification(this).subscribeTokenToTopic(fcmToken, room)
         }
     }
